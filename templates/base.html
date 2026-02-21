@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}সাহিত্যিক সংগ্রহশালা{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F9F6F0; 
+            --text-main: #2C2825; 
+            --accent: #8C3A3A; 
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Noto Serif Bengali', serif;
+            margin: 0; padding: 0; line-height: 1.6;
+        }
+        nav {
+            background: #fff; padding: 20px 50px;
+            border-bottom: 1px solid #e0dcd2;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        nav a { text-decoration: none; color: var(--text-main); font-weight: 600; margin-left: 20px; }
+        .logo { font-size: 1.5rem; color: var(--accent); font-weight: bold; }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        .flash-messages { color: green; font-weight: bold; text-align: center; margin-bottom: 20px; }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+
+    <nav>
+        <div class="logo"><a href="/" style="color:var(--accent); margin:0;">সাহিত্যিক সংগ্রহশালা</a></div>
+        <div>
+            <a href="/">গ্যালারি</a>
+            <a href="/upload">আপলোড করুন</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for message in messages %} <p>{{ message }}</p> {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
