@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ profile.display_name or profile.username }} এর প্রোফাইল | সাহিত্যিক সংগ্রহশালা{% endblock %}
+
+{% block head %}
+<style>
+    .profile-header { background: #fff; padding: 40px; border: 1px solid var(--border); border-radius: 8px; text-align: center; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    .profile-avatar { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-color); margin-bottom: 15px; }
+    .profile-name { font-size: 2rem; color: var(--accent); margin: 0; }
+    .profile-username { color: #666; font-size: 1.1rem; margin-top: 5px; }
+    .profile-bio { margin: 20px auto; max-width: 600px; font-size: 1.1rem; color: #444; line-height: 1.6; }
+    
+    .social-links { margin-top: 20px; }
+    .social-links a { display: inline-block; margin: 0 10px; color: var(--accent); text-decoration: none; font-weight: bold; font-size: 0.95rem; border: 1px solid var(--accent); padding: 5px 15px; border-radius: 20px; transition: 0.3s; }
+    .social-links a:hover { background: var(--accent); color: #fff; }
+
+    .section-title { text-align: center; color: var(--text-main); margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <img src="{{ profile.avatar_url }}" alt="Profile Picture" class="profile-avatar">
+    <h1 class="profile-name">{{ profile.display_name or profile.full_name or profile.username }}</h1>
+    <p class="profile-username">@{{ profile.username }}</p>
+
+    {% if profile.bio %}
+        <p class="profile-bio">" {{ profile.bio }} "</p>
+    {% endif %}
+
+    <div class="social-links">
+        {% if profile.fb_page_link %}<a href="{{ profile.fb_page_link }}" target="_blank">ফেসবুক পেজ</a>{% endif %}
+        {% if profile.fb_group_link %}<a href="{{ profile.fb_group_link }}" target="_blank">গ্রুপ</a>{% endif %}
+        {% if profile.pinterest_link %}<a href="{{ profile.pinterest_link }}" target="_blank">পিন্টারেস্ট</a>{% endif %}
+        {% if profile.tiktok_link %}<a href="{{ profile.tiktok_link }}" target="_blank">টিকটক</a>{% endif %}
+    </div>
