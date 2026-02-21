@@ -1,26 +1,31 @@
-{% extends "base.html" %}
-{% block title %}লগইন | সাহিত্যিক সংগ্রহশালা{% endblock %}
+signup.html {% extends "base.html" %}
+{% block title %}রেজিস্ট্রেশন | সাহিত্যিক সংগ্রহশালা{% endblock %}
 
 {% block content %}
 <div class="form-box" style="max-width: 400px;">
-    <h2 style="text-align: center; color: var(--accent); margin-bottom: 20px;">লগইন করুন</h2>
+    <h2 style="text-align: center; color: var(--accent); margin-bottom: 20px;">নতুন অ্যাকাউন্ট খুলুন</h2>
     
-    <form action="/login" method="POST">
+    <form action="/signup" method="POST">
+        <div class="form-group">
+            <label>আপনার নাম</label>
+            <input type="text" name="username" required placeholder="যেমন: কাজী নজরুল">
+        </div>
+
         <div class="form-group">
             <label>ইমেইল অ্যাড্রেস</label>
-            <input type="email" name="email" required placeholder="আপনার ইমেইল">
+            <input type="email" name="email" required placeholder="example@email.com">
         </div>
 
         <div class="form-group">
             <label>পাসওয়ার্ড</label>
-            <input type="password" name="password" required placeholder="আপনার পাসওয়ার্ড">
+            <input type="password" name="password" required placeholder="অন্তত ৬ অক্ষরের পাসওয়ার্ড">
         </div>
 
-        <button type="submit" class="btn-primary" style="width: 100%; border:none; padding:12px; font-size:1.1rem; cursor:pointer;">লগইন করুন</button>
+        <button type="submit" class="btn-primary" style="width: 100%; border:none; padding:12px; font-size:1.1rem; cursor:pointer;">রেজিস্ট্রেশন করুন</button>
     </form>
     
     <p style="text-align: center; margin-top: 15px;">
-        অ্যাকাউন্ট নেই? <a href="/signup" style="color: var(--accent); font-weight:bold;">নতুন খুলুন</a>
+        আগে থেকেই অ্যাকাউন্ট আছে? <a href="/login" style="color: var(--accent); font-weight:bold;">লগইন করুন</a>
     </p>
 </div>
 {% endblock %}
