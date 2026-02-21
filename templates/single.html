@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content.title }} | সাহিত্যিক সংগ্রহশালা{% endblock %}
+
+{% block head %}
+    <!-- Dynamic SEO & Open Graph Meta Tags -->
+    <meta name="description" content="{{ content.description }}">
+    <meta name="keywords" content="বাংলা, {{ content.categories.name_bn }}, {{ content.title }}, সাহিত্যিক ছবি">
+    
+    <meta property="og:title" content="{{ content.title }}">
+    <meta property="og:description" content="{{ content.description }}">
+    <meta property="og:image" content="{{ content.file_url }}">
+    <meta property="og:url" content="{{ request.url }}">
+
+    <style>
+        .single-container { background: #fff; padding: 30px; border: 1px solid var(--border); border-radius: 8px; text-align: center; }
+        .single-image { max-width: 100%; height: auto; border-radius: 4px; border: 5px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 20px 0; }
+        .meta-info { color: #666; font-size: 0.95rem; margin-bottom: 20px; }
+        .description { font-size: 1.1rem; line-height: 1.8; text-align: justify; margin-bottom: 30px; padding: 0 20px; }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="single-container">
+    <h1 style="color: var(--accent); margin-bottom: 10px;">{{ content.title }}</h1>
+    
+    <div class="meta-info">
+        বিভাগ: <strong>{{ content.categories.name_bn }}</strong> | 
+        আপলোড: <strong>{{ content.created_at[:10] }}</strong>
+    </div>
+
+    <img src="{{ content.file_url }}" alt="{{ content.alt_text }}" class="single-image">
+    
+    <div class="description">
+        <p>{{ content.description }}</p>
+    </div>
+
+    <!-- ডাউনলোড বাটন -->
+    <a href="{{ content.file_url }}" class="btn-primary" style="padding: 12px 25px; font-size: 1.1rem;" download target="_blank">অরিজিনাল সাইজ ডাউনলোড করুন</a>
+</div>
+{% endblock %}
