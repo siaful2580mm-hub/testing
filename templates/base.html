@@ -32,13 +32,14 @@
 </head>
 <body>
 
-    <nav>
-        <div class="logo"><a href="/" style="color:var(--accent); margin:0;">সাহিত্যিক সংগ্রহশালা</a></div>
-        <div>
-            <a href="/">গ্যালারি</a>
-            <a href="/upload">আপলোড করুন</a>
-        </div>
-    </nav>
+    <!-- Navbar এর ভেতরে লগইন করা ইউজারের অংশটুকু এমন করে দিন: -->
+{% if session.get('user') %}
+    <a href="/upload">আপলোড করুন</a>
+    <span style="margin-left:20px; color:#666;">|</span>
+    <!-- এখানে নামের লিংকে ইউজারের প্রোফাইলের রাউট দেওয়া হয়েছে -->
+    <a href="/profile/{{ session['user']['username'] }}" style="margin-left:20px; font-weight:bold; color:var(--accent);">{{ session['user']['username'] }}</a>
+    <a href="/logout" style="color: #c62828;">লগআউট</a>
+{% else %}
 
     <div class="container">
         {% with messages = get_flashed_messages() %}
