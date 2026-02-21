@@ -4,54 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}সাহিত্যিক সংগ্রহশালা{% endblock %}</title>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS File Link -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        :root {
-            --bg-color: #F9F6F0; 
-            --text-main: #2C2825; 
-            --accent: #8C3A3A; 
-        }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Noto Serif Bengali', serif;
-            margin: 0; padding: 0; line-height: 1.6;
-        }
-        nav {
-            background: #fff; padding: 20px 50px;
-            border-bottom: 1px solid #e0dcd2;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        nav a { text-decoration: none; color: var(--text-main); font-weight: 600; margin-left: 20px; }
-        .logo { font-size: 1.5rem; color: var(--accent); font-weight: bold; }
-        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
-        .flash-messages { color: green; font-weight: bold; text-align: center; margin-bottom: 20px; }
-    </style>
+    
     {% block head %}{% endblock %}
 </head>
 <body>
 
-    <!-- Navbar এর ভেতরে লগইন করা ইউজারের অংশটুকু এমন করে দিন: -->
-{% if session.get('user') %}
-    <a href="/upload">আপলোড করুন</a>
-    <span style="margin-left:20px; color:#666;">|</span>
-    <!-- এখানে নামের লিংকে ইউজারের প্রোফাইলের রাউট দেওয়া হয়েছে -->
-    <a href="/profile/{{ session['user']['username'] }}" style="margin-left:20px; font-weight:bold; color:var(--accent);">{{ session['user']['username'] }}</a>
-    <a href="/logout" style="color: #c62828;">লগআউট</a>
-{% else %}
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">
+            <a href="/" style="color:var(--accent); margin:0; text-decoration:none;">সাহিত্যিক সংগ্রহশালা</a>
+        </div>
+        <div class="nav-links">
+            <a href="/">গ্যালারি</a>
+            
+            <!-- Login/Logout Condition -->
+            {% if session.get('user') %}
+                <a href="/upload">আপলোড করুন</a>
+                <span style="margin-left:20px; color:#666;">|</span>
+                
+                <!-- Profile Link -->
+                <a href="/profile/{{ session['user']['username'] }}" style="margin-left:20px; font-weight:bold; color:var(--accent);">{{ session['user']['username'] }}</a>
+                <a href="/logout" style="color: #c62828;">লগআউট</a>
+            {% else %}
+                <a href="/login">লগইন</a>
+                <a href="/signup" style="background: var(--accent); color: white; padding: 5px 15px; border-radius: 4px;">রেজিস্ট্রেশন</a>
+            {% endif %} <!-- এখানে endif দেওয়াটা বাধ্যতামূলক ছিল -->
+            
+        </div>
+    </nav>
 
+    <!-- Main Content Container -->
     <div class="container">
-        {% with messages = get_flashed_messages() %}
+        
+        <!-- Flash Messages (Alerts) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <div class="flash-messages">
-              {% for message in messages %} <p>{{ message }}</p> {% endfor %}
+              {% for category, message in messages %} 
+                <p class="{{ category }}">{{ message }}</p> 
+              {% endfor %}
             </div>
           {% endif %}
         {% endwith %}
 
+        <!-- Dynamic Page Content -->
         {% block content %}{% endblock %}
+        
     </div>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <!-- JS File Link -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
