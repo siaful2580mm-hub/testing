@@ -34,6 +34,19 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+@app.route('/')
+def index():
+    # Supabase থেকে সব অ্যাপ্রুভড কন্টেন্ট আনা
+    try:
+        response = supabase.table('contents').select('*, categories(name_bn)').eq('is_approved', True).order('created_at', desc=True).execute()
+        contents = response.data
+    except Exception as e:
+        contents = []
+        print("Database Error:", e)
+    
+    return render_template('index.html', contents=contents)
+
 # ==========================================
 # সাইনআপ (Registration) রাউট
 # ==========================================
@@ -99,17 +112,6 @@ def logout():
     supabase.auth.sign_out()
     flash("আপনি সফলভাবে লগআউট হয়েছেন।", "success")
     return redirect(url_for('login'))
-@app.route('/')
-def index():
-    # Supabase থেকে সব অ্যাপ্রুভড কন্টেন্ট আনা
-    try:
-        response = supabase.table('contents').select('*, categories(name_bn)').eq('is_approved', True).order('created_at', desc=True).execute()
-        contents = response.data
-    except Exception as e:
-        contents = []
-        print("Database Error:", e)
-    
-    return render_template('index.html', contents=contents)
 
 
 @app.route('/content/<slug>')
