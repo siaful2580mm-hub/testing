@@ -179,13 +179,7 @@ def upload_content():
 # ==========================================
 # লগআউট (Logout) রাউট
 # ==========================================
-@app.route('/logout')
-def logout():
-    session.clear() # সেশন ক্লিয়ার করে দেওয়া
-    supabase.auth.sign_out()
-    flash("আপনি সফলভাবে লগআউট হয়েছেন।", "success")
-    return redirect(url_for('login'))
-    
+
 @app.route('/admin')
 def admin_panel():
     response = supabase.table('contents').select('*, categories(name_bn)').eq('is_approved', False).execute()
