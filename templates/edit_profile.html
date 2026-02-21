@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}প্রোফাইল আপডেট | সাহিত্যিক সংগ্রহশালা{% endblock %}
+
+{% block content %}
+<div class="form-box" style="max-width: 700px;">
+    <h2 style="text-align: center; color: var(--accent); margin-bottom: 25px;">আপনার প্রোফাইল সাজান</h2>
+    
+    <form action="/edit-profile" method="POST" enctype="multipart/form-data">
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="{{ profile.avatar_url }}" alt="Current Avatar" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--border); margin-bottom: 10px; object-fit: cover;">
+            <div class="form-group">
+                <label>নতুন প্রোফাইল ছবি (ঐচ্ছিক)</label>
+                <input type="file" name="avatar" accept="image/*">
+            </div>
+        </div>
+
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>আসল নাম (Full Name)</label>
+                <input type="text" name="full_name" value="{{ profile.full_name or '' }}" placeholder="যেমন: কাজী নজরুল ইসলাম">
+            </div>
+            <div class="form-group">
+                <label>ডিসপ্লে নেম (Display Name)</label>
+                <input type="text" name="display_name" value="{{ profile.display_name or '' }}" placeholder="পাবলিক প্রোফাইলে যা দেখাবে">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>বায়ো (Bio)</label>
+            <textarea name="bio" rows="3" placeholder="আপনার সাহিত্যিক বা শৈল্পিক পরিচয় সংক্ষেপে লিখুন...">{{ profile.bio or '' }}</textarea>
+        </div>
+
+        <h3 style="border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-top: 30px; color: #555;">সোশ্যাল লিংকস</h3>
+        
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>ফেসবুক পেজ লিংক</label>
+                <input type="url" name="fb_page_link" value="{{ profile.fb_page_link or '' }}" placeholder="https://facebook.com/yourpage">
+            </div>
+            <div class="form-group">
+                <label>ফেসবুক গ্রুপ লিংক</label>
+                <input type="url" name="fb_group_link" value="{{ profile.fb_group_link or '' }}" placeholder="https://facebook.com/groups/...">
+            </div>
+            <div class="form-group">
+                <label>পিন্টারেস্ট (Pinterest) লিংক</label>
+                <input type="url" name="pinterest_link" value="{{ profile.pinterest_link or '' }}" placeholder="https://pinterest.com/...">
+            </div>
+            <div class="form-group">
+                <label>টিকটক (TikTok) লিংক</label>
+                <input type="url" name="tiktok_link" value="{{ profile.tiktok_link or '' }}" placeholder="https://tiktok.com/@...">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label>যোগাযোগের তথ্য (ঐচ্ছিক)</label>
+            <input type="text" name="contact_info" value="{{ profile.contact_info or '' }}" placeholder="ইমেইল বা ফোন নম্বর (যদি পাবলিক করতে চান)">
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1.1rem; border: none; cursor: pointer; margin-top: 20px;">সেভ করুন</button>
+    </form>
+</div>
+{% endblock %}
