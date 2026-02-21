@@ -22,7 +22,83 @@ IMGBB_API_KEY = os.getenv("IMGBB_API_KEY")
 IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
 
 # ----------------- রাউটস (Routes) ----------------- #
+# ==========================================
+# লগইন চেকার ডেকোরেটর (যে পেজগুলোতে লগইন ছাড়া ঢোকা যাবে না)
+# ==========================================
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user' not in session:
+            flash("এই পেজটি ব্যবহার করার জন্য আগে লগইন করুন।", "error")
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
+# ==========================================
+# সাইনআপ (Registration) রাউট
+# ==========================================
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        try:
+            # Supabase এ নতুন ইউজার তৈরি
+            res = supabase.auth.sign_up({
+                "email": email,
+                "password": password,
+                "options": {
+                    "data": {"username": username} # ইউজারের নাম সেভ রাখা
+                }
+            })
+            flash("রেজিস্ট্রেশন সফল হয়েছে! দয়া করে লগইন করুন।", "success")
+            return redirect(url_for('login'))
+        except Exception as e:
+            flash(f"ত্রুটি: {str(e)}", "error")
+            return redirect(request.url)
+
+    return render_template('signup.html')
+
+# ==========================================
+# লগইন (Login) রাউট
+# ==========================================
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        try:
+            # Supabase Auth দিয়ে লগইন চেক
+            res = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            
+            # ফ্লাস্ক সেশনে (Session) ইউজারের তথ্য সেভ করে রাখা
+            session['user'] = {
+                "id": res.user.id,
+                "email": res.user.email,
+                "username": res.user.user_metadata.get('username', 'সাহিত্যিক')
+            }
+            session['access_token'] = res.session.access_token
+            
+            flash(f"স্বাগতম, {session['user']['username']}!", "success")
+            return redirect(url_for('index'))
+        except Exception as e:
+            flash("ইমেইল বা পাসওয়ার্ড ভুল হয়েছে!", "error")
+            return redirect(request.url)
+
+    return render_template('login.html')
+
+# ==========================================
+# লগআউট (Logout) রাউট
+# ==========================================
+@app.route('/logout')
+def logout():
+    session.clear() # সেশন ক্লিয়ার করে দেওয়া
+    supabase.auth.sign_out()
+    flash("আপনি সফলভাবে লগআউট হয়েছেন।", "success")
+    return redirect(url_for('login'))
 @app.route('/')
 def index():
     # Supabase থেকে সব অ্যাপ্রুভড কন্টেন্ট আনা
