@@ -94,7 +94,25 @@ def upload_content():
     # ফর্ম দেখানোর জন্য ক্যাটাগরি ফেচ
     categories = supabase.table('categories').select('*').execute().data
     return render_template('upload.html', categories=categories)
+# অ্যাডমিন প্যানেল ভিউ
+@app.route('/admin')
+def admin_panel():
+    response = supabase.table('contents').select('*, categories(name_bn)').eq('is_approved', False).execute()
+    return render_template('admin.html', pending_contents=response.data)
 
+# অ্যাপ্রুভ লজিক
+@app.route('/admin/approve/<int:id>')
+def approve_content(id):
+    supabase.table('contents').update({'is_approved': True}).eq('id', id).execute()
+    flash('কন্টেন্ট সফলভাবে অ্যাপ্রুভ করা হয়েছে!', 'success')
+    return redirect(url_for('admin_panel'))
+
+# ডিলিট লজিক
+@app.route('/admin/delete/<int:id>')
+def delete_content(id):
+    supabase.table('contents').delete().eq('id', id).execute()
+    flash('কন্টেন্ট ডিলিট করা হয়েছে।', 'error')
+    return redirect(url_for('admin_panel'))
 
 # শুধুমাত্র লোকাল টেস্টের জন্য, Vercel এটি ইগনোর করবে
 if __name__ == '__main__':
