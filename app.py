@@ -194,8 +194,11 @@ def single_content(slug):
     content = response.data[0]
     return render_template('single.html', content=content)
 
-
+# ==========================================
+# আপলোড রাউট (সঠিক User ID সহ)
+# ==========================================
 @app.route('/upload', methods=['GET', 'POST'])
+@login_required   # এই ডেকোরেটরটি নিশ্চিত করবে যে ইউজার লগইন করা আছে
 def upload_content():
     if request.method == 'POST':
         title = request.form.get('title')
@@ -224,14 +227,14 @@ def upload_content():
 
             # Supabase এ ডাটা সেভ করা
             new_content = {
-                "user_id": "DEFAULT_USER_ID", # বাস্তবে এটি লগইন সেশন থেকে আসবে
+                "user_id": session['user']['id'], # <--- মূল সমাধান (এখানে অরিজিনাল ইউজারের আইডি বসবে)
                 "title": title,
                 "description": description,
                 "slug": slug,
                 "alt_text": alt_text,
                 "category_id": category_id,
                 "file_url": file_url,
-                "is_approved": True # প্রজেক্ট টেস্টিংয়ের জন্য সরাসরি ট্রু রাখা হলো
+                "is_approved": True # (টেস্টিংয়ের জন্য True রাখা হলো, পরে অ্যাডমিন প্যানেলের জন্য False করে দিবেন)
             }
             supabase.table('contents').insert(new_content).execute()
             
