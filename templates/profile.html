@@ -33,3 +33,33 @@
         {% if profile.pinterest_link %}<a href="{{ profile.pinterest_link }}" target="_blank">পিন্টারেস্ট</a>{% endif %}
         {% if profile.tiktok_link %}<a href="{{ profile.tiktok_link }}" target="_blank">টিকটক</a>{% endif %}
     </div>
+
+    {% if profile.contact_info %}
+        <p style="margin-top: 20px; color: #666; font-size: 0.9rem;">যোগাযোগ: {{ profile.contact_info }}</p>
+    {% endif %}
+
+    <!-- যদি নিজের প্রোফাইল হয়, তবে এডিট বাটন দেখাবে -->
+    {% if session.get('user') and session['user']['id'] == profile.id %}
+        <div style="margin-top: 25px;">
+            <a href="/edit-profile" class="btn-primary" style="background: #444;">প্রোফাইল এডিট করুন</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- ইউজারের আপলোড করা ছবির গ্রিড -->
+<h2 class="section-title">সংগ্রহশালায় অবদান</h2>
+<div class="grid">
+    {% for item in contents %}
+    <div class="card">
+        <img src="{{ item.file_url }}" alt="{{ item.alt_text }}">
+        <div class="card-content">
+            <h3>{{ item.title }}</h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">{{ item.categories.name_bn }}</p>
+            <a href="/content/{{ item.slug }}" class="btn-primary">বিস্তারিত</a>
+        </div>
+    </div>
+    {% else %}
+    <p style="text-align: center; grid-column: 1 / -1; color: #777;">এখনো কোনো ছবি বা ফন্ট আপলোড করা হয়নি।</p>
+    {% endfor %}
+</div>
+{% endblock %}
