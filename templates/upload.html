@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}কন্টেন্ট আপলোড | সাহিত্যিক সংগ্রহশালা{% endblock %}
+
+{% block content %}
+<div class="form-box">
+    <h2 style="text-align: center; color: var(--accent); margin-bottom: 20px;">নতুন কন্টেন্ট যুক্ত করুন</h2>
+    
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>শিরোনাম (Title)</label>
+            <input type="text" name="title" required placeholder="যেমন: একুশের ভোর">
+        </div>
+        
+        <div class="form-group">
+            <label>URL স্লাগ (Slug - ইংরেজিতে)</label>
+            <!-- script.js এর মাধ্যমে অটো ফিল হবে -->
+            <input type="text" name="slug" id="slugInput" required placeholder="ekusher-bhor">
+        </div>
+
+        <div class="form-group">
+            <label>ক্যাটাগরি</label>
+            <select name="category_id" required>
+                {% for cat in categories %}
+                <option value="{{ cat.id }}">{{ cat.name_bn }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>বিবরণ (Description)</label>
+            <textarea name="description" rows="4" placeholder="ছবির বা ফন্টের সুন্দর বর্ণনা লিখুন..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Alt Text (SEO এর জন্য)</label>
+            <input type="text" name="alt_text" placeholder="যেমন: ভোরের আলোয় শহীদ মিনার">
+        </div>
+
+        <div class="form-group">
+            <label>ফাইল নির্বাচন করুন</label>
+            <input type="file" name="file" id="fileInput" accept="image/*" required>
+            <!-- ছবি সিলেক্ট করলে এখানে প্রিভিউ দেখাবে -->
+            <img id="imagePreview" alt="Image Preview">
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1.1rem; border:none; cursor:pointer;">আপলোড করুন</button>
+    </form>
+</div>
+{% endblock %}
