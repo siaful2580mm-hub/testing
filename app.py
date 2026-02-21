@@ -50,6 +50,77 @@ def index():
 # ==========================================
 # সাইনআপ (Registration) রাউট
 # ==========================================
+
+# ==========================================
+# পাবলিক প্রোফাইল ভিউ (ইউজারের সব ইনফো এবং আপলোড করা ছবি দেখাবে)
+# ==========================================
+@app.route('/profile/<username>')
+def user_profile(username):
+    # ১. ইউজার প্রোফাইল ফেচ করা
+    user_res = supabase.table('profiles').select('*').eq('username', username).execute()
+    if not user_res.data:
+        abort(404)
+    
+    profile_data = user_res.data[0]
+    
+    # ২. ওই ইউজারের আপলোড করা (এবং অ্যাপ্রুভ হওয়া) সব ছবি ফেচ করা
+    contents_res = supabase.table('contents').select('*, categories(name_bn)').eq('user_id', profile_data['id']).eq('is_approved', True).order('created_at', desc=True).execute()
+    uploaded_contents = contents_res.data
+
+    return render_template('profile.html', profile=profile_data, contents=uploaded_contents)
+
+
+# ==========================================
+# প্রোফাইল এডিট/আপডেট রাউট (লগইন করা ইউজার নিজের ডাটা আপডেট করবে)
+# ==========================================
+@app.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    user_id = session['user']['id']
+
+    if request.method == 'POST':
+        full_name = request.form.get('full_name')
+        display_name = request.form.get('display_name')
+        bio = request.form.get('bio')
+        fb_page_link = request.form.get('fb_page_link')
+        fb_group_link = request.form.get('fb_group_link')
+        pinterest_link = request.form.get('pinterest_link')
+        tiktok_link = request.form.get('tiktok_link')
+        contact_info = request.form.get('contact_info')
+        
+        # ডিফল্ট ডাটা ডিকশনারি
+        update_data = {
+            "full_name": full_name,
+            "display_name": display_name,
+            "bio": bio,
+            "fb_page_link": fb_page_link,
+            "fb_group_link": fb_group_link,
+            "pinterest_link": pinterest_link,
+            "tiktok_link": tiktok_link,
+            "contact_info": contact_info
+        }
+
+        # যদি ইউজার নতুন প্রোফাইল ছবি দেয়, তবে ImgBB তে আপলোড করা
+        file = request.files.get('avatar')
+        if file and file.filename != '':
+            try:
+                payload = {'key': IMGBB_API_KEY}
+                files = {'image': file.read()}
+                imgbb_res = requests.post(IMGBB_UPLOAD_URL, params=payload, files=files).json()
+                
+                if imgbb_res.get('success'):
+                    update_data['avatar_url'] = imgbb_res['data']['url']
+            except Exception as e:
+                flash("প্রোফাইল ছবি আপলোডে সমস্যা হয়েছে।", "error")
+
+        # Supabase এ প্রোফাইল আপডেট
+        supabase.table('profiles').update(update_data).eq('id', user_id).execute()
+        flash("আপনার প্রোফাইল সফলভাবে আপডেট হয়েছে!", "success")
+        return redirect(url_for('user_profile', username=session['user']['username']))
+
+    # GET Request: ফর্ম দেখানোর জন্য বর্তমান ডাটা ফেচ
+    current_profile = supabase.table('profiles').select('*').eq('id', user_id).execute().data[0]
+    return render_template('edit_profile.html', profile=current_profile)
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
