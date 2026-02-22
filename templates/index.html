@@ -1,20 +1,204 @@
-# ==========================================
-# হোমপেজ (Landing Page)
-# ==========================================
-@app.route('/')
-def index():
-    try:
-        # ডেটাবেস থেকে সব অ্যাপ্রুভড কন্টেন্ট আনা (একসাথে)
-        res = supabase.table('contents').select('*, categories(name_bn, slug), profiles(username, display_name, avatar_url)').eq('is_approved', True).order('created_at', desc=True).limit(100).execute()
-        all_contents = res.data
-    except Exception as e:
-        all_contents = []
-        print("Database Error:", e)
+{% extends "base.html" %}
 
-    # পাইথনের মাধ্যমে কন্টেন্টগুলোকে ক্যাটাগরি অনুযায়ী ভাগ করা
-    images = [c for c in all_contents if c['categories']['slug'] in ['image', 'poster', 'picture']][:6] # ৬টি ছবি
-    stories = [c for c in all_contents if c['categories']['slug'] == 'story'][:3] # ৩টি গল্প
-    fonts = [c for c in all_contents if c['categories']['slug'] == 'font'][:3]   # ৩টি ফন্ট
-    blogs = [c for c in all_contents if c['categories']['slug'] == 'blog'][:3]   # ৩টি ব্লগ
+{% block title %}পিকঘর | বাঙালির নান্দনিক সংগ্রহশালা{% endblock %}
 
-    return render_template('index.html', images=images, stories=stories, fonts=fonts, blogs=blogs)
+{% block head %}
+<style>
+    /* Hero Banner Styling */
+    .hero-banner {
+        background: var(--nav-bg);
+        color: var(--surface-color);
+        padding: 80px 20px;
+        text-align: center;
+        border-radius: 8px;
+        margin-bottom: 50px;
+        border-bottom: 6px solid var(--accent);
+        box-shadow: 0 10px 30px rgba(15, 30, 77, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+    .hero-banner h1 {
+        font-size: 3.5rem;
+        color: var(--surface-color);
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+    }
+    .hero-banner h1 span { color: var(--accent); }
+    .hero-banner p {
+        font-size: 1.2rem;
+        color: #e0e6ed;
+        max-width: 650px;
+        margin: 0 auto 30px auto;
+        line-height: 1.8;
+    }
+    
+    /* Section Headers */
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid rgba(15, 30, 77, 0.1);
+        padding-bottom: 10px;
+        margin-top: 60px;
+        margin-bottom: 30px;
+    }
+    .section-header h2 {
+        margin: 0;
+        font-size: 2rem;
+        color: var(--text-main);
+    }
+    .section-header h2 i {
+        color: var(--accent);
+        margin-right: 10px;
+    }
+    .view-all {
+        text-decoration: none;
+        color: var(--text-main);
+        font-weight: bold;
+        font-size: 1rem;
+        transition: color 0.3s;
+    }
+    .view-all:hover { color: var(--accent); }
+    .view-all i { margin-left: 5px; }
+
+    /* About Section */
+    .about-box {
+        background: var(--surface-color);
+        padding: 50px;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px solid var(--accent);
+        box-shadow: 0 10px 30px rgba(15, 30, 77, 0.05);
+        margin-top: 60px;
+        margin-bottom: 20px;
+    }
+    .about-box h2 {
+        font-size: 2.5rem;
+        color: var(--accent);
+        margin-top: 0;
+    }
+    .about-box p {
+        font-size: 1.15rem;
+        color: var(--text-light);
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
+
+    /* Card adjustments for specific sections */
+    .author-info { margin-top: 15px; display: flex; align-items: center; border-top: 1px dashed #eee; padding-top: 10px;}
+    .author-info img { width: 30px; height: 30px; border-radius: 50%; border: none !important; margin-right: 10px; }
+    .author-info a { text-decoration: none; color: var(--text-main); font-weight: bold; font-size: 0.9rem; }
+    
+    @media (max-width: 768px) {
+        .hero-banner h1 { font-size: 2.5rem; }
+        .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- 1. Hero Header -->
+<div class="hero-banner">
+    <h1>পিক<span>ঘর</span>-এ স্বাগতম</h1>
+    <p>নান্দনিক ছবি, হৃদয় ছুঁয়ে যাওয়া গল্প, প্রিমিয়াম বাংলা ফন্ট এবং ব্লগের এক অনন্য মেলবন্ধন। আপনার ভেতরের সৃজনশীলতাকে ছড়িয়ে দিন পুরো বিশ্বে।</p>
+    <a href="/upload" class="btn-primary" style="font-size: 1.1rem; padding: 15px 35px;"><i class="fa-solid fa-cloud-arrow-up"></i> আপনার শিল্প আপলোড করুন</a>
+</div>
+
+<!-- 2. Images Section -->
+{% if images %}
+<div class="section-header">
+    <h2><i class="fa-solid fa-camera-retro"></i> নতুন ছবি সমূহ</h2>
+    <a href="#" class="view-all">সব ছবি দেখুন <i class="fa-solid fa-arrow-right"></i></a>
+</div>
+<div class="grid">
+    {% for item in images %}
+    <div class="card">
+        <a href="/content/{{ item.slug }}"><img src="{{ item.file_url }}" alt="{{ item.alt_text }}"></a>
+        <div class="card-content">
+            <h3><a href="/content/{{ item.slug }}" style="text-decoration:none; color:inherit;">{{ item.title }}</a></h3>
+            <p style="margin-bottom: 5px;">{{ item.description[:60] }}...</p>
+            <div class="author-info">
+                <img src="{{ item.profiles.avatar_url }}" alt="Author">
+                <a href="/profile/{{ item.profiles.username }}">@{{ item.profiles.username }}</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- 3. Stories Section -->
+{% if stories %}
+<div class="section-header">
+    <h2><i class="fa-solid fa-book-open"></i> সেরা গল্প</h2>
+    <a href="#" class="view-all">সব গল্প পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
+</div>
+<div class="grid" style="column-count: 3;">
+    {% for item in stories %}
+    <div class="card" style="border-top: 4px solid var(--accent);">
+        <a href="/content/{{ item.slug }}"><img src="{{ item.file_url }}" alt="{{ item.alt_text }}" style="height: 180px;"></a>
+        <div class="card-content">
+            <h3><a href="/content/{{ item.slug }}" style="text-decoration:none; color:inherit;">{{ item.title }}</a></h3>
+            <p style="margin-bottom: 5px; font-style: italic;">"{{ item.description[:80] }}..."</p>
+            <div class="author-info">
+                <img src="{{ item.profiles.avatar_url }}" alt="Author">
+                <a href="/profile/{{ item.profiles.username }}">{{ item.profiles.display_name or item.profiles.username }}</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- 4. Fonts Section -->
+{% if fonts %}
+<div class="section-header">
+    <h2><i class="fa-solid fa-font"></i> বাংলা ফন্ট</h2>
+    <a href="#" class="view-all">সব ফন্ট দেখুন <i class="fa-solid fa-arrow-right"></i></a>
+</div>
+<div class="grid">
+    {% for item in fonts %}
+    <div class="card">
+        <a href="/content/{{ item.slug }}"><img src="{{ item.file_url }}" alt="{{ item.alt_text }}" style="height: 150px; object-fit: contain; background: #fdfdfd; padding: 10px;"></a>
+        <div class="card-content">
+            <h3><a href="/content/{{ item.slug }}" style="text-decoration:none; color:inherit;">{{ item.title }}</a></h3>
+            <a href="/content/{{ item.slug }}" class="btn-primary" style="padding: 6px 15px; font-size: 0.8rem;">ডাউনলোড করুন</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- 5. Blogs Section -->
+{% if blogs %}
+<div class="section-header">
+    <h2><i class="fa-solid fa-blog"></i> পিকঘর ব্লগ</h2>
+    <a href="#" class="view-all">সব ব্লগ পড়ুন <i class="fa-solid fa-arrow-right"></i></a>
+</div>
+<div class="grid">
+    {% for item in blogs %}
+    <div class="card">
+        <a href="/content/{{ item.slug }}"><img src="{{ item.file_url }}" alt="{{ item.alt_text }}"></a>
+        <div class="card-content">
+            <h3><a href="/content/{{ item.slug }}" style="text-decoration:none; color:inherit;">{{ item.title }}</a></h3>
+            <p>{{ item.description[:90] }}...</p>
+            <a href="/content/{{ item.slug }}" style="color: var(--accent); font-weight: bold; text-decoration: none;">আরও পড়ুন &raquo;</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- 6. About Section -->
+<div class="about-box">
+    <h2><i class="fa-solid fa-quote-left" style="color: #e0e6ed; font-size: 2rem; vertical-align: top; margin-right: 10px;"></i> আমাদের সম্পর্কে</h2>
+    <p>
+        <strong>পিকঘর (PicGhor)</strong> হলো বাংলা ভাষাভাষীদের জন্য তৈরি একটি প্রিমিয়াম ক্রিয়েটিভ প্ল্যাটফর্ম। 
+        এখানে শিল্পী, লেখক, ফটোগ্রাফার এবং ডিজাইনাররা একত্রিত হয়ে তাদের সেরা কাজগুলো শেয়ার করেন। 
+        আমাদের লক্ষ্য হলো বাংলা শিল্প ও সাহিত্যকে ডিজিটাল মাধ্যমে আরও এক ধাপ এগিয়ে নিয়ে যাওয়া এবং ক্রিয়েটরদের কাজের যথাযথ মূল্যায়ন করা। 
+        আজই আমাদের সাথে যুক্ত হোন এবং আপনার সৃষ্টিশীলতাকে নতুন মাত্রা দিন।
+    </p>
+    <a href="/signup" class="btn-primary" style="margin-top: 25px; padding: 12px 30px;"><i class="fa-solid fa-user-plus"></i> মেম্বারশিপ নিন (ফ্রি)</a>
+</div>
+{% endblock %}
