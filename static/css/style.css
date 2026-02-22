@@ -360,3 +360,29 @@ td {
         width: 150px;
     }
 }
+
+/* =========================================
+   FontAwesome Icon Formatting
+========================================= */
+.nav-links a i {
+    margin-right: 6px;
+    font-size: 1.1rem;
+}
+
+.footer-links a i {
+    margin-right: 8px;
+    font-size: 0.9rem;
+    color: var(--accent);
+}
+
+.social-icons a i {
+    font-size: 1.2rem;
+}
+
+/* লোগোর আইকন */
+.logo a i {
+    transition: transform 0.3s ease;
+}
+.logo a:hover i {
+    transform: scale(1.1) rotate(-10deg); /* হোভার করলে লোগোর আইকনটি একটু ঘুরবে */
+}
