@@ -1,34 +1,20 @@
-{% extends "base.html" %}
+# ==========================================
+# হোমপেজ (Landing Page)
+# ==========================================
+@app.route('/')
+def index():
+    try:
+        # ডেটাবেস থেকে সব অ্যাপ্রুভড কন্টেন্ট আনা (একসাথে)
+        res = supabase.table('contents').select('*, categories(name_bn, slug), profiles(username, display_name, avatar_url)').eq('is_approved', True).order('created_at', desc=True).limit(100).execute()
+        all_contents = res.data
+    except Exception as e:
+        all_contents = []
+        print("Database Error:", e)
 
-{% block title %}গ্যালারি | সাহিত্যিক সংগ্রহশালা{% endblock %}
+    # পাইথনের মাধ্যমে কন্টেন্টগুলোকে ক্যাটাগরি অনুযায়ী ভাগ করা
+    images = [c for c in all_contents if c['categories']['slug'] in ['image', 'poster', 'picture']][:6] # ৬টি ছবি
+    stories = [c for c in all_contents if c['categories']['slug'] == 'story'][:3] # ৩টি গল্প
+    fonts = [c for c in all_contents if c['categories']['slug'] == 'font'][:3]   # ৩টি ফন্ট
+    blogs = [c for c in all_contents if c['categories']['slug'] == 'blog'][:3]   # ৩টি ব্লগ
 
-{% block head %}
-<style>
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-    .card { background: #fff; border: 1px solid #e0dcd2; border-radius: 5px; overflow: hidden; transition: 0.3s; }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    .card img { width: 100%; height: 200px; object-fit: cover; }
-    .card-content { padding: 15px; text-align: center; }
-    .card-content h3 { margin: 0 0 10px 0; font-size: 1.2rem; }
-    .card-content a { text-decoration: none; color: white; background: var(--accent); padding: 8px 15px; border-radius: 3px; display: inline-block; font-size: 0.9rem; }
-</style>
-{% endblock %}
-
-{% block content %}
-<h2 style="text-align: center; margin-bottom: 30px; color: var(--accent);">নান্দনিক ছবি ও ফন্টের সংগ্রহ</h2>
-
-<div class="grid">
-    {% for item in contents %}
-    <div class="card">
-        <img src="{{ item.file_url }}" alt="{{ item.alt_text }}">
-        <div class="card-content">
-            <h3>{{ item.title }}</h3>
-            <p style="font-size: 0.8rem; color: #666;">বিভাগ: {{ item.categories.name_bn }}</p>
-            <a href="/content/{{ item.slug }}">বিস্তারিত দেখুন</a>
-        </div>
-    </div>
-    {% else %}
-    <p style="text-align:center; width: 100%;">এখনো কোনো কন্টেন্ট আপলোড করা হয়নি।</p>
-    {% endfor %}
-</div>
-{% endblock %}
+    return render_template('index.html', images=images, stories=stories, fonts=fonts, blogs=blogs)
