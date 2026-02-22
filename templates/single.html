@@ -3,39 +3,148 @@
 {% block title %}{{ content.title }} | সাহিত্যিক সংগ্রহশালা{% endblock %}
 
 {% block head %}
-    <!-- Dynamic SEO & Open Graph Meta Tags -->
     <meta name="description" content="{{ content.description }}">
-    <meta name="keywords" content="বাংলা, {{ content.categories.name_bn }}, {{ content.title }}, সাহিত্যিক ছবি">
-    
     <meta property="og:title" content="{{ content.title }}">
-    <meta property="og:description" content="{{ content.description }}">
     <meta property="og:image" content="{{ content.file_url }}">
-    <meta property="og:url" content="{{ request.url }}">
-
+    
     <style>
-        .single-container { background: #fff; padding: 30px; border: 1px solid var(--border); border-radius: 8px; text-align: center; }
-        .single-image { max-width: 100%; height: auto; border-radius: 4px; border: 5px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin: 20px 0; }
-        .meta-info { color: #666; font-size: 0.95rem; margin-bottom: 20px; }
-        .description { font-size: 1.1rem; line-height: 1.8; text-align: justify; margin-bottom: 30px; padding: 0 20px; }
+        .details-wrapper { display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 40px; }
+        .image-section { flex: 1 1 500px; text-align: center; }
+        .image-section img { max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 5px solid #fff; }
+        
+        .info-section { flex: 1 1 350px; background: #fff; padding: 25px; border-radius: 8px; border: 1px solid var(--border); }
+        .info-section h1 { color: var(--accent); margin-top: 0; font-size: 2.2rem; margin-bottom: 5px; }
+        .author-box { display: flex; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); }
+        .author-box img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; object-fit: cover; }
+        .author-box a { text-decoration: none; color: var(--text-main); font-weight: bold; font-size: 1.1rem; }
+        
+        .meta-list { list-style: none; padding: 0; margin: 0 0 20px 0; color: #555; font-size: 1rem; line-height: 1.8; }
+        .meta-list li strong { color: var(--text-main); }
+        
+        .stats-box { display: flex; gap: 20px; margin-bottom: 25px; background: var(--bg-color); padding: 15px; border-radius: 6px; justify-content: space-around; text-align: center; font-weight: bold; color: var(--accent); }
+        
+        .action-btns { display: flex; gap: 10px; margin-bottom: 20px; }
+        .btn-action { flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s; color: var(--text-main); }
+        .btn-action:hover { background: var(--border); }
+        .btn-liked { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
+        
+        .btn-download-adv { display: block; width: 100%; text-align: center; background: var(--accent); color: #fff; padding: 15px; text-decoration: none; font-size: 1.2rem; font-weight: bold; border-radius: 6px; transition: 0.3s; box-sizing: border-box;}
+        .btn-download-adv:hover { background: #6a2a2a; }
+
+        .comments-section, .related-section { background: #fff; padding: 25px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 40px; }
+        .comment-item { display: flex; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #eee; }
+        .comment-item img { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover;}
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="single-container">
-    <h1 style="color: var(--accent); margin-bottom: 10px;">{{ content.title }}</h1>
-    
-    <div class="meta-info">
-        বিভাগ: <strong>{{ content.categories.name_bn }}</strong> | 
-        আপলোড: <strong>{{ content.created_at[:10] }}</strong>
+<div class="details-wrapper">
+    <!-- বাম পাশ: ছবি -->
+    <div class="image-section">
+        <img src="{{ content.file_url }}" alt="{{ content.alt_text }}">
     </div>
 
-    <img src="{{ content.file_url }}" alt="{{ content.alt_text }}" class="single-image">
-    
-    <div class="description">
-        <p>{{ content.description }}</p>
-    </div>
+    <!-- ডান পাশ: বিস্তারিত তথ্য -->
+    <div class="info-section">
+        <h1>{{ content.title }}</h1>
+        
+        <div class="author-box">
+            <img src="{{ content.profiles.avatar_url }}" alt="Author">
+            <div>
+                <span style="font-size: 0.85rem; color: #888;">শিল্পী/লেখক</span><br>
+                <a href="/profile/{{ content.profiles.username }}">{{ content.profiles.display_name or content.profiles.username }}</a>
+            </div>
+        </div>
 
-    <!-- ডাউনলোড বাটন -->
-    <a href="{{ content.file_url }}" class="btn-primary" style="padding: 12px 25px; font-size: 1.1rem;" download target="_blank">অরিজিনাল সাইজ ডাউনলোড করুন</a>
+        <p style="text-align: justify; margin-bottom: 20px; font-size: 1.05rem;">{{ content.description }}</p>
+
+        <ul class="meta-list">
+            <li><strong>ক্যাটাগরি:</strong> {{ content.categories.name_bn }}</li>
+            <li><strong>ফরম্যাট (Format):</strong> {{ content.file_format }}</li>
+            <li><strong>আপলোডের তারিখ:</strong> {{ content.created_at[:10] }}</li>
+        </ul>
+
+        <!-- স্ট্যাটস (Views, Downloads, Likes) -->
+        <div class="stats-box">
+            <div>👁️ {{ content.views }}<br><span style="font-size:0.8rem; color:#666;">ভিউ</span></div>
+            <div>⬇️ {{ content.downloads }}<br><span style="font-size:0.8rem; color:#666;">ডাউনলোড</span></div>
+            <div>❤️ {{ likes_count }}<br><span style="font-size:0.8rem; color:#666;">লাইক</span></div>
+        </div>
+
+        <!-- অ্যাকশন বাটনস (Like & Share) -->
+        <div class="action-btns">
+            <!-- Like Form -->
+            <form action="/like/{{ content.id }}" method="POST" style="flex:1;">
+                <button type="submit" class="btn-action {% if user_liked %}btn-liked{% endif %}" style="width:100%;">
+                    {% if user_liked %}❤️ লাইকড{% else %}🤍 লাইক দিন{% endif %}
+                </button>
+            </form>
+            
+            <!-- Share Button -->
+            <button onclick="copyShareLink()" class="btn-action" style="flex:1;">🔗 শেয়ার করুন</button>
+        </div>
+
+        <!-- Advanced Download -->
+        <a href="/download/{{ content.id }}" class="btn-download-adv" target="_blank">অ্যাডভান্সড ডাউনলোড</a>
+        <p style="text-align:center; font-size:0.85rem; color:#888; margin-top:10px;">অরিজিনাল হাই-রেজোলিউশন ফাইল ডাউনলোড হবে।</p>
+    </div>
 </div>
+
+<!-- কমেন্ট সেকশন -->
+<div class="comments-section">
+    <h3 style="color: var(--accent); margin-top:0; border-bottom: 2px solid var(--border); padding-bottom: 10px;">মন্তব্য সমূহ ({{ comments|length }})</h3>
+    
+    {% if session.get('user') %}
+    <form action="/comment/{{ content.id }}" method="POST" style="margin-bottom: 25px; display:flex; gap:10px;">
+        <input type="text" name="text" placeholder="আপনার সুন্দর মন্তব্যটি লিখুন..." required style="flex:1; padding:10px; border:1px solid #ccc; border-radius:4px; font-family:inherit;">
+        <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">কমেন্ট করুন</button>
+    </form>
+    {% else %}
+    <p style="color: #666; font-size: 0.95rem; background: #fdfdfd; padding: 10px; border: 1px solid var(--border); text-align: center;">কমেন্ট করতে দয়া করে <a href="/login">লগইন করুন</a>।</p>
+    {% endif %}
+
+    <div>
+        {% for comment in comments %}
+        <div class="comment-item">
+            <img src="{{ comment.profiles.avatar_url }}" alt="User">
+            <div>
+                <a href="/profile/{{ comment.profiles.username }}" style="font-weight: bold; color: var(--text-main); text-decoration: none;">{{ comment.profiles.display_name or comment.profiles.username }}</a>
+                <span style="font-size: 0.8rem; color: #888; margin-left: 10px;">{{ comment.created_at[:10] }}</span>
+                <p style="margin: 5px 0 0 0; color: #444;">{{ comment.text }}</p>
+            </div>
+        </div>
+        {% else %}
+        <p style="color: #888;">এখনো কোনো মন্তব্য করা হয়নি। প্রথম মন্তব্যটি আপনি করুন!</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- রিলেটেড কন্টেন্ট -->
+{% if related %}
+<div class="related-section">
+    <h3 style="color: var(--accent); margin-top:0; border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 20px;">একই ক্যাটাগরির আরও দেখুন</h3>
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+        {% for item in related %}
+        <div class="card">
+            <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" style="height: 150px;">
+            <div class="card-content" style="padding: 10px;">
+                <h4 style="margin:0 0 5px 0; font-size: 1rem;">{{ item.title }}</h4>
+                <a href="/content/{{ item.slug }}" class="btn-primary" style="padding: 5px 10px; font-size: 0.85rem;">বিস্তারিত</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- শেয়ার করার জন্য জাভাস্ক্রিপ্ট -->
+<script>
+    function copyShareLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('লিংক সফলভাবে কপি করা হয়েছে! এখন আপনি এটি যেকোনো জায়গায় শেয়ার করতে পারবেন।');
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    }
+</script>
 {% endblock %}
