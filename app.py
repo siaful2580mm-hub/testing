@@ -347,13 +347,6 @@ def delete_content(id):
     supabase.table('contents').delete().eq('id', id).execute()
     flash('কন্টেন্টটি ডিলিট করা হয়েছে।', 'error')
     return redirect(url_for('admin_panel'))
-# ডিলিট লজিক
-@app.route('/admin/delete/<int:id>')
-def delete_content(id):
-    supabase.table('contents').delete().eq('id', id).execute()
-    flash('কন্টেন্ট ডিলিট করা হয়েছে।', 'error')
-    return redirect(url_for('admin_panel'))
-
 # শুধুমাত্র লোকাল টেস্টের জন্য, Vercel এটি ইগনোর করবে
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
