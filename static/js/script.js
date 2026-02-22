@@ -1,31 +1,43 @@
 document.addEventListener("DOMContentLoaded", function() {
-
-
-
-    // --- Mobile Hamburger Menu Toggle ---
+    // --- প্রফেশনাল মোবাইল সাইডবার মেনু (Toggle Menu) ---
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('nav-links');
 
     if (hamburger && navLinks) {
-        hamburger.addEventListener('click', () => {
-            navLinks.classList.toggle('active'); // মেনু ওপেন/ক্লোজ হবে
-            
-            // হ্যামবার্গার আইকন এনিমেশন (Optional, ক্রস চিহ্নের মতো করতে)
-            hamburger.classList.toggle('toggle-icon');
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation(); // ইভেন্ট বাবলিং বন্ধ করা
+            navLinks.classList.toggle('active'); 
+            hamburger.classList.toggle('toggle-icon'); // ৩ দাগ থেকে ক্রস (X) হবে
+        });
+
+        // মেনুর বাইরে ক্লিক করলে মেনু বন্ধ হয়ে যাবে
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('toggle-icon');
+            }
+        });
+
+        // যেকোনো লিংকে ক্লিক করলে মেনু অটোমেটিক বন্ধ হবে
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('toggle-icon');
+            });
         });
     }
 
-
-    
-    // ১. Flash Message Auto Hide (৪ সেকেন্ড পর মেসেজ গায়েব হয়ে যাবে)
+    // --- Flash Message Auto Hide ---
     const flashMessages = document.querySelector('.flash-messages');
     if (flashMessages) {
         setTimeout(() => {
-            flashMessages.style.transition = "opacity 0.5s ease";
+            flashMessages.style.transition = "opacity 0.6s ease, transform 0.6s ease";
             flashMessages.style.opacity = "0";
-            setTimeout(() => flashMessages.remove(), 500);
+            flashMessages.style.transform = "translateY(-20px)";
+            setTimeout(() => flashMessages.remove(), 600);
         }, 4000);
     }
+});
 
     // ২. Image Upload Preview (আপলোড করার আগে ছবি দেখা)
     const fileInput = document.getElementById('fileInput');
