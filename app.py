@@ -47,7 +47,73 @@ def index():
         print("Database Error:", e)
     
     return render_template('index.html', contents=contents)
+# ==========================================
+# ইউজার পেআউট ও হিস্ট্রি (User Payout & History)
+# ==========================================
+@app.route('/payout', methods=['GET', 'POST'])
+@login_required
+def payout_history():
+    user_id = session['user']['id']
+    
+    # ১. মোট আয় হিসাব করা
+    res = supabase.table('contents').select('views, downloads').eq('user_id', user_id).eq('is_approved', True).execute()
+    total_earnings = sum([(item.get('views', 0) * 0.4) + (item.get('downloads', 0) * 0.5) for item in res.data])
+    
+    # ২. মোট উত্তোলিত বা পেন্ডিং পেমেন্ট হিসাব করা
+    payouts_res = supabase.table('payouts').select('amount, status').eq('user_id', user_id).in_('status', ['Pending', 'Approved']).execute()
+    total_withdrawn = sum([p['amount'] for p in payouts_res.data])
+    
+    # ৩. বর্তমান এভেইলেবল ব্যালেন্স
+    available_balance = round(total_earnings - total_withdrawn, 2)
+    
+    if request.method == 'POST':
+        amount = float(request.form.get('amount', 0))
+        payment_method = request.form.get('payment_method')
+        account_info = request.form.get('account_info')
+        
+        if amount < 50:
+            flash("সর্বনিম্ন ৫০ টাকা উত্তোলন করা যাবে।", "error")
+        elif amount > available_balance:
+            flash("আপনার অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই!", "error")
+        else:
+            supabase.table('payouts').insert({
+                'user_id': user_id,
+                'amount': amount,
+                'payment_method': payment_method,
+                'account_info': account_info
+            }).execute()
+            flash("আপনার উত্তোলনের অনুরোধটি সফলভাবে জমা হয়েছে। অ্যাডমিন শীঘ্রই পেমেন্ট করে দিবে।", "success")
+            return redirect(url_for('payout_history'))
+            
+    # ইউজারের পেআউট হিস্ট্রি ফেচ করা
+    history = supabase.table('payouts').select('*').eq('user_id', user_id).order('created_at', desc=True).execute().data
+    
+    return render_template('payout.html', available_balance=available_balance, history=history)
 
+
+# ==========================================
+# অ্যাডমিন পেআউট কন্ট্রোল প্যানেল (Admin Payouts)
+# ==========================================
+@app.route('/admin/payouts')
+@admin_required
+def admin_payouts():
+    # পেন্ডিং রিকোয়েস্টগুলো ফেচ করা
+    pending = supabase.table('payouts').select('*, profiles(username, display_name, email)').eq('status', 'Pending').order('created_at', desc=True).execute().data
+    
+    # অতীতের পেমেন্ট হিস্ট্রি (Approved / Rejected)
+    history = supabase.table('payouts').select('*, profiles(username, display_name, email)').neq('status', 'Pending').order('created_at', desc=True).limit(50).execute().data
+    
+    return render_template('admin_payouts.html', pending=pending, history=history)
+
+
+@app.route('/admin/payout/<action>/<int:id>')
+@admin_required
+def handle_payout(action, id):
+    status = 'Approved' if action == 'approve' else 'Rejected'
+    supabase.table('payouts').update({'status': status}).eq('id', id).execute()
+    flash(f"পেমেন্ট রিকোয়েস্ট {status} করা হয়েছে!", "success" if action == 'approve' else "error")
+    return redirect(url_for('admin_payouts'))
+    
 # ==========================================
 # সাইনআপ (Registration) রাউট
 # ==========================================
