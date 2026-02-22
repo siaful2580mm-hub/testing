@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}সাহিত্যিক সংগ্রহশালা{% endblock %}</title>
+    <title>{% block title %}PicGhor | নান্দনিক সংগ্রহশালা{% endblock %}</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
@@ -16,26 +16,41 @@
 <body>
 
     <!-- Navigation Bar -->
-    <nav>
+    <nav class="navbar">
         <div class="logo">
-            <a href="/" style="color:var(--accent); margin:0; text-decoration:none;">সাহিত্যিক সংগ্রহশালা</a>
+            <a href="/">Pic<span>Ghor</span></a>
         </div>
-        <div class="nav-links">
-            <a href="/">গ্যালারি</a>
+        
+        <!-- Hamburger Icon for Mobile -->
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="nav-links" id="nav-links">
+            <a href="/">Home</a>
+            <a href="#">Image</a>
+            <a href="#">Story</a>
+            <a href="#">Font</a>
+            <a href="#">Blogs</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
             
-            <!-- Login/Logout Condition -->
+            <!-- Auth Logic / Conditional Links -->
             {% if session.get('user') %}
-                <a href="/upload">আপলোড করুন</a>
-                <span style="margin-left:20px; color:#666;">|</span>
+                <a href="/upload" class="nav-btn-highlight">Upload</a>
+                <a href="/profile/{{ session['user']['username'] }}" style="color: var(--accent);">{{ session['user']['username'] }}</a>
                 
-                <!-- Profile Link -->
-                <a href="/profile/{{ session['user']['username'] }}" style="margin-left:20px; font-weight:bold; color:var(--accent);">{{ session['user']['username'] }}</a>
-                <a href="/logout" style="color: #c62828;">লগআউট</a>
+                {% if session['user']['email'] == 'admin@gmail.com' %}
+                    <a href="/admin" style="color: #4caf50;">Admin</a>
+                {% endif %}
+                
+                <a href="/logout" style="color: #ff4d4d;">Logout</a>
             {% else %}
-                <a href="/login">লগইন</a>
-                <a href="/signup" style="background: var(--accent); color: white; padding: 5px 15px; border-radius: 4px;">রেজিস্ট্রেশন</a>
-            {% endif %} <!-- এখানে endif দেওয়াটা বাধ্যতামূলক ছিল -->
-            
+                <a href="/login">Login</a>
+                <a href="/signup" class="nav-btn-highlight">Sign Up</a>
+            {% endif %}
         </div>
     </nav>
 
@@ -57,6 +72,36 @@
         {% block content %}{% endblock %}
         
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-about">
+                <h2>Pic<span>Ghor</span></h2>
+                <p>PicGhor is a premium digital archive for aesthetic images, stories, fonts, and blogs. Join our creative community to share and earn from your art.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="#">Categories</a>
+                <a href="/upload">Upload Art</a>
+                <a href="/insight">Earn Money</a>
+            </div>
+            <div class="footer-contact">
+                <h3>Contact Us</h3>
+                <p>Email: info@picghor.com</p>
+                <p>Location: Dhaka, Bangladesh</p>
+                <div class="social-icons">
+                    <a href="#">FB</a>
+                    <a href="#">IG</a>
+                    <a href="#">X</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; ২০২৬ PicGhor. All rights reserved.
+        </div>
+    </footer>
 
     <!-- JS File Link -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
