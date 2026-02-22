@@ -88,18 +88,24 @@
 <div class="grid">
     {% for item in images %}
     <div class="card">
-        <a href="/content/{{ item.slug }}"><img src="{{ item.file_url }}" alt="{{ item.alt_text }}"></a>
-        <div class="card-content">
-            <h3><a href="/content/{{ item.slug }}" style="text-decoration:none; color:inherit;">{{ item.title }}</a></h3>
-            <p style="margin-bottom: 5px;">{{ item.description[:60] }}...</p>
-            <div class="author-info">
-                <img src="{{ item.profiles.avatar_url }}" alt="Author">
-                <a href="/profile/{{ item.profiles.username }}">@{{ item.profiles.username }}</a>
+        <!-- পুরো কার্ডটি একটি লিংক হবে -->
+        <a href="/content/{{ item.slug }}" style="display: block; position: relative; height: 100%;">
+            <img src="{{ item.file_url }}" alt="{{ item.alt_text }}">
+            
+            <!-- হোভার করলে এই ওভারলে বক্সটি ভেসে উঠবে -->
+            <div class="card-overlay">
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.description[:60] }}...</p>
+                <div class="author-info">
+                    <img src="{{ item.profiles.avatar_url }}" alt="Author">
+                    <span>@{{ item.profiles.username }}</span>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
     {% endfor %}
 </div>
+
 {% endif %}
 
 <!-- 3. Stories Section -->
