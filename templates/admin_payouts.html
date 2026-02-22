@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}পেমেন্ট কন্ট্রোল | সাহিত্যিক সংগ্রহশালা{% endblock %}
+
+{% block head %}
+<style>
+    .admin-table { width: 100%; border-collapse: collapse; margin-bottom: 40px; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+    .admin-table th, .admin-table td { border: 1px solid var(--border); padding: 12px; text-align: left; }
+    .admin-table th { background: var(--bg-color); color: var(--accent); }
+    .btn-approve { background: #2e7d32; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9rem; margin-right: 5px; font-weight:bold; }
+    .btn-delete { background: #c62828; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9rem; font-weight:bold; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2 style="color: var(--accent); text-align: center;">অ্যাডমিন পেমেন্ট কন্ট্রোল প্যানেল</h2>
+
+<h3 style="color: #e65100;">পেন্ডিং পেমেন্ট রিকোয়েস্ট</h3>
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>ইউজার</th>
+            <th>পরিমাণ</th>
+            <th>পেমেন্ট মেথড ও নম্বর</th>
+            <th>অ্যাকশন</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in pending %}
+        <tr>
+            <td>
+                <a href="/profile/{{ p.profiles.username }}" target="_blank" style="color:var(--accent); font-weight:bold;">{{ p.profiles.display_name or p.profiles.username }}</a><br>
+                <span style="font-size:0.8rem; color:#666;">{{ p.profiles.email }}</span>
+            </td>
+            <td style="font-weight: bold; color: #c62828; font-size: 1.1rem;">৳ {{ p.amount }}</td>
+            <td><strong>{{ p.payment_method }}</strong><br>{{ p.account_info }}</td>
+            <td>
+                <!-- পেমেন্ট পাঠানোর পর Approve এ ক্লিক করবেন -->
+                <a href="/admin/payout/approve/{{ p.id }}" class="btn-approve" onclick="return confirm('আপনি কি নিশ্চিত যে পেমেন্টটি পাঠানো হয়েছে?');">Paid (Approve)</a>
+                <a href="/admin/payout/reject/{{ p.id }}" class="btn-delete" onclick="return confirm('পেমেন্টটি বাতিল করতে চান?');">Reject</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="text-align: center; padding: 20px;">কোনো পেন্ডিং রিকোয়েস্ট নেই।</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3 style="color: #555;">পেমেন্ট হিস্ট্রি (Approved / Rejected)</h3>
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th>ইউজার</th>
+            <th>পরিমাণ</th>
+            <th>মেথড ও নম্বর</th>
+            <th>স্ট্যাটাস</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in history %}
+        <tr>
+            <td>{{ p.profiles.display_name or p.profiles.username }}</td>
+            <td style="font-weight: bold;">৳ {{ p.amount }}</td>
+            <td>{{ p.payment_method }} ({{ p.account_info }})</td>
+            <td style="font-weight: bold; color: {% if p.status == 'Approved' %}green{% else %}red{% endif %};">{{ p.status }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="text-align: center;">কোনো হিস্ট্রি নেই।</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
