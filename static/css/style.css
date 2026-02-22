@@ -1,221 +1,220 @@
 /* =========================================
-   রয়্যাল থিম (Premium Royal Aesthetic)
-   60% Navy Blue | 30% White | 10% Gold
+   ম্যাগাজিন / এডিটোরিয়াল থিম (As per Image)
 ========================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&display=swap');
 
 :root {
     /* Theme Colors */
-    --bg-color: #0F1E4D;       /* 60% - গাঢ় নেভি ব্লু (Main Background) */
-    --surface-color: #FFFFFF;  /* 30% - সাদা (Cards, Navbar, Forms) */
-    --accent: #FFD700;         /* 10% - সোনালী (Buttons, Links, Borders) */
-    
-    /* Text Colors */
-    --text-on-bg: #FFFFFF;     /* নেভি ব্লু ব্যাকগ্রাউন্ডের উপর সাদা লেখা */
-    --text-on-surface: #0F1E4D;/* সাদা কার্ডের উপর নেভি ব্লু লেখা */
-    
-    /* Subtle Elements */
-    --border: rgba(255, 215, 0, 0.4); /* হালকা সোনালী বর্ডার */
+    --nav-bg: #0F1E4D;         /* গাঢ় নেভি ব্লু (Navbar & Footer) */
+    --bg-color: #Faf8f5;       /* ক্রিম / অফ-হোয়াইট (Main Body Background) */
+    --surface-color: #FFFFFF;  /* সাদা (Cards & Text boxes) */
+    --accent: #FFD700;         /* সোনালী (Buttons) */
+    --text-main: #0F1E4D;      /* সাধারণ টেক্সট (Navy Blue for readability) */
+    --text-light: #555555;     /* হালকা টেক্সট */
 }
 
 body {
     background-color: var(--bg-color);
-    color: var(--text-on-bg);
+    color: var(--text-main);
     font-family: 'Noto Serif Bengali', serif;
     margin: 0;
     padding: 0;
     line-height: 1.6;
 }
 
-/* ================= Navbar (30% White) ================= */
+/* ================= Navbar (Dark Navy) ================= */
 nav {
-    background: var(--surface-color);
-    padding: 15px 50px;
-    border-bottom: 4px solid var(--accent); /* সোনালী বর্ডার */
+    background: var(--nav-bg);
+    padding: 20px 50px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .logo a {
     font-size: 1.8rem;
-    color: var(--text-on-surface);
+    color: var(--surface-color);
     font-weight: 700;
     text-decoration: none;
     letter-spacing: 1px;
 }
 
-/* "সাহিত্যিক" লেখার একাংশ সোনালী করতে */
-.logo a span {
-    color: var(--accent);
+nav .nav-links {
+    display: flex;
+    align-items: center;
 }
 
 nav .nav-links a {
     text-decoration: none;
-    color: var(--text-on-surface);
+    color: var(--surface-color);
     font-weight: 600;
-    margin-left: 25px;
+    margin-left: 30px;
+    font-size: 0.95rem;
     transition: color 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 nav .nav-links a:hover {
     color: var(--accent);
 }
 
-/* ================= Layout & Typography ================= */
+/* ================= Layout ================= */
 .container {
-    max-width: 1000px;
-    margin: 40px auto;
+    max-width: 1100px; /* ম্যাগাজিন লুকের জন্য একটু চওড়া */
+    margin: 50px auto;
     padding: 0 20px;
 }
 
 h1, h2, h3, h4 {
-    color: var(--accent); /* পেজের হেডলাইনগুলো সোনালী রঙের হবে */
+    color: var(--text-main);
+    font-weight: 700;
 }
 
-/* ================= Alerts (Flash Messages) ================= */
-.flash-messages p {
-    background-color: var(--surface-color);
-    color: var(--text-on-surface);
-    padding: 12px;
-    border-radius: 6px;
-    text-align: center;
+/* ================= Buttons (Golden with Dark Text) ================= */
+.btn-primary, .submit-btn, .btn-download-adv {
+    text-decoration: none;
+    color: var(--nav-bg) !important; /* সোনালী বাটনে নেভি ব্লু লেখা */
+    background: var(--accent);     
+    padding: 12px 28px;
+    border-radius: 3px; /* ছবির মতো সামান্য চারকোনা লুক */
+    display: inline-block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase; /* সব অক্ষর বড় হাতের */
+    letter-spacing: 1px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
+}
+
+.btn-primary:hover, .submit-btn:hover, .btn-download-adv:hover {
+    background: #e6c200; 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255, 215, 0, 0.3);
+}
+
+/* Navbar এ বাটনের ডিজাইন ফিক্স করার জন্য */
+nav .nav-links a[href="/signup"], nav .nav-links a[href="/admin"], nav .nav-links a[href="/upload"] {
+    background: var(--accent);
+    color: var(--nav-bg);
+    padding: 8px 20px;
+    border-radius: 3px;
     font-weight: bold;
-    border-left: 5px solid var(--accent);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
-.flash-messages p.error {
-    border-left-color: #ff4d4d; /* এরর হলে লাল বর্ডার */
+nav .nav-links a[href="/signup"]:hover, nav .nav-links a[href="/admin"]:hover, nav .nav-links a[href="/upload"]:hover {
+    background: #e6c200;
+    color: var(--nav-bg);
 }
 
-/* ================= Grid & Cards (30% White) ================= */
+/* ================= Masonry Grid (ছবির মতো উঁচু-নিচু কার্ড) ================= */
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 25px;
+    column-count: 3; /* ৩টি কলাম */
+    column-gap: 30px; /* কলামের মাঝের গ্যাপ */
 }
 
 .card {
     background: var(--surface-color);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 0; /* ম্যাগাজিন স্টাইলে বর্ডার রেডিয়াস থাকে না */
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    break-inside: avoid; /* কার্ড যাতে ভেঙে অন্য কলামে না যায় */
+    margin-bottom: 30px;
+    display: inline-block;
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(15, 30, 77, 0.04); /* অত্যন্ত সফট শ্যাডো */
 }
 
 .card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.2); /* হোভার করলে গোল্ডেন গ্লো (Glow) */
-    border-color: var(--accent);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(15, 30, 77, 0.08);
 }
 
 .card img {
     width: 100%;
-    height: 220px;
-    object-fit: cover;
-    border-bottom: 2px solid var(--border);
+    height: auto; /* অরিজিনাল ছবির রেশিও অনুযায়ী উচ্চতা নিবে */
+    display: block;
 }
 
 .card-content {
-    padding: 15px;
-    text-align: center;
+    padding: 25px;
+    text-align: left; /* এডিটোরিয়াল স্টাইলে লেখা বামে থাকে */
 }
 
 .card-content h3 {
-    margin: 0 0 5px 0;
-    font-size: 1.3rem;
-    color: var(--text-on-surface);
+    margin: 0 0 10px 0;
+    font-size: 1.6rem;
+    line-height: 1.3;
 }
 
-/* ================= Buttons (10% Gold) ================= */
-.btn-primary, .submit-btn, .btn-download-adv {
-    text-decoration: none;
-    color: var(--text-on-surface); /* সোনালী বাটনের উপর নেভি ব্লু লেখা (ফোকাস বাড়াবে) */
-    background: var(--accent);     
-    padding: 10px 20px;
-    border-radius: 5px;
-    display: inline-block;
-    font-size: 1rem;
-    font-weight: bold;
-    margin-top: 10px;
-    transition: background 0.3s, transform 0.2s;
-    border: none;
-    cursor: pointer;
+.card-content p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    margin-bottom: 20px;
 }
 
-.btn-primary:hover, .submit-btn:hover, .btn-download-adv:hover {
-    background: #e6c200; /* হোভার করলে একটু গাঢ় সোনালী */
-    transform: scale(1.02);
+/* Responsive Grid */
+@media (max-width: 900px) {
+    .grid { column-count: 2; }
+}
+@media (max-width: 600px) {
+    .grid { column-count: 1; }
+    nav { flex-direction: column; gap: 15px; }
+    nav .nav-links { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    nav .nav-links a { margin-left: 10px; }
 }
 
-/* ================= Forms & Info Boxes (30% White) ================= */
+/* ================= Forms & Profile ================= */
 .form-box, .profile-header, .private-followers-box, .info-section, .comments-section, .related-section, .balance-card, .payout-form, .admin-container, .insight-table-wrapper {
     background: var(--surface-color);
-    padding: 30px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    box-shadow: 0 5px 25px rgba(0,0,0,0.4);
-    color: var(--text-on-surface);
+    padding: 40px;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(15, 30, 77, 0.03);
+    border: none;
 }
 
 .form-group label {
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
-    color: var(--text-on-surface);
+    color: var(--text-main);
 }
 
 .form-group input, 
 .form-group textarea, 
 .form-group select {
     width: 100%;
-    padding: 12px;
-    border: 1px solid rgba(15, 30, 77, 0.2);
-    border-radius: 5px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
     box-sizing: border-box;
     font-family: inherit;
     font-size: 1rem;
     background: #fdfdfd;
-    color: var(--text-on-surface);
+    transition: border 0.3s;
 }
 
 .form-group input:focus, 
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 5px rgba(255, 215, 0, 0.4);
+    border-color: var(--nav-bg);
 }
 
-/* Image Preview Box */
-#imagePreview {
-    max-width: 100%;
-    margin-top: 15px;
-    border-radius: 4px;
-    border: 2px solid var(--accent);
-    display: none;
-}
-
-/* ================= Tables (Admin, Insight, Payout) ================= */
+/* ================= Tables ================= */
 table {
+    width: 100%;
     background: var(--surface-color);
-    color: var(--text-on-surface);
-    border-radius: 8px;
-    overflow: hidden;
 }
-
 th {
-    background: var(--bg-color) !important;
-    color: var(--accent) !important;
+    background: #f4f6f9 !important;
+    color: var(--text-main) !important;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
 }
-
 td {
-    border-bottom: 1px solid rgba(15, 30, 77, 0.1) !important;
-}
-
-/* ================= Custom Text Fixes ================= */
-/* নেভি ব্লু ব্যাকগ্রাউন্ডের উপর হালকা লেখাগুলো সাদায় রূপান্তর করা */
-.container > p {
-    color: #e0e6ed !important;
+    border-bottom: 1px solid #eee !important;
 }
