@@ -1,78 +1,211 @@
 {% extends "base.html" %}
-{% block title %}{{ profile.display_name or profile.username }} এর প্রোফাইল | সাহিত্যিক সংগ্রহশালা{% endblock %}
+{% block title %}{{ profile.display_name or profile.username }} এর প্রোফাইল | পিকঘর{% endblock %}
 
 {% block head %}
 <style>
-    .profile-header { background: #fff; padding: 40px; border: 1px solid var(--border); border-radius: 8px; text-align: center; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-    .profile-avatar { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid var(--bg-color); margin-bottom: 15px; }
-    .profile-name { font-size: 2rem; color: var(--accent); margin: 0; }
-    .profile-username { color: #666; font-size: 1.1rem; margin-top: 5px; }
-    .profile-bio { margin: 20px auto; max-width: 600px; font-size: 1.1rem; color: #444; line-height: 1.6; }
-    
-    .follower-count { color: var(--accent); font-weight: bold; font-size: 1.1rem; margin-top: 5px; }
-    
-    .social-links { margin-top: 20px; }
-    .social-links a { display: inline-block; margin: 0 10px; color: var(--accent); text-decoration: none; font-weight: bold; font-size: 0.95rem; border: 1px solid var(--accent); padding: 5px 15px; border-radius: 20px; transition: 0.3s; margin-bottom: 10px; }
-    .social-links a:hover { background: var(--accent); color: #fff; }
+    /* =========================================
+       Premium Profile Header Styling
+    ========================================= */
+    .profile-container {
+        max-width: 950px;
+        margin: 0 auto 40px auto;
+    }
 
-    .section-title { text-align: center; color: var(--text-main); margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+    /* Cover Photo / Gradient */
+    .profile-cover {
+        height: 220px;
+        background: linear-gradient(135deg, var(--nav-bg) 0%, #2a4185 100%);
+        border-radius: 12px 12px 0 0;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+    }
     
-    .private-followers-box { background: #fdfdfd; border: 1px solid var(--border); padding: 20px; border-radius: 8px; max-width: 400px; margin: 30px auto 0; text-align: left; }
-    .private-followers-box h4 { margin-top: 0; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
-    .follower-item { padding: 10px 0; border-bottom: 1px dashed #eee; display: flex; align-items: center; }
+    /* ব্যাকগ্রাউন্ডে সূক্ষ্ম প্যাটার্ন */
+    .profile-cover::after {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background-image: radial-gradient(rgba(255, 215, 0, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px; border-radius: 12px 12px 0 0;
+    }
+
+    /* Avatar Overlapping Cover */
+    .profile-avatar-wrapper {
+        position: absolute;
+        bottom: -70px; /* কভারের নিচে অর্ধেক ঝুলে থাকবে */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+    }
+    .profile-avatar-wrapper img {
+        width: 140px; height: 140px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid var(--surface-color);
+        box-shadow: 0 5px 15px rgba(15, 30, 77, 0.15);
+        background: #fff;
+    }
+
+    /* Profile Info Box */
+    .profile-info-box {
+        background: var(--surface-color);
+        padding: 80px 30px 40px 30px; /* ওপরের দিকে জায়গা রাখা হয়েছে অ্যাভাটারের জন্য */
+        border-radius: 0 0 12px 12px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(15, 30, 77, 0.04);
+        margin-bottom: 40px;
+        border: 1px solid rgba(15, 30, 77, 0.05);
+        border-top: none;
+    }
+
+    .profile-name { font-size: 2.2rem; color: var(--nav-bg); margin: 0 0 5px 0; font-weight: 700; letter-spacing: -0.5px;}
+    .profile-username { color: #888; font-size: 1.1rem; margin-top: 0; font-weight: 600;}
+    .profile-bio { margin: 20px auto; max-width: 650px; font-size: 1.1rem; color: #555; line-height: 1.7; font-style: italic; }
+
+    /* Stats & Action Row */
+    .profile-actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 25px;
+        flex-wrap: wrap;
+    }
+    
+    .stat-box {
+        background: #f8f9fa;
+        padding: 10px 25px;
+        border-radius: 30px;
+        font-weight: bold;
+        color: var(--nav-bg);
+        border: 1px solid #eee;
+    }
+    .stat-box span { color: var(--accent); margin-right: 5px; }
+
+    .btn-share {
+        background: #f0f4f8;
+        color: var(--nav-bg);
+        padding: 10px 25px;
+        border-radius: 30px;
+        font-weight: bold;
+        border: 1px solid #d1d9e6;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        font-size: 0.95rem;
+    }
+    .btn-share:hover { background: #e2e8f0; transform: translateY(-2px); }
+
+    /* Social Links */
+    .social-links { margin-top: 25px; }
+    .social-links a {
+        display: inline-flex; justify-content: center; align-items: center;
+        width: 40px; height: 40px; margin: 0 8px;
+        color: var(--nav-bg); background: #f0f4f8;
+        border-radius: 50%; transition: 0.3s; font-size: 1.1rem; text-decoration: none;
+    }
+    .social-links a:hover { background: var(--accent); color: var(--surface-color); transform: translateY(-3px); box-shadow: 0 5px 10px rgba(255, 215, 0, 0.3); }
+
+    /* Private Follower List */
+    .private-followers-box {
+        background: #fdfdfd; border: 1px solid var(--border); padding: 25px; border-radius: 12px;
+        max-width: 500px; margin: 40px auto 0; text-align: left;
+    }
+    .private-followers-box h4 { margin-top: 0; color: var(--nav-bg); border-bottom: 2px solid rgba(255, 215, 0, 0.3); padding-bottom: 10px; margin-bottom: 15px; font-size: 1.2rem; }
+    .follower-item { padding: 12px 0; border-bottom: 1px dashed #eee; display: flex; align-items: center; }
     .follower-item:last-child { border-bottom: none; }
-    .follower-item img { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover; border: 2px solid var(--border); }
-    .follower-item a { text-decoration: none; color: var(--text-main); font-weight: bold; font-size: 1.05rem; }
+    .follower-item img { width: 45px; height: 45px; border-radius: 50%; margin-right: 15px; object-fit: cover; border: 2px solid #eee; }
+    .follower-item a { text-decoration: none; color: var(--nav-bg); font-weight: bold; font-size: 1.05rem; transition: color 0.3s; }
     .follower-item a:hover { color: var(--accent); }
+
+    /* =========================================
+       Content Grid (Pinterest Style Hover)
+    ========================================= */
+    .section-title { text-align: left; color: var(--nav-bg); margin-bottom: 25px; border-bottom: 2px solid rgba(15, 30, 77, 0.08); padding-bottom: 10px; font-size: 1.6rem; font-weight: 700; }
+    .section-title i { color: var(--accent); margin-right: 8px; }
+
+    .card-link-wrapper {
+        display: block; position: relative; height: 100%; border-radius: 8px; overflow: hidden;
+        background: var(--surface-color); box-shadow: 0 5px 15px rgba(15, 30, 77, 0.08);
+    }
+    .card-img-top { width: 100%; height: 100%; min-height: 250px; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    .card-link-wrapper:hover .card-img-top { transform: scale(1.08); }
+
+    .card-overlay {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(to top, rgba(15, 30, 77, 0.95) 0%, rgba(15, 30, 77, 0.4) 50%, transparent 100%);
+        opacity: 0; transition: opacity 0.4s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 25px; color: #fff; z-index: 2;
+    }
+    .card-link-wrapper:hover .card-overlay { opacity: 1; }
+    
+    .card-overlay h3 { color: #fff; margin: 0 0 5px 0; font-size: 1.25rem; font-weight: 700; transform: translateY(20px); transition: transform 0.4s ease; }
+    .card-overlay p { color: var(--accent); font-size: 0.9rem; margin-bottom: 0; transform: translateY(20px); transition: transform 0.4s ease 0.05s; font-weight: bold; }
+    .card-link-wrapper:hover .card-overlay h3, .card-link-wrapper:hover .card-overlay p { transform: translateY(0); }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="profile-header">
-    <img src="{{ profile.avatar_url }}" alt="Profile Picture" class="profile-avatar">
-    <h1 class="profile-name">{{ profile.display_name or profile.full_name or profile.username }}</h1>
-    <p class="profile-username">@{{ profile.username }}</p>
-
-    <!-- মোট ফলোয়ার (সবার জন্য উন্মুক্ত) -->
-    <p class="follower-count">{{ followers_count }} জন ফলোয়ার</p>
-
-    <!-- ফলো / আনফলো বাটন (লগইন করা ইউজার অন্যের প্রোফাইল দেখলে) -->
-    {% if session.get('user') and session['user']['id'] != profile.id %}
-        <form action="/follow/{{ profile.username }}" method="POST" style="margin-top: 15px;">
-            {% if is_following %}
-                <button type="submit" class="btn-primary" style="background: #555; padding: 8px 25px; border:none; cursor:pointer;">আনফলো করুন</button>
-            {% else %}
-                <button type="submit" class="btn-primary" style="padding: 8px 25px; border:none; cursor:pointer;">ফলো করুন</button>
-            {% endif %}
-        </form>
-    {% endif %}
-
-    <!-- বায়ো (Bio) -->
-    {% if profile.bio %}
-        <p class="profile-bio">" {{ profile.bio }} "</p>
-    {% endif %}
-
-    <!-- সোশ্যাল লিংকস -->
-    <div class="social-links">
-        {% if profile.fb_page_link %}<a href="{{ profile.fb_page_link }}" target="_blank">ফেসবুক পেজ</a>{% endif %}
-        {% if profile.fb_group_link %}<a href="{{ profile.fb_group_link }}" target="_blank">গ্রুপ</a>{% endif %}
-        {% if profile.pinterest_link %}<a href="{{ profile.pinterest_link }}" target="_blank">পিন্টারেস্ট</a>{% endif %}
-        {% if profile.tiktok_link %}<a href="{{ profile.tiktok_link }}" target="_blank">টিকটক</a>{% endif %}
+<div class="profile-container">
+    
+    <!-- 1. Profile Header (Cover & Info) -->
+    <div class="profile-cover">
+        <div class="profile-avatar-wrapper">
+            <img src="{{ profile.avatar_url }}" alt="Profile Picture">
+        </div>
     </div>
+    
+    <div class="profile-info-box">
+        <h1 class="profile-name">{{ profile.display_name or profile.full_name or profile.username }}</h1>
+        <p class="profile-username">@{{ profile.username }}</p>
 
-    <!-- কন্টাক্ট ইনফো -->
-    {% if profile.contact_info %}
-        <p style="margin-top: 20px; color: #666; font-size: 0.95rem;">যোগাযোগ: <strong>{{ profile.contact_info }}</strong></p>
-    {% endif %}
+        <!-- Bio -->
+        {% if profile.bio %}
+            <p class="profile-bio">"{{ profile.bio }}"</p>
+        {% endif %}
 
-    <!-- নিজের প্রোফাইল হলে এডিট বাটন এবং ফলোয়ার লিস্ট দেখাবে -->
-    {% if session.get('user') and session['user']['id'] == profile.id %}
-        <div style="margin-top: 30px;">
-            <a href="/edit-profile" class="btn-primary" style="background: #444;">প্রোফাইল এডিট করুন</a>
+        <!-- Contact Info -->
+        {% if profile.contact_info %}
+            <p style="color: #666; font-size: 0.95rem; margin-bottom: 0;"><i class="fa-solid fa-envelope" style="color: var(--accent); margin-right: 5px;"></i> {{ profile.contact_info }}</p>
+        {% endif %}
+
+        <!-- Actions Row (Followers, Share, Follow/Edit) -->
+        <div class="profile-actions">
+            <div class="stat-box">
+                <span><i class="fa-solid fa-users"></i></span> {{ followers_count }} ফলোয়ার
+            </div>
             
-            <!-- গোপন ফলোয়ার লিস্ট (শুধুমাত্র অ্যাকাউন্টের মালিক দেখবে) -->
+            <!-- Share Button -->
+            <button onclick="copyProfileLink()" class="btn-share"><i class="fa-solid fa-share-nodes"></i> শেয়ার করুন</button>
+
+            <!-- Conditional Buttons -->
+            {% if session.get('user') %}
+                {% if session['user']['id'] == profile.id %}
+                    <!-- নিজের প্রোফাইল হলে -->
+                    <a href="/edit-profile" class="btn-primary" style="background: var(--nav-bg); color: #fff;"><i class="fa-solid fa-user-pen"></i> প্রোফাইল এডিট</a>
+                {% else %}
+                    <!-- অন্যের প্রোফাইল হলে -->
+                    <form action="/follow/{{ profile.username }}" method="POST" style="margin: 0;">
+                        {% if is_following %}
+                            <button type="submit" class="btn-primary" style="background: #e2e8f0; color: var(--nav-bg); box-shadow:none;"><i class="fa-solid fa-user-minus"></i> আনফলো করুন</button>
+                        {% else %}
+                            <button type="submit" class="btn-primary"><i class="fa-solid fa-user-plus"></i> ফলো করুন</button>
+                        {% endif %}
+                    </form>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        <!-- Social Links -->
+        <div class="social-links">
+            {% if profile.fb_page_link %}<a href="{{ profile.fb_page_link }}" target="_blank" title="ফেসবুক পেজ"><i class="fa-brands fa-facebook-f"></i></a>{% endif %}
+            {% if profile.fb_group_link %}<a href="{{ profile.fb_group_link }}" target="_blank" title="ফেসবুক গ্রুপ"><i class="fa-solid fa-users"></i></a>{% endif %}
+            {% if profile.pinterest_link %}<a href="{{ profile.pinterest_link }}" target="_blank" title="পিন্টারেস্ট"><i class="fa-brands fa-pinterest-p"></i></a>{% endif %}
+            {% if profile.tiktok_link %}<a href="{{ profile.tiktok_link }}" target="_blank" title="টিকটক"><i class="fa-brands fa-tiktok"></i></a>{% endif %}
+        </div>
+
+        <!-- Private Follower List (শুধুমাত্র প্রোফাইল মালিক দেখবে) -->
+        {% if session.get('user') and session['user']['id'] == profile.id %}
             <div class="private-followers-box">
-                <h4>আপনার ফলোয়ারবৃন্দ</h4>
+                <h4><i class="fa-solid fa-users-viewfinder"></i> আপনার ফলোয়ারবৃন্দ</h4>
                 {% if followers_list %}
                     <ul style="list-style: none; padding: 0; margin: 0;">
                     {% for f in followers_list %}
@@ -86,24 +219,37 @@
                     <p style="color: #666; font-size: 0.95rem; margin: 0; text-align:center;">আপনাকে এখনো কেউ ফলো করেনি।</p>
                 {% endif %}
             </div>
+        {% endif %}
+    </div>
+
+    <!-- 2. Uploaded Content Grid -->
+    <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> সংগ্রহশালায় অবদান</h2>
+    <div class="grid">
+        {% for item in contents %}
+        <div class="card">
+            <a href="/content/{{ item.slug }}" class="card-link-wrapper">
+                <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" class="card-img-top">
+                <div class="card-overlay">
+                    <h3>{{ item.title }}</h3>
+                    <p><i class="fa-solid fa-folder-open"></i> {{ item.categories.name_bn }}</p>
+                </div>
+            </a>
         </div>
-    {% endif %}
+        {% else %}
+        <p style="text-align: center; grid-column: 1 / -1; color: #777; font-size: 1.1rem; padding: 40px; background: var(--surface-color); border-radius: 8px; border: 1px dashed #ccc;">এখনো কোনো ছবি, গল্প বা ফন্ট আপলোড করা হয়নি।</p>
+        {% endfor %}
+    </div>
 </div>
 
-<!-- ইউজারের আপলোড করা ছবির গ্রিড -->
-<h2 class="section-title">সংগ্রহশালায় অবদান</h2>
-<div class="grid">
-    {% for item in contents %}
-    <div class="card">
-        <img src="{{ item.file_url }}" alt="{{ item.alt_text }}">
-        <div class="card-content">
-            <h3>{{ item.title }}</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">{{ item.categories.name_bn }}</p>
-            <a href="/content/{{ item.slug }}" class="btn-primary">বিস্তারিত</a>
-        </div>
-    </div>
-    {% else %}
-    <p style="text-align: center; grid-column: 1 / -1; color: #777; font-size: 1.1rem; padding: 20px;">এখনো কোনো ছবি বা ফন্ট আপলোড করা হয়নি।</p>
-    {% endfor %}
-</div>
+<!-- Share Link JS -->
+<script>
+    function copyProfileLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('প্রোফাইল লিংক সফলভাবে কপি করা হয়েছে! এখন আপনি এটি যেকোনো জায়গায় শেয়ার করতে পারবেন।');
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+            alert('লিংক কপি করতে সমস্যা হয়েছে। দয়া করে ব্রাউজারের ওপর থেকে লিংকটি কপি করুন।');
+        });
+    }
+</script>
 {% endblock %}
