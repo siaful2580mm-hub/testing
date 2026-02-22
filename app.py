@@ -240,14 +240,41 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/content/<slug>')
-def single_content(slug):
-    # নির্দিষ্ট Slug দিয়ে কন্টেন্ট আনা
-    response = supabase.table('contents').select('*, categories(name_bn)').eq('slug', slug).execute()
-    if not response.data:
-        abort(404)
-    content = response.data[0]
-    return render_template('single.html', content=content)
+
+# ==========================================
+# লাইক, কমেন্ট এবং ডাউনলোড অ্যাকশন রাউটস
+# ==========================================
+@app.route('/like/<int:content_id>', methods=['POST'])
+@login_required
+def like_content(content_id):
+    user_id = session['user']['id']
+    check = supabase.table('likes').select('*').eq('content_id', content_id).eq('user_id', user_id).execute().data
+    
+    if check:
+        supabase.table('likes').delete().eq('content_id', content_id).eq('user_id', user_id).execute() # আনলাইক
+    else:
+        supabase.table('likes').insert({'content_id': content_id, 'user_id': user_id}).execute() # লাইক
+    return redirect(request.referrer)
+
+@app.route('/comment/<int:content_id>', methods=['POST'])
+@login_required
+def add_comment(content_id):
+    text = request.form.get('text')
+    if text:
+        supabase.table('comments').insert({'content_id': content_id, 'user_id': session['user']['id'], 'text': text}).execute()
+        flash('আপনার মন্তব্য যুক্ত হয়েছে।', 'success')
+    return redirect(request.referrer)
+
+@app.route('/download/<int:content_id>')
+def download_content(content_id):
+    # ডাউনলোড কাউন্ট বাড়ানো এবং অরিজিনাল ফাইলে রিডাইরেক্ট করা
+    res = supabase.table('contents').select('downloads, file_url').eq('id', content_id).execute().data
+    if res:
+        current_dl = res[0].get('downloads', 0)
+        supabase.table('contents').update({'downloads': current_dl + 1}).eq('id', content_id).execute()
+        return redirect(res[0]['file_url'])
+    abort(404)
+
 
 # ==========================================
 # আপলোড রাউট (সঠিক User ID সহ)
@@ -280,16 +307,19 @@ def upload_content():
                 flash("ছবি আপলোডে সমস্যা হয়েছে।", "error")
                 return redirect(request.url)
 
-            # Supabase এ ডাটা সেভ করা
+            # ফাইলের এক্সটেনশন বের করা (যেমন: JPG, PNG)
+            file_format = file.filename.rsplit('.', 1)[1].upper() if '.' in file.filename else 'JPG'
+
             new_content = {
-                "user_id": session['user']['id'], # <--- মূল সমাধান (এখানে অরিজিনাল ইউজারের আইডি বসবে)
+                "user_id": session['user']['id'],
                 "title": title,
                 "description": description,
                 "slug": slug,
                 "alt_text": alt_text,
                 "category_id": category_id,
                 "file_url": file_url,
-                "is_approved": False # (টেস্টিংয়ের জন্য True রাখা হলো, পরে অ্যাডমিন প্যানেলের জন্য False করে দিবেন)
+                "file_format": file_format, # <--- নতুন যুক্ত করা হলো
+                "is_approved": False 
             }
             supabase.table('contents').insert(new_content).execute()
             
