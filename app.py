@@ -315,20 +315,30 @@ def edit_profile():
     # GET Request: ফর্ম দেখানোর জন্য বর্তমান ডাটা ফেচ
     current_profile = supabase.table('profiles').select('*').eq('id', user_id).execute().data[0]
     return render_template('edit_profile.html', profile=current_profile)
+# ==========================================
+# সাইনআপ (Registration) রাউট
+# ==========================================
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form.get('username')
+        display_name = request.form.get('display_name') # ইউজারের আসল নাম (বাংলা বা স্পেসযুক্ত)
+        username = request.form.get('username')         # প্রোফাইল লিংকের জন্য ইউজারনেম
         email = request.form.get('email')
         password = request.form.get('password')
         
+        # ইউজারনেমটি লিংকের জন্য পারফেক্ট করা (সব ছোট হাতের এবং স্পেস রিমুভ করা)
+        username = username.lower().replace(" ", "")
+
         try:
             # Supabase এ নতুন ইউজার তৈরি
             res = supabase.auth.sign_up({
                 "email": email,
                 "password": password,
                 "options": {
-                    "data": {"username": username} # ইউজারের নাম সেভ রাখা
+                    "data": {
+                        "username": username,
+                        "display_name": display_name
+                    }
                 }
             })
             flash("রেজিস্ট্রেশন সফল হয়েছে! দয়া করে লগইন করুন।", "success")
@@ -338,10 +348,6 @@ def signup():
             return redirect(request.url)
 
     return render_template('signup.html')
-
-# ==========================================
-# লগইন (Login) রাউট
-# ==========================================
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
