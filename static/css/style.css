@@ -1,47 +1,60 @@
 /* =========================================
-   সাহিত্যিক থিম (Literary Aesthetic) 
+   রয়্যাল থিম (Premium Royal Aesthetic)
+   60% Navy Blue | 30% White | 10% Gold
 ========================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&display=swap');
 
 :root {
-    --bg-color: #F9F6F0; /* পুরানো কাগজের মতো হালকা রঙ */
-    --text-main: #2C2825; /* গাঢ় খয়েরি/কালো টেক্সট */
-    --accent: #8C3A3A; /* ইটের মতো লাল (Terracotta Red) */
-    --border: #DCD3C6; /* হালকা বর্ডার */
-    --white: #FFFFFF;
+    /* Theme Colors */
+    --bg-color: #0F1E4D;       /* 60% - গাঢ় নেভি ব্লু (Main Background) */
+    --surface-color: #FFFFFF;  /* 30% - সাদা (Cards, Navbar, Forms) */
+    --accent: #FFD700;         /* 10% - সোনালী (Buttons, Links, Borders) */
+    
+    /* Text Colors */
+    --text-on-bg: #FFFFFF;     /* নেভি ব্লু ব্যাকগ্রাউন্ডের উপর সাদা লেখা */
+    --text-on-surface: #0F1E4D;/* সাদা কার্ডের উপর নেভি ব্লু লেখা */
+    
+    /* Subtle Elements */
+    --border: rgba(255, 215, 0, 0.4); /* হালকা সোনালী বর্ডার */
 }
 
 body {
     background-color: var(--bg-color);
-    color: var(--text-main);
+    color: var(--text-on-bg);
     font-family: 'Noto Serif Bengali', serif;
     margin: 0;
     padding: 0;
     line-height: 1.6;
 }
 
-/* ================= Navbar ================= */
+/* ================= Navbar (30% White) ================= */
 nav {
-    background: var(--white);
-    padding: 20px 50px;
-    border-bottom: 1px solid var(--border);
+    background: var(--surface-color);
+    padding: 15px 50px;
+    border-bottom: 4px solid var(--accent); /* সোনালী বর্ডার */
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .logo a {
     font-size: 1.8rem;
-    color: var(--accent);
+    color: var(--text-on-surface);
     font-weight: 700;
     text-decoration: none;
+    letter-spacing: 1px;
+}
+
+/* "সাহিত্যিক" লেখার একাংশ সোনালী করতে */
+.logo a span {
+    color: var(--accent);
 }
 
 nav .nav-links a {
     text-decoration: none;
-    color: var(--text-main);
+    color: var(--text-on-surface);
     font-weight: 600;
     margin-left: 25px;
     transition: color 0.3s ease;
@@ -51,54 +64,58 @@ nav .nav-links a:hover {
     color: var(--accent);
 }
 
-/* ================= Layout ================= */
+/* ================= Layout & Typography ================= */
 .container {
     max-width: 1000px;
     margin: 40px auto;
     padding: 0 20px;
 }
 
-/* ================= Alerts ================= */
-.flash-messages p {
-    background-color: #e8f4e9;
-    color: #2e7d32;
-    padding: 10px;
-    border-radius: 4px;
-    text-align: center;
-    font-weight: bold;
-    border: 1px solid #c8e6c9;
-}
-.flash-messages p.error {
-    background-color: #ffebee;
-    color: #c62828;
-    border-color: #ffcdd2;
+h1, h2, h3, h4 {
+    color: var(--accent); /* পেজের হেডলাইনগুলো সোনালী রঙের হবে */
 }
 
-/* ================= Grid & Cards ================= */
+/* ================= Alerts (Flash Messages) ================= */
+.flash-messages p {
+    background-color: var(--surface-color);
+    color: var(--text-on-surface);
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    border-left: 5px solid var(--accent);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+.flash-messages p.error {
+    border-left-color: #ff4d4d; /* এরর হলে লাল বর্ডার */
+}
+
+/* ================= Grid & Cards (30% White) ================= */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 25px;
 }
 
 .card {
-    background: var(--white);
+    background: var(--surface-color);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    transform: translateY(-8px);
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.2); /* হোভার করলে গোল্ডেন গ্লো (Glow) */
+    border-color: var(--accent);
 }
 
 .card img {
     width: 100%;
     height: 220px;
     object-fit: cover;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--border);
 }
 
 .card-content {
@@ -109,45 +126,45 @@ nav .nav-links a:hover {
 .card-content h3 {
     margin: 0 0 5px 0;
     font-size: 1.3rem;
-    color: var(--accent);
+    color: var(--text-on-surface);
 }
 
-.btn-primary {
+/* ================= Buttons (10% Gold) ================= */
+.btn-primary, .submit-btn, .btn-download-adv {
     text-decoration: none;
-    color: var(--white);
-    background: var(--accent);
-    padding: 8px 18px;
-    border-radius: 4px;
+    color: var(--text-on-surface); /* সোনালী বাটনের উপর নেভি ব্লু লেখা (ফোকাস বাড়াবে) */
+    background: var(--accent);     
+    padding: 10px 20px;
+    border-radius: 5px;
     display: inline-block;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    font-weight: bold;
     margin-top: 10px;
-    transition: background 0.3s;
+    transition: background 0.3s, transform 0.2s;
+    border: none;
+    cursor: pointer;
 }
 
-.btn-primary:hover {
-    background: #6a2a2a;
+.btn-primary:hover, .submit-btn:hover, .btn-download-adv:hover {
+    background: #e6c200; /* হোভার করলে একটু গাঢ় সোনালী */
+    transform: scale(1.02);
 }
 
-/* ================= Forms ================= */
-.form-box {
-    background: var(--white);
-    padding: 40px;
+/* ================= Forms & Info Boxes (30% White) ================= */
+.form-box, .profile-header, .private-followers-box, .info-section, .comments-section, .related-section, .balance-card, .payout-form, .admin-container, .insight-table-wrapper {
+    background: var(--surface-color);
+    padding: 30px;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    max-width: 600px;
-    margin: auto;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-}
-
-.form-group {
-    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.4);
+    color: var(--text-on-surface);
 }
 
 .form-group label {
     display: block;
     font-weight: 600;
     margin-bottom: 8px;
-    color: var(--text-main);
+    color: var(--text-on-surface);
 }
 
 .form-group input, 
@@ -155,17 +172,20 @@ nav .nav-links a:hover {
 .form-group select {
     width: 100%;
     padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid rgba(15, 30, 77, 0.2);
+    border-radius: 5px;
     box-sizing: border-box;
     font-family: inherit;
     font-size: 1rem;
+    background: #fdfdfd;
+    color: var(--text-on-surface);
 }
 
 .form-group input:focus, 
 .form-group textarea:focus {
     outline: none;
     border-color: var(--accent);
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.4);
 }
 
 /* Image Preview Box */
@@ -173,5 +193,29 @@ nav .nav-links a:hover {
     max-width: 100%;
     margin-top: 15px;
     border-radius: 4px;
+    border: 2px solid var(--accent);
     display: none;
-  }
+}
+
+/* ================= Tables (Admin, Insight, Payout) ================= */
+table {
+    background: var(--surface-color);
+    color: var(--text-on-surface);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th {
+    background: var(--bg-color) !important;
+    color: var(--accent) !important;
+}
+
+td {
+    border-bottom: 1px solid rgba(15, 30, 77, 0.1) !important;
+}
+
+/* ================= Custom Text Fixes ================= */
+/* নেভি ব্লু ব্যাকগ্রাউন্ডের উপর হালকা লেখাগুলো সাদায় রূপান্তর করা */
+.container > p {
+    color: #e0e6ed !important;
+}
