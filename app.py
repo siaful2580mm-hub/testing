@@ -1,18 +1,18 @@
 import os
 import requests
-from flask import Flask, render_template, request, redirect, url_for, flash, abort
+from datetime import timedelta  # <--- এটি নতুন ইমপোর্ট করতে হবে
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, session, Response
+from functools import wraps
 from supabase import create_client, Client
 from dotenv import load_dotenv
-from flask import session
-from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, abort, session, Response
 
-# .env ফাইল লোড করা (লোকাল ডেভেলপমেন্টের জন্য)
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "sahityik_secret_key_2026")
 
+# সেশন যেন ৩০ দিন পর্যন্ত ব্রাউজারে সেভ থাকে
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 # Supabase কনফিগারেশন
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
@@ -344,7 +344,10 @@ def login():
             # Supabase Auth দিয়ে লগইন চেক
             res = supabase.auth.sign_in_with_password({"email": email, "password": password})
             
-            # ফ্লাস্ক সেশনে (Session) ইউজারের তথ্য সেভ করে রাখা
+            # সেশনকে ব্রাউজারে স্থায়ী (Permanent) করা
+            session.permanent = True  # <--- এই লাইনটি যুক্ত করতে হবে
+            
+            # ফ্লাস্ক সেশনে ইউজারের তথ্য সেভ করে রাখা
             session['user'] = {
                 "id": res.user.id,
                 "email": res.user.email,
@@ -359,7 +362,6 @@ def login():
             return redirect(request.url)
 
     return render_template('login.html')
-
 # ==========================================
 # লগআউট (Logout) রাউট
 # ==========================================
