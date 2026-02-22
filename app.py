@@ -11,6 +11,24 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "sahityik_secret_key_2026")
 
+# ==========================================
+# ডাইনামিক URL জেনারেটর (টেমপ্লেটের জন্য)
+# ==========================================
+@app.context_processor
+def utility_processor():
+    def get_url(item):
+        cat_slug = item.get('categories', {}).get('slug', 'image')
+        if cat_slug == 'story': 
+            return f"/st/{item['slug']}"
+        elif cat_slug == 'blog': 
+            return f"/bg/{item['slug']}"
+        elif cat_slug == 'font': 
+            return f"/ft/{item['slug']}" # ফন্টের জন্য /ft/
+        else: 
+            return f"/image/{item['slug']}"
+    return dict(get_url=get_url)
+    
+
 # সেশন যেন ৩০ দিন পর্যন্ত ব্রাউজারে সেভ থাকে
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=30)
 # Supabase কনফিগারেশন
@@ -151,7 +169,7 @@ def user_insight():
     user_id = session['user']['id']
     
     # ইউজারের আপলোড করা সব কন্টেন্ট ফেচ করা
-    res = supabase.table('contents').select('title, slug, views, downloads, file_url, is_approved, created_at').eq('user_id', user_id).order('created_at', desc=True).execute()
+    res = supabase.table('contents').select('title, slug, views, downloads, file_url, is_approved, created_at, categories(slug)').eq('user_id', user_id).order('created_at', desc=True).execute()
     contents = res.data
 
     total_views = 0
@@ -178,15 +196,11 @@ def user_insight():
     total_earnings = round(total_earnings, 2)
 
     return render_template('insight.html', contents=contents, total_views=total_views, total_downloads=total_downloads, total_earnings=total_earnings)
-    
-# ==========================================
-# পাবলিক প্রোফাইল ভিউ (আপডেটেড)
-# ==========================================
 
-# ==========================================
-# সিঙ্গেল ইমেজ/কন্টেন্ট ডিটেইলস পেজ
-# ==========================================
-@app.route('/content/<slug>')
+@app.route('/image/<slug>')
+@app.route('/st/<slug>')
+@app.route('/bg/<slug>')
+@app.route('/ft/<slug>')
 def single_content(slug):
     # ১. কন্টেন্ট ফেচ করা
     res = supabase.table('contents').select('*, categories(name_bn), profiles(username, display_name, avatar_url)').eq('slug', slug).execute()
@@ -231,7 +245,7 @@ def single_content(slug):
     related = supabase.table('contents').select('*, categories(name_bn)').eq('category_id', content['category_id']).eq('is_approved', True).neq('id', content_id).limit(4).execute().data
 
     return render_template('single.html', content=content, likes_count=likes_count, user_liked=user_liked, comments=comments, related=related)
-@app.route('/profile/<username>')
+@app.route('/p/<username>')
 def user_profile(username):
     user_res = supabase.table('profiles').select('*').eq('username', username).execute()
     if not user_res.data:
