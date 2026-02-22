@@ -92,29 +92,6 @@ def payout_history():
 
 
 # ==========================================
-# অ্যাডমিন পেআউট কন্ট্রোল প্যানেল (Admin Payouts)
-# ==========================================
-@app.route('/admin/payouts')
-@admin_required
-def admin_payouts():
-    # পেন্ডিং রিকোয়েস্টগুলো ফেচ করা
-    pending = supabase.table('payouts').select('*, profiles(username, display_name, email)').eq('status', 'Pending').order('created_at', desc=True).execute().data
-    
-    # অতীতের পেমেন্ট হিস্ট্রি (Approved / Rejected)
-    history = supabase.table('payouts').select('*, profiles(username, display_name, email)').neq('status', 'Pending').order('created_at', desc=True).limit(50).execute().data
-    
-    return render_template('admin_payouts.html', pending=pending, history=history)
-
-
-@app.route('/admin/payout/<action>/<int:id>')
-@admin_required
-def handle_payout(action, id):
-    status = 'Approved' if action == 'approve' else 'Rejected'
-    supabase.table('payouts').update({'status': status}).eq('id', id).execute()
-    flash(f"পেমেন্ট রিকোয়েস্ট {status} করা হয়েছে!", "success" if action == 'approve' else "error")
-    return redirect(url_for('admin_payouts'))
-    
-# ==========================================
 # সাইনআপ (Registration) রাউট
 # ==========================================
 
@@ -555,6 +532,31 @@ def delete_content(id):
     supabase.table('contents').delete().eq('id', id).execute()
     flash('কন্টেন্টটি ডিলিট করা হয়েছে।', 'error')
     return redirect(url_for('admin_panel'))
+
+
+# ==========================================
+# অ্যাডমিন পেআউট কন্ট্রোল প্যানেল (Admin Payouts)
+# ==========================================
+@app.route('/admin/payouts')
+@admin_required
+def admin_payouts():
+    # পেন্ডিং রিকোয়েস্টগুলো ফেচ করা
+    pending = supabase.table('payouts').select('*, profiles(username, display_name, email)').eq('status', 'Pending').order('created_at', desc=True).execute().data
+    
+    # অতীতের পেমেন্ট হিস্ট্রি (Approved / Rejected)
+    history = supabase.table('payouts').select('*, profiles(username, display_name, email)').neq('status', 'Pending').order('created_at', desc=True).limit(50).execute().data
+    
+    return render_template('admin_payouts.html', pending=pending, history=history)
+
+
+@app.route('/admin/payout/<action>/<int:id>')
+@admin_required
+def handle_payout(action, id):
+    status = 'Approved' if action == 'approve' else 'Rejected'
+    supabase.table('payouts').update({'status': status}).eq('id', id).execute()
+    flash(f"পেমেন্ট রিকোয়েস্ট {status} করা হয়েছে!", "success" if action == 'approve' else "error")
+    return redirect(url_for('admin_payouts'))
+    
 # শুধুমাত্র লোকাল টেস্টের জন্য, Vercel এটি ইগনোর করবে
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
