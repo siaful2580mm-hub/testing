@@ -5,6 +5,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 from flask import session
 from functools import wraps
+from flask import Flask, render_template, request, redirect, url_for, flash, abort, session, Response
 
 # .env ফাইল লোড করা (লোকাল ডেভেলপমেন্টের জন্য)
 load_dotenv()
@@ -314,16 +315,40 @@ def add_comment(content_id):
         flash('আপনার মন্তব্য যুক্ত হয়েছে।', 'success')
     return redirect(request.referrer)
 
+# ==========================================
+# ফোর্স ডাউনলোড (Force Download) রাউট
+# ==========================================
 @app.route('/download/<int:content_id>')
 def download_content(content_id):
-    # ডাউনলোড কাউন্ট বাড়ানো এবং অরিজিনাল ফাইলে রিডাইরেক্ট করা
-    res = supabase.table('contents').select('downloads, file_url').eq('id', content_id).execute().data
-    if res:
-        current_dl = res[0].get('downloads', 0)
-        supabase.table('contents').update({'downloads': current_dl + 1}).eq('id', content_id).execute()
-        return redirect(res[0]['file_url'])
-    abort(404)
+    # ডেটাবেস থেকে ছবির তথ্য বের করা
+    res = supabase.table('contents').select('title, slug, file_format, downloads, file_url').eq('id', content_id).execute().data
+    if not res:
+        abort(404)
 
+    content = res[0]
+    
+    # ১. ডাউনলোড কাউন্ট বাড়ানো
+    current_dl = content.get('downloads', 0)
+    supabase.table('contents').update({'downloads': current_dl + 1}).eq('id', content_id).execute()
+
+    # ২. ছবিটির লিংক এবং সুন্দর একটি ফাইলের নাম তৈরি করা (যেমন: ekusher-bhor.jpg)
+    file_url = content['file_url']
+    file_format = content.get('file_format', 'jpg').lower()
+    filename = f"{content['slug']}.{file_format}"
+
+    try:
+        # requests দিয়ে ImgBB থেকে ছবিটি ব্যাকএন্ডে নিয়ে আসা
+        r = requests.get(file_url, stream=True)
+        
+        # Response তৈরি করে Content-Disposition 'attachment' দেওয়া, যাতে সরাসরি ডাউনলোড শুরু হয়
+        return Response(
+            r.iter_content(chunk_size=1024 * 1024), # 1MB চাঙ্ক হিসেবে ডাউনলোড হবে
+            content_type=r.headers.get('Content-Type', 'image/jpeg'),
+            headers={'Content-Disposition': f'attachment; filename="{filename}"'}
+        )
+    except Exception as e:
+        flash("ডাউনলোড করতে সমস্যা হচ্ছে। দয়া করে আবার চেষ্টা করুন।", "error")
+        return redirect(request.referrer)
 
 # ==========================================
 # আপলোড রাউট (সঠিক User ID সহ)
