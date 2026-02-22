@@ -57,94 +57,74 @@ def index():
 # ==========================================
 # পাবলিক প্রোফাইল ভিউ (ফলো সিস্টেম সহ)
 # ==========================================
+# ==========================================
+# ফলো / আনফলো রাউট (Follow/Unfollow)
+# ==========================================
+@app.route('/follow/<username>', methods=['POST'])
+@login_required
+def follow_user(username):
+    # যাকে ফলো করবে তার আইডি বের করা
+    target_user = supabase.table('profiles').select('id').eq('username', username).execute().data
+    if not target_user:
+        abort(404)
+        
+    follower_id = session['user']['id']
+    following_id = target_user[0]['id']
+
+    if follower_id == following_id:
+        flash("আপনি নিজেকে ফলো করতে পারবেন না!", "error")
+        return redirect(request.referrer)
+
+    # আগে থেকেই ফলো করা আছে কিনা চেক করা
+    check = supabase.table('followers').select('*').eq('follower_id', follower_id).eq('following_id', following_id).execute().data
+    
+    if check:
+        # আনফলো লজিক
+        supabase.table('followers').delete().eq('follower_id', follower_id).eq('following_id', following_id).execute()
+        flash(f"আপনি {username} কে আনফলো করেছেন।", "success")
+    else:
+        # ফলো লজিক
+        supabase.table('followers').insert({"follower_id": follower_id, "following_id": following_id}).execute()
+        flash(f"আপনি {username} কে ফলো করেছেন!", "success")
+
+    return redirect(request.referrer)
+
+# ==========================================
+# পাবলিক প্রোফাইল ভিউ (আপডেটেড)
+# ==========================================
 @app.route('/profile/<username>')
 def user_profile(username):
-    # ১. ইউজার প্রোফাইল ফেচ করা
     user_res = supabase.table('profiles').select('*').eq('username', username).execute()
     if not user_res.data:
         abort(404)
-    
     profile_data = user_res.data[0]
     
-    # ২. আপলোড করা ছবি ফেচ করা
+    # আপলোড করা ছবি ফেচ
     contents_res = supabase.table('contents').select('*, categories(name_bn)').eq('user_id', profile_data['id']).eq('is_approved', True).order('created_at', desc=True).execute()
     uploaded_contents = contents_res.data
 
-    # ৩. ফলোয়ার এবং ফলোয়িং এর সংখ্যা বের করা
-    followers_data = supabase.table('followers').select('follower_id').eq('following_id', profile_data['id']).execute()
-    following_data = supabase.table('followers').select('following_id').eq('follower_id', profile_data['id']).execute()
-    
-    followers_count = len(followers_data.data)
-    following_count = len(following_data.data)
-
+    # --- ফলো সিস্টেম লজিক ---
     is_following = False
     followers_list = []
-    following_list = []
+    
+    # মোট ফলোয়ার গণনা
+    followers_count_res = supabase.table('followers').select('id', count='exact').eq('following_id', profile_data['id']).execute()
+    followers_count = followers_count_res.count if followers_count_res.count else 0
 
     if 'user' in session:
-        current_user_id = session['user']['id']
-        
-        # চেক করা: বর্তমান ইউজার কি এই প্রোফাইলকে ফলো করে?
-        check_follow = supabase.table('followers').select('*').eq('follower_id', current_user_id).eq('following_id', profile_data['id']).execute()
-        if check_follow.data:
+        # চেক করুন বর্তমান ইউজার এই প্রোফাইলকে ফলো করে কিনা
+        check = supabase.table('followers').select('*').eq('follower_id', session['user']['id']).eq('following_id', profile_data['id']).execute()
+        if check.data:
             is_following = True
 
-        # শর্ত: "শুধু অ্যাকাউন্ট মালিক নিজের ফলো লিস্ট দেখতে পারবে"
-        if current_user_id == profile_data['id']:
-            # যারা আমাকে ফলো করে (Followers)
-            follower_ids = [item['follower_id'] for item in followers_data.data]
+        # যদি ইউজার তার নিজের প্রোফাইলে থাকে, তবে ফলোয়ারদের লিস্ট বের করা
+        if session['user']['id'] == profile_data['id']:
+            followers_data = supabase.table('followers').select('follower_id').eq('following_id', profile_data['id']).execute().data
+            follower_ids = [f['follower_id'] for f in followers_data]
             if follower_ids:
-                followers_list = supabase.table('profiles').select('*').in_('id', follower_ids).execute().data
-            
-            # আমি যাদের ফলো করি (Following)
-            following_ids = [item['following_id'] for item in following_data.data]
-            if following_ids:
-                following_list = supabase.table('profiles').select('*').in_('id', following_ids).execute().data
+                followers_list = supabase.table('profiles').select('username, display_name, avatar_url').in_('id', follower_ids).execute().data
 
-    return render_template('profile.html', 
-                           profile=profile_data, 
-                           contents=uploaded_contents,
-                           followers_count=followers_count,
-                           following_count=following_count,
-                           is_following=is_following,
-                           followers_list=followers_list,
-                           following_list=following_list)
-
-# ==========================================
-# ফলো / আনফলো করার রাউট
-# ==========================================
-@app.route('/toggle-follow/<target_username>', methods=['POST'])
-@login_required
-def toggle_follow(target_username):
-    current_user_id = session['user']['id']
-    
-    # টার্গেট ইউজারের আইডি বের করা
-    target_res = supabase.table('profiles').select('id').eq('username', target_username).execute()
-    if not target_res.data:
-        flash("ইউজার পাওয়া যায়নি!", "error")
-        return redirect(request.referrer)
-        
-    target_id = target_res.data[0]['id']
-    
-    # নিজেকে নিজে ফলো করা থেকে আটকানো
-    if current_user_id == target_id:
-        flash("আপনি নিজেকে ফলো করতে পারবেন না!", "error")
-        return redirect(request.referrer)
-        
-    # চেক করা আগে থেকে ফলো করা আছে কিনা
-    check = supabase.table('followers').select('*').eq('follower_id', current_user_id).eq('following_id', target_id).execute()
-    
-    if check.data:
-        # যদি ফলো করা থাকে, তবে আনফলো (Delete) করবে
-        supabase.table('followers').delete().eq('follower_id', current_user_id).eq('following_id', target_id).execute()
-        flash(f"{target_username} কে আনফলো করা হয়েছে।", "success")
-    else:
-        # যদি ফলো করা না থাকে, তবে ফলো (Insert) করবে
-        supabase.table('followers').insert({'follower_id': current_user_id, 'following_id': target_id}).execute()
-        flash(f"আপনি এখন {target_username} কে অনুসরণ করছেন।", "success")
-        
-    return redirect(url_for('user_profile', username=target_username))
-
+    return render_template('profile.html', profile=profile_data, contents=uploaded_contents, is_following=is_following, followers_count=followers_count, followers_list=followers_list)
 # ==========================================
 # প্রোফাইল এডিট/আপডেট রাউট (লগইন করা ইউজার নিজের ডাটা আপডেট করবে)
 # ==========================================
