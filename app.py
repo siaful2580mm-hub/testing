@@ -35,18 +35,26 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-
+# ==========================================
+# হোমপেজ (Landing Page)
+# ==========================================
 @app.route('/')
 def index():
-    # Supabase থেকে সব অ্যাপ্রুভড কন্টেন্ট আনা
     try:
-        response = supabase.table('contents').select('*, categories(name_bn)').eq('is_approved', True).order('created_at', desc=True).execute()
-        contents = response.data
+        # ডেটাবেস থেকে সব অ্যাপ্রুভড কন্টেন্ট আনা (একসাথে)
+        res = supabase.table('contents').select('*, categories(name_bn, slug), profiles(username, display_name, avatar_url)').eq('is_approved', True).order('created_at', desc=True).limit(100).execute()
+        all_contents = res.data
     except Exception as e:
-        contents = []
+        all_contents = []
         print("Database Error:", e)
-    
-    return render_template('index.html', contents=contents)
+
+    # পাইথনের মাধ্যমে কন্টেন্টগুলোকে ক্যাটাগরি অনুযায়ী ভাগ করা
+    images = [c for c in all_contents if c['categories']['slug'] in ['image', 'poster', 'picture']][:6] # ৬টি ছবি
+    stories = [c for c in all_contents if c['categories']['slug'] == 'story'][:3] # ৩টি গল্প
+    fonts = [c for c in all_contents if c['categories']['slug'] == 'font'][:3]   # ৩টি ফন্ট
+    blogs = [c for c in all_contents if c['categories']['slug'] == 'blog'][:3]   # ৩টি ব্লগ
+
+    return render_template('index.html', images=images, stories=stories, fonts=fonts, blogs=blogs)
 # ==========================================
 # ইউজার পেআউট ও হিস্ট্রি (User Payout & History)
 # ==========================================
