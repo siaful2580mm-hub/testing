@@ -289,7 +289,7 @@ def upload_content():
                 "alt_text": alt_text,
                 "category_id": category_id,
                 "file_url": file_url,
-                "is_approved": True # (টেস্টিংয়ের জন্য True রাখা হলো, পরে অ্যাডমিন প্যানেলের জন্য False করে দিবেন)
+                "is_approved": False # (টেস্টিংয়ের জন্য True রাখা হলো, পরে অ্যাডমিন প্যানেলের জন্য False করে দিবেন)
             }
             supabase.table('contents').insert(new_content).execute()
             
@@ -309,18 +309,44 @@ def upload_content():
 # লগআউট (Logout) রাউট
 # ==========================================
 
-@app.route('/admin')
-def admin_panel():
-    response = supabase.table('contents').select('*, categories(name_bn)').eq('is_approved', False).execute()
-    return render_template('admin.html', pending_contents=response.data)
+# ==========================================
+# অ্যাডমিন চেকার ডেকোরেটর
+# ==========================================
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # যদি ইউজার লগইন করা না থাকে অথবা ইমেইল admin@gmail.com না হয়
+        if 'user' not in session or session['user']['email'] != 'admin@gmail.com':
+            flash("এই পেজে প্রবেশের অনুমতি আপনার নেই!", "error")
+            return redirect(url_for('index'))
+        return f(*args, **kwargs)
+    return decorated_function
 
-# অ্যাপ্রুভ লজিক
+# ==========================================
+# অ্যাডমিন প্যানেল রাউটস (Admin Panel)
+# ==========================================
+@app.route('/admin')
+@admin_required
+def admin_panel():
+    # যেসব কন্টেন্ট এখনো অ্যাপ্রুভ হয়নি, সেগুলো ফেচ করা
+    res = supabase.table('contents').select('*, categories(name_bn), profiles(username, display_name)').eq('is_approved', False).order('created_at', desc=True).execute()
+    return render_template('admin.html', pending_contents=res.data)
+
 @app.route('/admin/approve/<int:id>')
+@admin_required
 def approve_content(id):
+    # কন্টেন্ট অ্যাপ্রুভ করা
     supabase.table('contents').update({'is_approved': True}).eq('id', id).execute()
-    flash('কন্টেন্ট সফলভাবে অ্যাপ্রুভ করা হয়েছে!', 'success')
+    flash('কন্টেন্ট সফলভাবে অ্যাপ্রুভ করা হয়েছে এবং ওয়েবসাইটে পাবলিশ হয়েছে!', 'success')
     return redirect(url_for('admin_panel'))
 
+@app.route('/admin/delete/<int:id>')
+@admin_required
+def delete_content(id):
+    # কন্টেন্ট রিজেক্ট বা ডিলিট করা
+    supabase.table('contents').delete().eq('id', id).execute()
+    flash('কন্টেন্টটি ডিলিট করা হয়েছে।', 'error')
+    return redirect(url_for('admin_panel'))
 # ডিলিট লজিক
 @app.route('/admin/delete/<int:id>')
 def delete_content(id):
