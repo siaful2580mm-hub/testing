@@ -1,5 +1,23 @@
 document.addEventListener("DOMContentLoaded", function() {
 
+
+    document.addEventListener("DOMContentLoaded", function() {
+    
+    // --- Mobile Hamburger Menu Toggle ---
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active'); // মেনু ওপেন/ক্লোজ হবে
+            
+            // হ্যামবার্গার আইকন এনিমেশন (Optional, ক্রস চিহ্নের মতো করতে)
+            hamburger.classList.toggle('toggle-icon');
+        });
+    }
+
+
+    
     // ১. Flash Message Auto Hide (৪ সেকেন্ড পর মেসেজ গায়েব হয়ে যাবে)
     const flashMessages = document.querySelector('.flash-messages');
     if (flashMessages) {
