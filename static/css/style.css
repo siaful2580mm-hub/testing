@@ -404,7 +404,96 @@ h1, h2, h3 { font-weight: 700; letter-spacing: -0.5px; }
 
 /* বাটনগুলোকে আধুনিক (Pill Shape) করা হলো */
 .btn-primary, .nav-btn-highlight, .btn-download-adv {
-    border-radius: 30px !important; /* গোলাকার বাটন */
+ 
+   
+   
+   
+   /* =========================================
+   Premium Image Hover Overlay (Unsplash Style)
+========================================= */
+.card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px; /* স্মুথ বর্ডার */
+    border: none;
+    box-shadow: 0 5px 15px rgba(15, 30, 77, 0.08);
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); /* স্মুথ জুম এনিমেশন */
+}
+
+/* হোভার করলে ছবি একটু জুম হবে */
+.card:hover img {
+    transform: scale(1.08); 
+}
+
+/* ছবির ওপরের কালো/নেভি ব্লু গ্রেডিয়েন্ট পর্দা */
+.card-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to top, rgba(15, 30, 77, 0.95) 0%, rgba(15, 30, 77, 0.4) 60%, transparent 100%);
+    opacity: 0; /* প্রথমে লুকানো থাকবে */
+    transition: opacity 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 25px;
+    color: #fff;
+}
+
+/* কার্ডে মাউস রাখলে পর্দাটি ভেসে উঠবে */
+.card:hover .card-overlay {
+    opacity: 1; 
+}
+
+/* ================= লেখার এনিমেশন (নিচ থেকে উঠবে) ================= */
+.card-overlay h3 {
+    color: #fff;
+    margin: 0 0 8px 0;
+    font-size: 1.4rem;
+    transform: translateY(20px); /* একটু নিচে থাকবে */
+    transition: transform 0.4s ease;
+}
+
+.card-overlay p {
+    color: #e0e6ed;
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+    transform: translateY(20px);
+    transition: transform 0.4s ease 0.05s; /* সামান্য ডিল্যয় */
+}
+
+.card-overlay .author-info {
+    border-top: 1px solid rgba(255, 215, 0, 0.3); /* সোনালী বর্ডার */
+    padding-top: 12px;
+    margin-top: 0;
+    transform: translateY(20px);
+    transition: transform 0.4s ease 0.1s;
+    display: flex;
+    align-items: center;
+}
+
+.card-overlay .author-info img {
+    width: 30px; height: 30px; border-radius: 50%; margin-right: 10px; border: 2px solid var(--accent);
+}
+
+.card-overlay .author-info span {
+    color: var(--accent); /* সোনালী নাম */
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* হোভার করলে লেখাগুলো জায়গা মতো উঠে আসবে */
+.card:hover .card-overlay h3,
+.card:hover .card-overlay p,
+.card:hover .card-overlay .author-info {
+    transform: translateY(0); 
+}: 30px !important; /* গোলাকার বাটন */
     padding: 10px 24px !important;
     font-size: 0.9rem !important;
     letter-spacing: 0.5px;
