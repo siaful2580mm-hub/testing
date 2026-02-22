@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+    
     // --- প্রফেশনাল মোবাইল সাইডবার মেনু (Toggle Menu) ---
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('nav-links');
@@ -36,38 +37,5 @@ document.addEventListener("DOMContentLoaded", function() {
             flashMessages.style.transform = "translateY(-20px)";
             setTimeout(() => flashMessages.remove(), 600);
         }, 4000);
-    }
-});
-
-    // ২. Image Upload Preview (আপলোড করার আগে ছবি দেখা)
-    const fileInput = document.getElementById('fileInput');
-    const imagePreview = document.getElementById('imagePreview');
-
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.style.display = 'none';
-                imagePreview.src = '';
-            }
-        });
-    }
-
-    // ৩. Auto Slug Formatter (ইংরেজিতে স্পেস দিলে হাইফেন বসে যাবে)
-    const slugInput = document.getElementById('slugInput');
-    if (slugInput) {
-        slugInput.addEventListener('input', function() {
-            let val = this.value;
-            // ইংরেজি বর্ণ, সংখ্যা এবং হাইফেন ছাড়া সব রিমুভ করবে এবং স্পেসকে হাইফেন করবে
-            val = val.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            this.value = val;
-        });
     }
 });
