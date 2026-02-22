@@ -90,6 +90,44 @@ def follow_user(username):
 
     return redirect(request.referrer)
 
+
+# ==========================================
+# ইনসাইট ও আয় (Insight & Earning) রাউট
+# ==========================================
+@app.route('/insight')
+@login_required
+def user_insight():
+    user_id = session['user']['id']
+    
+    # ইউজারের আপলোড করা সব কন্টেন্ট ফেচ করা
+    res = supabase.table('contents').select('title, slug, views, downloads, file_url, is_approved, created_at').eq('user_id', user_id).order('created_at', desc=True).execute()
+    contents = res.data
+
+    total_views = 0
+    total_downloads = 0
+    total_earnings = 0.0
+
+    # আয়ের হিসাব (Calculation)
+    for item in contents:
+        v = item.get('views') or 0
+        d = item.get('downloads') or 0
+        
+        # প্রতি ভিউ ০.৪ টাকা, প্রতি ডাউনলোড ০.৫ টাকা
+        earning = (v * 0.4) + (d * 0.5)
+        
+        item['views'] = v
+        item['downloads'] = d
+        item['earning'] = round(earning, 2) # দশমিকের পর ২ ঘর পর্যন্ত রাখা
+        
+        if item.get('is_approved'):
+            total_views += v
+            total_downloads += d
+            total_earnings += earning
+
+    total_earnings = round(total_earnings, 2)
+
+    return render_template('insight.html', contents=contents, total_views=total_views, total_downloads=total_downloads, total_earnings=total_earnings)
+    
 # ==========================================
 # পাবলিক প্রোফাইল ভিউ (আপডেটেড)
 # ==========================================
