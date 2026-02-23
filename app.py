@@ -243,8 +243,18 @@ def single_content(slug):
 
     # ৫. রিলেটেড কন্টেন্ট (একই ক্যাটাগরির অন্য ছবি)
     related = supabase.table('contents').select('*, categories(name_bn)').eq('category_id', content['category_id']).eq('is_approved', True).neq('id', content_id).limit(4).execute().data
+# ... (লাইক, কমেন্ট, রিলেটেড ফেচ করার কোডগুলো আগের মতোই থাকবে) ...
 
-    return render_template('single.html', content=content, likes_count=likes_count, user_liked=user_liked, comments=comments, related=related)
+    # ক্যাটাগরি চেক করে আলাদা টেমপ্লেট রেন্ডার করা
+    cat_slug = content['categories']['slug']
+    
+    if cat_slug in ['story', 'blog']:
+        # গল্প এবং ব্লগের জন্য আলাদা রিডিং টেমপ্লেট
+        return render_template('story_single.html', content=content, likes_count=likes_count, user_liked=user_liked, comments=comments, related=related)
+    else:
+        # ছবি, পোস্টার এবং ফন্টের জন্য গ্যালারি টেমপ্লেট
+        return render_template('single.html', content=content, likes_count=likes_count, user_liked=user_liked, comments=comments, related=related)
+        
 @app.route('/p/<username>')
 def user_profile(username):
     user_res = supabase.table('profiles').select('*').eq('username', username).execute()
