@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}ইনসাইট ও আয় | পিকঘর{% endblock %}
+
+{% block head %}
+<style>
+    .insight-header { text-align: center; margin-bottom: 40px; margin-top: 20px; }
+    .insight-header h2 { color: var(--nav-bg); margin: 0; font-size: 2.2rem; font-weight: 700; }
+    .insight-header p { color: #666; font-size: 1.05rem; margin-top: 5px; }
+    
+    /* Summary Cards */
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 50px; }
+    .summary-card { background: var(--surface-color); padding: 30px; border-radius: 12px; border: 1px solid rgba(15, 30, 77, 0.05); text-align: center; box-shadow: 0 10px 30px rgba(15, 30, 77, 0.04); transition: transform 0.3s; }
+    .summary-card:hover { transform: translateY(-5px); border-color: rgba(255, 215, 0, 0.4); }
+    .summary-card i { font-size: 2.5rem; color: var(--accent); margin-bottom: 15px; }
+    .summary-card h3 { margin: 0; font-size: 2.5rem; color: var(--nav-bg); font-weight: 700; }
+    .summary-card p { margin: 5px 0 0 0; color: #666; font-size: 1.1rem; font-weight: bold; }
+    
+    .earning-card { background: #fdfdfd; border: 1px solid #e0e6ed; }
+    .earning-card i { color: #2e7d32; }
+    .earning-card h3 { color: #2e7d32; }
+
+    /* Content Table */
+    .insight-table-wrapper { background: var(--surface-color); border: 1px solid rgba(15, 30, 77, 0.08); border-radius: 12px; overflow-x: auto; box-shadow: 0 5px 20px rgba(15, 30, 77, 0.03); margin-bottom: 30px;}
+    .insight-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .insight-table th, .insight-table td { padding: 18px; text-align: left; border-bottom: 1px solid #eee; vertical-align: middle; }
+    .insight-table th { background: var(--nav-bg) !important; color: var(--accent) !important; font-weight: bold; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; }
+    .insight-table tr:hover { background: #f8f9fa; }
+    .insight-table img { width: 65px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; }
+    
+    .status-badge { padding: 6px 12px; border-radius: 30px; font-size: 0.85rem; font-weight: bold; display: inline-block;}
+    .status-approved { background: #e8f4e9; color: #2e7d32; border: 1px solid #c8e6c9;}
+    .status-pending { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2;}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="insight-header">
+    <h2><i class="fa-solid fa-chart-line" style="color: var(--accent); margin-right: 10px;"></i> আপনার ইনসাইট ও আয়</h2>
+    <p>আপনার আপলোড করা ছবি ও গল্পগুলোর পারফরম্যান্স এবং আয়ের বিবরণ</p>
+</div>
+
+<!-- Summary Cards (মোট হিসাব) -->
+<div class="summary-grid">
+    <div class="summary-card">
+        <i class="fa-solid fa-eye"></i>
+        <h3>{{ total_views }}</h3>
+        <p>মোট ভিউ</p>
+    </div>
+    <div class="summary-card">
+        <i class="fa-solid fa-download"></i>
+        <h3>{{ total_downloads }}</h3>
+        <p>মোট ডাউনলোড</p>
+    </div>
+    <div class="summary-card earning-card">
+        <i class="fa-solid fa-sack-dollar"></i>
+        <h3>৳ {{ total_earnings }}</h3>
+        <p>সর্বমোট আয়</p>
+    </div>
+</div>
+
+<h3 style="color: var(--nav-bg); margin-bottom: 20px; border-bottom: 2px solid rgba(15, 30, 77, 0.08); padding-bottom: 10px;"><i class="fa-solid fa-list" style="color: var(--accent); margin-right: 8px;"></i> কন্টেন্ট অনুযায়ী আয়ের হিসাব</h3>
+
+<div class="insight-table-wrapper">
+    <table class="insight-table">
+        <thead>
+            <tr>
+                <th>কন্টেন্ট</th>
+                <th>শিরোনাম</th>
+                <th>স্ট্যাটাস</th>
+                <th style="text-align: center;">ভিউ (০.৪৳)</th>
+                <th style="text-align: center;">ডাউনলোড (০.৫৳)</th>
+                <th style="text-align: right;">মোট আয়</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in contents %}
+            <tr>
+                <td><img src="{{ item.file_url }}" alt="Thumbnail"></td>
+                <td>
+                    {% if item.is_approved %}
+                        <!-- Dynamic URL Update Here -->
+                        <a href="{{ get_url(item) }}" target="_blank" style="text-decoration: none; color: var(--nav-bg); font-weight: bold; font-size: 1.05rem;">{{ item.title }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.8rem; color: #888; margin-left: 5px;"></i></a>
+                    {% else %}
+                        <span style="font-weight: bold; color: #666; font-size: 1.05rem;">{{ item.title }}</span>
+                    {% endif %}
+                    <br>
+                    <span style="font-size: 0.85rem; color: #888;"><i class="fa-regular fa-calendar-days"></i> {{ item.created_at[:10] }}</span>
+                </td>
+                <td>
+                    {% if item.is_approved %}
+                        <span class="status-badge status-approved"><i class="fa-solid fa-check"></i> পাবলিশড</span>
+                    {% else %}
+                        <span class="status-badge status-pending"><i class="fa-solid fa-clock-rotate-left"></i> পেন্ডিং</span>
+                    {% endif %}
+                </td>
+                <td style="text-align: center; font-weight: bold; color: #555; font-size: 1.1rem;">{{ item.views }}</td>
+                <td style="text-align: center; font-weight: bold; color: #555; font-size: 1.1rem;">{{ item.downloads }}</td>
+                <td style="text-align: right; font-weight: bold; color: #2e7d32; font-size: 1.15rem;">৳ {{ item.earning }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 40px; color: #777; font-size: 1.1rem;">
+                    <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                    আপনি এখনো কোনো কন্টেন্ট আপলোড করেননি।
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p style="text-align: center; margin-top: 15px; font-size: 0.9rem; color: #888;"><i class="fa-solid fa-circle-info"></i> বি.দ্র: শুধুমাত্র অনুমোদিত (Published) কন্টেন্টের আয় মোট আয়ের সাথে যোগ করা হয়।</p>
+{% endblock %}
