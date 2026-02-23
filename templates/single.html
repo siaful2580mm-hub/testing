@@ -132,9 +132,30 @@
            Responsive & Masonry Grid for Related
         ========================================= */
         @media (max-width: 900px) {
-            .action-bar { flex-direction: column; align-items: flex-start; }
+            .action-bar { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .action-buttons { width: 100%; } /* মোবাইলে বাটন এরিয়া ফুল-উইডথ নিবে */
             .content-details { grid-template-columns: 1fr; gap: 30px; padding: 30px 20px; }
             .comments-section { padding: 0 20px 30px 20px; }
+        }
+
+        /* মোবাইলের জন্য স্পেশাল বাটন লেআউট (Download Button Fix) */
+        @media (max-width: 600px) {
+            .action-buttons {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* শেয়ার এবং লাইক পাশাপাশি থাকবে */
+                gap: 10px;
+                width: 100%;
+            }
+            .action-buttons form { width: 100%; margin: 0; }
+            .btn-ui { width: 100%; justify-content: center; padding: 12px 0; }
+            
+            /* ডাউনলোড বাটনটি নিচে সম্পূর্ণ জায়গা জুড়ে থাকবে */
+            .btn-download-hero {
+                grid-column: 1 / -1; 
+                justify-content: center;
+                width: 100%;
+                padding: 15px 0;
+            }
         }
 
         /* Related Grid Styles (Copied from Homepage for consistency) */
