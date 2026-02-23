@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name_bn }} গ্যালারি | পিকঘর{% endblock %}
+
+{% block head %}
+<style>
+    /* =========================================
+       Category Page Header
+    ========================================= */
+    .category-header {
+        background: radial-gradient(circle at top right, #162b66, var(--nav-bg));
+        color: var(--surface-color);
+        padding: 60px 20px;
+        text-align: center;
+        border-radius: 12px;
+        margin-top: 20px;
+        margin-bottom: 50px;
+        box-shadow: 0 10px 30px rgba(15, 30, 77, 0.15);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .category-header::after {
+        content: ''; position: absolute; top: -50px; left: -50px;
+        width: 200px; height: 200px; background: rgba(255, 215, 0, 0.05);
+        border-radius: 50%; filter: blur(40px);
+    }
+
+    .category-header h1 {
+        font-size: 2.8rem;
+        margin: 0 0 10px 0;
+        color: var(--accent);
+        font-weight: 700;
+        position: relative; z-index: 1;
+    }
+    
+    .category-header p {
+        font-size: 1.1rem;
+        color: #e0e6ed;
+        margin: 0;
+        position: relative; z-index: 1;
+    }
+
+    /* =========================================
+       Premium Card Hover (Pinterest Style)
+    ========================================= */
+    .card-link-wrapper {
+        display: block; position: relative; height: 100%; border-radius: 8px; overflow: hidden;
+        background: var(--surface-color); box-shadow: 0 5px 15px rgba(15, 30, 77, 0.08);
+    }
+    .card-img-top { width: 100%; height: 100%; min-height: 250px; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    .card-link-wrapper:hover .card-img-top { transform: scale(1.08); }
+
+    .card-overlay {
+        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(to top, rgba(15, 30, 77, 0.95) 0%, rgba(15, 30, 77, 0.4) 50%, transparent 100%);
+        opacity: 0; transition: opacity 0.4s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 25px; color: #fff; z-index: 2;
+    }
+    .card-link-wrapper:hover .card-overlay { opacity: 1; }
+    
+    .card-overlay h3 { color: #fff; margin: 0 0 8px 0; font-size: 1.3rem; font-weight: 700; transform: translateY(20px); transition: transform 0.4s ease; }
+    .card-overlay p { color: #e0e6ed; font-size: 0.9rem; margin-bottom: 15px; transform: translateY(20px); transition: transform 0.4s ease 0.05s; }
+    .card-overlay .author-info { border-top: 1px solid rgba(255, 215, 0, 0.3); padding-top: 12px; margin-top: 0; transform: translateY(20px); transition: transform 0.4s ease 0.1s; display: flex; align-items: center; }
+    .card-overlay .author-info img { width: 30px; height: 30px; border-radius: 50%; margin-right: 10px; border: 2px solid var(--accent); object-fit: cover;}
+    .card-overlay .author-info span { color: var(--accent); font-weight: bold; font-size: 0.85rem; }
+
+    .card-link-wrapper:hover .card-overlay h3,
+    .card-link-wrapper:hover .card-overlay p,
+    .card-link-wrapper:hover .card-overlay .author-info { transform: translateY(0); }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Category Header -->
+<div class="category-header">
+    <h1><i class="fa-solid fa-layer-group"></i> {{ category.name_bn }}</h1>
+    <p>সেরা ও নান্দনিক {{ category.name_bn }}-এর সম্পূর্ণ সংগ্রহশালা</p>
+</div>
+
+<!-- Content Grid -->
+<div class="grid">
+    {% for item in contents %}
+    <div class="card">
+        <a href="{{ get_url(item) }}" class="card-link-wrapper">
+            <!-- যদি ফন্ট হয় তাহলে অবজেক্ট ফিট 'contain' হবে, না হলে 'cover' -->
+            <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" class="card-img-top" {% if category.slug == 'font' %}style="background: #fff; padding: 10px; object-fit: contain;"{% endif %}>
+            
+            <div class="card-overlay">
+                <h3>{{ item.title }}</h3>
+                {% if category.slug == 'story' or category.slug == 'blog' %}
+                    <p style="font-style: italic;">"{{ item.description[:60] }}..."</p>
+                {% else %}
+                    <p>{{ item.description[:60] }}...</p>
+                {% endif %}
+                <div class="author-info">
+                    <img src="{{ item.profiles.avatar_url }}" alt="Author">
+                    <span>@{{ item.profiles.username }}</span>
+                </div>
+            </div>
+        </a>
+    </div>
+    {% else %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 50px; background: var(--surface-color); border-radius: 12px; border: 1px dashed #ccc;">
+        <i class="fa-solid fa-folder-open" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
+        <p style="font-size: 1.2rem; color: #777; margin: 0;">এই মুহূর্তে এখানে কোনো কন্টেন্ট নেই।</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
