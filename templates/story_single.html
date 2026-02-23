@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}{{ content.title }} | পিকঘর{% endblock %}
+
+{% block head %}
+<meta name="description" content="{{ content.description }}">
+<meta property="og:title" content="{{ content.title }}">
+<meta property="og:image" content="{{ content.file_url }}">
+
+<style>
+    /* =========================================
+       Premium Reading Template (Medium Style)
+    ========================================= */
+    .reading-container {
+        max-width: 800px; /* পড়ার সুবিধার জন্য প্রস্থ কমানো হয়েছে */
+        margin: 0 auto 50px auto;
+        background: var(--surface-color);
+        padding: 50px;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(15, 30, 77, 0.05);
+    }
+
+    /* Story Header */
+    .story-header { text-align: center; margin-bottom: 30px; }
+    .story-title { font-size: 2.8rem; color: var(--nav-bg); margin: 0 0 15px 0; font-weight: 700; line-height: 1.3; }
+    
+    .story-badges { margin-bottom: 20px; }
+    .badge-genre { background: var(--nav-bg); color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; margin-right: 10px; }
+    .badge-original { background: #e8f4e9; color: #2e7d32; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid #c8e6c9;}
+    .badge-copied { background: #fff3e0; color: #e65100; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid #ffe0b2;}
+
+    /* Author Info */
+    .story-meta { display: flex; align-items: center; justify-content: center; gap: 15px; color: #666; font-size: 0.95rem; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0; margin-bottom: 30px; }
+    .story-meta img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
+    .story-meta a { color: var(--nav-bg); font-weight: bold; text-decoration: none; font-size: 1.1rem; }
+    .story-meta span { display: flex; align-items: center; gap: 5px; }
+
+    /* Story Cover Image */
+    .story-cover { width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+
+    /* Story Body (Reading Area) */
+    .story-body {
+        font-size: 1.25rem; /* পড়ার জন্য বড় ফন্ট */
+        line-height: 2.2;
+        color: #2c3e50;
+        white-space: pre-wrap;
+        text-align: justify;
+    }
+    .story-body::first-letter {
+        font-size: 3.5rem;
+        font-weight: bold;
+        color: var(--accent);
+        float: left;
+        line-height: 1;
+        margin-right: 10px;
+        margin-top: 5px;
+    }
+
+    /* Actions & Next Part */
+    .story-footer { margin-top: 50px; border-top: 2px dashed #eee; padding-top: 30px; text-align: center; }
+    
+    .btn-next-part { display: inline-block; background: var(--nav-bg); color: #fff !important; padding: 15px 40px; font-size: 1.2rem; border-radius: 30px; text-decoration: none; font-weight: bold; box-shadow: 0 5px 15px rgba(15, 30, 77, 0.2); transition: 0.3s; margin-bottom: 30px;}
+    .btn-next-part:hover { transform: translateY(-3px); background: var(--accent); color: var(--nav-bg) !important; }
+
+    /* Like & Share Action */
+    .action-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
+    .btn-action { background: #fdfdfd; border: 1px solid #ddd; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 1rem; color: var(--nav-bg); transition: 0.3s; }
+    .btn-action:hover { background: #eee; }
+    .btn-liked { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .reading-container { padding: 25px; }
+        .story-title { font-size: 2rem; }
+        .story-body { font-size: 1.15rem; line-height: 2; }
+        .story-cover { height: 250px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<article class="reading-container">
+    
+    <!-- 1. Header (Title & Badges) -->
+    <header class="story-header">
+        <div class="story-badges">
+            {% if content.genre %}
+                <span class="badge-genre"><i class="fa-solid fa-tags"></i> {{ content.genre }}</span>
+            {% endif %}
+            
+            {% if content.is_original %}
+                <span class="badge-original"><i class="fa-solid fa-pen-nib"></i> মৌলিক লেখা</span>
+            {% else %}
+                <span class="badge-copied"><i class="fa-solid fa-copy"></i> সংগৃহীত</span>
+            {% endif %}
+        </div>
+        
+        <h1 class="story-title">{{ content.title }}</h1>
+        <p style="color: #666; font-size: 1.1rem; font-style: italic;">{{ content.description }}</p>
+    </header>
+
+    <!-- 2. Meta Info (Author, Date, Views) -->
+    <div class="story-meta">
+        <img src="{{ content.profiles.avatar_url }}" alt="Author">
+        <div>
+            <a href="/p/{{ content.profiles.username }}">{{ content.profiles.display_name or content.profiles.username }}</a>
+            <div style="display: flex; gap: 15px; margin-top: 5px; font-size: 0.85rem; font-weight: normal;">
+                <span><i class="fa-regular fa-calendar"></i> {{ content.created_at[:10] }}</span>
+                <span><i class="fa-regular fa-eye"></i> {{ content.views }} ভিউ</span>
+                <span><i class="fa-regular fa-heart"></i> {{ likes_count }} লাইক</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Edit Button (If Owner) -->
+    {% if session.get('user') and session['user']['id'] == content.user_id %}
+    <div style="text-align: center; margin-bottom: 20px;">
+        <a href="/edit-content/{{ content.id }}" class="btn-primary" style="background: #4caf50; font-size: 0.9rem;"><i class="fa-solid fa-pen-to-square"></i> লেখাটি এডিট করুন</a>
+    </div>
+    {% endif %}
+
+    <!-- 4. Cover Image -->
+    <img src="{{ content.file_url }}" alt="{{ content.alt_text }}" class="story-cover">
+
+    <!-- 5. Main Story Body -->
+    <div class="story-body">{{ content.body_text }}</div>
+
+    <!-- 6. Footer Actions -->
+    <footer class="story-footer">
+        
+        <!-- Next Part Button -->
+        {% if content.next_part_link %}
+            <a href="{{ content.next_part_link }}" class="btn-next-part">পরের পর্ব পড়ুন <i class="fa-solid fa-arrow-right-long" style="margin-left: 8px;"></i></a>
+        {% endif %}
+
+        <!-- Like & Share -->
+        <div class="action-row">
+            <form action="/like/{{ content.id }}" method="POST" style="margin: 0;">
+                <button type="submit" class="btn-action {% if user_liked %}btn-liked{% endif %}">
+                    {% if user_liked %}<i class="fa-solid fa-heart"></i> লাইকড{% else %}<i class="fa-regular fa-heart"></i> লাইক দিন{% endif %}
+                </button>
+            </form>
+            <button onclick="copyShareLink()" class="btn-action"><i class="fa-solid fa-share-nodes"></i> শেয়ার করুন</button>
+        </div>
+    </footer>
+</article>
+
+<!-- ==========================================
+     Comments Section (গল্পের নিচে কমেন্ট বক্স)
+=========================================== -->
+<div class="reading-container" style="padding: 30px 50px;">
+    <h3 style="color: var(--nav-bg); margin-top:0; border-bottom: 2px solid #eee; padding-bottom: 10px;"><i class="fa-regular fa-comments"></i> মন্তব্য সমূহ ({{ comments|length }})</h3>
+    
+    {% if session.get('user') %}
+    <form action="/comment/{{ content.id }}" method="POST" style="margin-bottom: 25px; display:flex; gap:10px;">
+        <input type="text" name="text" placeholder="আপনার সুন্দর মন্তব্যটি লিখুন..." required style="flex:1; padding:12px; border:1px solid #ccc; border-radius:30px; font-family:inherit;">
+        <button type="submit" class="btn-primary" style="border:none; cursor:pointer; border-radius:30px; padding: 0 25px;"><i class="fa-solid fa-paper-plane"></i></button>
+    </form>
+    {% else %}
+    <p style="color: #666; font-size: 0.95rem; background: #fdfdfd; padding: 15px; border: 1px solid #eee; text-align: center; border-radius: 8px;">মন্তব্য করতে দয়া করে <a href="/login" style="color: var(--accent); font-weight: bold;">লগইন করুন</a>।</p>
+    {% endif %}
+
+    <div>
+        {% for comment in comments %}
+        <div style="display: flex; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #eee;">
+            <img src="{{ comment.profiles.avatar_url }}" alt="User" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover;">
+            <div>
+                <a href="/p/{{ comment.profiles.username }}" style="font-weight: bold; color: var(--nav-bg); text-decoration: none;">{{ comment.profiles.display_name or comment.profiles.username }}</a>
+                <span style="font-size: 0.8rem; color: #888; margin-left: 10px;">{{ comment.created_at[:10] }}</span>
+                <p style="margin: 5px 0 0 0; color: #444; font-size: 1rem;">{{ comment.text }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ==========================================
+     Related Stories (একই ক্যাটাগরির অন্য গল্প)
+=========================================== -->
+{% if related %}
+<div class="reading-container" style="background: transparent; box-shadow: none; padding: 0;">
+    <h3 style="color: var(--nav-bg); margin-bottom: 20px;"><i class="fa-solid fa-layer-group"></i> আরও পড়ুন</h3>
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+        {% for item in related %}
+        <div class="card" style="background: var(--surface-color);">
+            <a href="{{ get_url(item) }}" style="display: block; text-decoration: none; color: inherit;">
+                <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" style="height: 160px;">
+                <div style="padding: 15px;">
+                    <h4 style="margin:0 0 5px 0; font-size: 1.1rem; color: var(--nav-bg);">{{ item.title }}</h4>
+                    <p style="font-size: 0.85rem; color: #666; margin:0;">{{ item.profiles.display_name or item.profiles.username }}</p>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<script>
+    function copyShareLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('লিংক সফলভাবে কপি করা হয়েছে!');
+        });
+    }
+</script>
+{% endblock %}
