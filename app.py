@@ -197,13 +197,16 @@ def user_insight():
 
     return render_template('insight.html', contents=contents, total_views=total_views, total_downloads=total_downloads, total_earnings=total_earnings)
 
+# ==========================================
+# সিঙ্গেল ইমেজ/কন্টেন্ট ডিটেইলস পেজ
+# ==========================================
 @app.route('/image/<slug>')
 @app.route('/st/<slug>')
 @app.route('/bg/<slug>')
 @app.route('/ft/<slug>')
 def single_content(slug):
-    # ১. কন্টেন্ট ফেচ করা
-    res = supabase.table('contents').select('*, categories(name_bn), profiles(username, display_name, avatar_url)').eq('slug', slug).execute()
+    # ১. কন্টেন্ট ফেচ করা (categories(name_bn, slug) যুক্ত করা হয়েছে)
+    res = supabase.table('contents').select('*, categories(name_bn, slug), profiles(username, display_name, avatar_url)').eq('slug', slug).execute()
     if not res.data:
         abort(404)
     
@@ -211,22 +214,20 @@ def single_content(slug):
     content_id = content['id']
 
     # ২. স্মার্ট ভিউ (View) কাউন্টার (এক ডিভাইসে/সেশনে মাত্র একবার কাউন্ট হবে)
-    viewed_items = session.get('viewed_items', []) # সেশন থেকে দেখা আইটেমগুলোর লিস্ট নেওয়া
+    viewed_items = session.get('viewed_items', [])
     
     if content_id not in viewed_items:
-        # যদি ইউজার এই ছবিটি আগে না দেখে থাকে, তবেই ভিউ ১ বাড়বে
+        # যদি ইউজার এই কন্টেন্ট আগে না দেখে থাকে, তবেই ভিউ ১ বাড়বে
         new_views = content.get('views', 0) + 1
         supabase.table('contents').update({'views': new_views}).eq('id', content_id).execute()
         content['views'] = new_views
         
-        # সেশনে ছবির আইডি সেভ করে রাখা হচ্ছে, যাতে রিফ্রেশ করলে আর না বাড়ে
         viewed_items.append(content_id)
         session['viewed_items'] = viewed_items
-        session.modified = True  # ফ্লাস্ককে জানানো হলো যে সেশন আপডেট হয়েছে
+        session.modified = True
     else:
-        # রিফ্রেশ করলে ডাটাবেসে আর আপডেট হবে না, শুধু বর্তমান ভিউ সংখ্যাটাই দেখাবে
+        # রিফ্রেশ করলে ডাটাবেসে আর আপডেট হবে না
         pass
-
 
     # ৩. লাইক (Like) কাউন্ট এবং চেক করা
     likes_res = supabase.table('likes').select('id', count='exact').eq('content_id', content_id).execute()
@@ -241,11 +242,11 @@ def single_content(slug):
     # ৪. কমেন্টস (Comments) ফেচ করা
     comments = supabase.table('comments').select('*, profiles(username, display_name, avatar_url)').eq('content_id', content_id).order('created_at', desc=True).execute().data
 
-    # ৫. রিলেটেড কন্টেন্ট (একই ক্যাটাগরির অন্য ছবি)
-    related = supabase.table('contents').select('*, categories(name_bn)').eq('category_id', content['category_id']).eq('is_approved', True).neq('id', content_id).limit(4).execute().data
-# ... (লাইক, কমেন্ট, রিলেটেড ফেচ করার কোডগুলো আগের মতোই থাকবে) ...
+    # ৫. রিলেটেড কন্টেন্ট (একই ক্যাটাগরির অন্য ছবি/গল্প)
+    # এখানেও categories(name_bn, slug) দেওয়া হয়েছে, যাতে লিংকে কোনো এরর না আসে
+    related = supabase.table('contents').select('*, categories(name_bn, slug), profiles(username, display_name)').eq('category_id', content['category_id']).eq('is_approved', True).neq('id', content_id).limit(4).execute().data
 
-    # ক্যাটাগরি চেক করে আলাদা টেমপ্লেট রেন্ডার করা
+    # ৬. ক্যাটাগরি চেক করে আলাদা টেমপ্লেট রেন্ডার করা
     cat_slug = content['categories']['slug']
     
     if cat_slug in ['story', 'blog']:
@@ -254,7 +255,6 @@ def single_content(slug):
     else:
         # ছবি, পোস্টার এবং ফন্টের জন্য গ্যালারি টেমপ্লেট
         return render_template('single.html', content=content, likes_count=likes_count, user_liked=user_liked, comments=comments, related=related)
-        
 @app.route('/p/<username>')
 def user_profile(username):
     user_res = supabase.table('profiles').select('*').eq('username', username).execute()
