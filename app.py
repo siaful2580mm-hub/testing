@@ -211,7 +211,12 @@ def user_insight():
     total_earnings = round(total_earnings, 2)
 
     return render_template('insight.html', contents=contents, total_views=total_views, total_downloads=total_downloads, total_earnings=total_earnings)
-
+# ==========================================
+# আমাদের সম্পর্কে (About Us) পেজ
+# ==========================================
+@app.route('/about')
+def about():
+    return render_template('about.html')
 # ==========================================
 # সিঙ্গেল ইমেজ/কন্টেন্ট ডিটেইলস পেজ
 # ==========================================
