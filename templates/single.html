@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ content.title }} | সাহিত্যিক সংগ্রহশালা{% endblock %}
+{% block title %}{{ content.title }} | পিকঘর{% endblock %}
 
 {% block head %}
     <meta name="description" content="{{ content.description }}">
@@ -8,142 +8,291 @@
     <meta property="og:image" content="{{ content.file_url }}">
     
     <style>
-        .details-wrapper { display: flex; flex-wrap: wrap; gap: 30px; margin-bottom: 40px; }
-        .image-section { flex: 1 1 500px; text-align: center; }
-        .image-section img { max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 5px solid #fff; }
+        /* =========================================
+           Premium Image Viewer Layout
+        ========================================= */
+        .single-container {
+            max-width: 1200px;
+            margin: 0 auto 40px auto;
+            background: var(--surface-color);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(15, 30, 77, 0.05);
+            overflow: hidden;
+            border: 1px solid rgba(15, 30, 77, 0.05);
+        }
+
+        /* Image Showcase Area */
+        .image-showcase {
+            width: 100%;
+            background: #f4f6f9; /* সফট গ্রে ব্যাকগ্রাউন্ড যাতে ছবি ফুটে ওঠে */
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
         
-        .info-section { flex: 1 1 350px; background: #fff; padding: 25px; border-radius: 8px; border: 1px solid var(--border); }
-        .info-section h1 { color: var(--accent); margin-top: 0; font-size: 2.2rem; margin-bottom: 5px; }
-        .author-box { display: flex; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); }
-        .author-box img { width: 40px; height: 40px; border-radius: 50%; margin-right: 12px; object-fit: cover; }
-        .author-box a { text-decoration: none; color: var(--text-main); font-weight: bold; font-size: 1.1rem; }
+        .image-showcase img {
+            max-width: 100%;
+            max-height: 75vh; /* স্ক্রিনের ৭৫% জায়গা নিবে */
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+
+        /* Action Bar (Author Info + Buttons) */
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .author-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+        .author-card img {
+            width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+        .author-card div { display: flex; flex-direction: column; }
+        .author-name { color: var(--nav-bg); font-weight: 700; font-size: 1.2rem; margin: 0; }
+        .author-user { color: #888; font-size: 0.9rem; margin: 0; }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
         
-        .meta-list { list-style: none; padding: 0; margin: 0 0 20px 0; color: #555; font-size: 1rem; line-height: 1.8; }
-        .meta-list li strong { color: var(--text-main); }
-        
-        .stats-box { display: flex; gap: 20px; margin-bottom: 25px; background: var(--bg-color); padding: 15px; border-radius: 6px; justify-content: space-around; text-align: center; font-weight: bold; color: var(--accent); }
-        
-        .action-btns { display: flex; gap: 10px; margin-bottom: 20px; }
-        .btn-action { flex: 1; text-align: center; padding: 10px; background: #fdfdfd; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s; color: var(--text-main); }
-        .btn-action:hover { background: var(--border); }
+        .btn-ui {
+            background: #fff; border: 1px solid #ddd; color: var(--nav-bg);
+            padding: 10px 20px; border-radius: 30px; font-weight: bold; font-size: 1rem;
+            cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;
+            text-decoration: none; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .btn-ui:hover { background: #f8f9fa; transform: translateY(-2px); border-color: #ccc; }
         .btn-liked { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
         
-        .btn-download-adv { display: block; width: 100%; text-align: center; background: var(--accent); color: #fff; padding: 15px; text-decoration: none; font-size: 1.2rem; font-weight: bold; border-radius: 6px; transition: 0.3s; box-sizing: border-box;}
-        .btn-download-adv:hover { background: #6a2a2a; }
+        .btn-download-hero {
+            background: var(--accent); color: var(--nav-bg); padding: 12px 30px;
+            border-radius: 30px; font-weight: 800; font-size: 1.1rem; border: none;
+            cursor: pointer; transition: all 0.3s ease; text-decoration: none;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.25); display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-download-hero:hover { background: #e6c200; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4); }
 
-        .comments-section, .related-section { background: #fff; padding: 25px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 40px; }
-        .comment-item { display: flex; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #eee; }
-        .comment-item img { width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover;}
+        /* Content Details Section */
+        .content-details {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        .info-text h1 { font-size: 2.2rem; color: var(--nav-bg); margin: 0 0 15px 0; font-weight: 700; }
+        .info-text p { font-size: 1.1rem; color: #555; line-height: 1.8; margin-bottom: 20px; text-align: justify; }
+        
+        .meta-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .meta-tags span { background: #f0f4f8; color: #444; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid #e2e8f0; }
+        
+        /* Stats Box */
+        .stats-box {
+            background: #fdfdfd; padding: 25px; border-radius: 12px; border: 1px solid #eee;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .stat-item { display: flex; align-items: center; justify-content: space-between; font-size: 1.05rem; color: #555; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
+        .stat-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .stat-item i { color: var(--accent); font-size: 1.2rem; width: 30px; }
+        .stat-item strong { color: var(--nav-bg); font-size: 1.15rem; }
+
+        /* Comments Section */
+        .comments-section { padding: 0 40px 40px 40px; }
+        .comments-section h3 { color: var(--nav-bg); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
+        .comment-input-row { display: flex; gap: 15px; margin-bottom: 30px; }
+        .comment-input-row input { flex: 1; padding: 15px 25px; border: 1px solid #ddd; border-radius: 30px; font-size: 1rem; outline: none; transition: 0.3s; background: #f8f9fa; }
+        .comment-input-row input:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+        .comment-input-row button { background: var(--nav-bg); color: #fff; border: none; padding: 0 30px; border-radius: 30px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+        .comment-input-row button:hover { background: var(--accent); color: var(--nav-bg); }
+
+        .comment-item { display: flex; margin-bottom: 20px; background: #fdfdfd; padding: 15px; border-radius: 12px; border: 1px solid #f0f0f0; }
+        .comment-item img { width: 45px; height: 45px; border-radius: 50%; margin-right: 15px; object-fit: cover; border: 1px solid #eee;}
+        .comment-content h4 { margin: 0 0 5px 0; font-size: 1.05rem; color: var(--nav-bg); }
+        .comment-content h4 span { font-weight: normal; font-size: 0.8rem; color: #888; margin-left: 10px; }
+        .comment-content p { margin: 0; color: #444; font-size: 1rem; line-height: 1.5; }
+
+        /* =========================================
+           Responsive & Masonry Grid for Related
+        ========================================= */
+        @media (max-width: 900px) {
+            .action-bar { flex-direction: column; align-items: flex-start; }
+            .content-details { grid-template-columns: 1fr; gap: 30px; padding: 30px 20px; }
+            .comments-section { padding: 0 20px 30px 20px; }
+        }
+
+        /* Related Grid Styles (Copied from Homepage for consistency) */
+        .grid { column-count: 4; column-gap: 20px; margin-top: 20px; }
+        .card { margin-bottom: 20px; display: inline-block; width: 100%; break-inside: avoid; border-radius: 12px; overflow: hidden; }
+        .card-link-wrapper { display: block; position: relative; border-radius: 12px; overflow: hidden; background: var(--surface-color); box-shadow: 0 4px 10px rgba(15, 30, 77, 0.05); }
+        .card-img-top { width: 100%; height: auto; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+        .card-link-wrapper:hover .card-img-top { transform: scale(1.08); }
+        .card-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to top, rgba(15, 30, 77, 0.95) 0%, rgba(15, 30, 77, 0.2) 60%, transparent 100%); opacity: 0; transition: opacity 0.3s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; color: #fff; z-index: 2; }
+        .card-link-wrapper:hover .card-overlay { opacity: 1; }
+        .card-overlay h3 { color: #fff; margin: 0 0 5px 0; font-size: 1.1rem; font-weight: 700; transform: translateY(15px); transition: transform 0.4s ease; }
+        .card-overlay p { color: #e0e6ed; font-size: 0.85rem; margin-bottom: 10px; transform: translateY(15px); transition: transform 0.4s ease 0.05s; }
+        .card-link-wrapper:hover .card-overlay h3, .card-link-wrapper:hover .card-overlay p { transform: translateY(0); }
+        @media (max-width: 1100px) { .grid { column-count: 3; } }
+        @media (max-width: 768px) { .grid { column-count: 2; column-gap: 15px; } .card { margin-bottom: 15px; } }
+        @media (max-width: 480px) { .grid { column-count: 2; column-gap: 10px; } .card { margin-bottom: 10px; } .card-overlay { padding: 12px; } .card-overlay h3 { font-size: 0.95rem; } .card-overlay p { display: none; } }
     </style>
 {% endblock %}
 
 {% block content %}
-<div class="details-wrapper">
-    <!-- বাম পাশ: ছবি -->
-    <div class="image-section">
+<div class="single-container">
+    
+    <!-- 1. Full Width Image Showcase -->
+    <div class="image-showcase">
         <img src="{{ content.file_url }}" alt="{{ content.alt_text }}">
     </div>
 
-    <!-- ডান পাশ: বিস্তারিত তথ্য -->
-    <div class="info-section">
-        <h1>{{ content.title }}</h1>
-        
-        <div class="author-box">
+    <!-- 2. Action Bar (Profile & Buttons) -->
+    <div class="action-bar">
+        <!-- Author Info -->
+        <a href="/p/{{ content.profiles.username }}" class="author-card">
             <img src="{{ content.profiles.avatar_url }}" alt="Author">
             <div>
-                <span style="font-size: 0.85rem; color: #888;">শিল্পী/লেখক</span><br>
-                <a href="/profile/{{ content.profiles.username }}">{{ content.profiles.display_name or content.profiles.username }}</a>
+                <h3 class="author-name">{{ content.profiles.display_name or content.profiles.username }}</h3>
+                <p class="author-user">@{{ content.profiles.username }}</p>
             </div>
-        </div>
+        </a>
 
-        <p style="text-align: justify; margin-bottom: 20px; font-size: 1.05rem;">{{ content.description }}</p>
-
-        <ul class="meta-list">
-            <li><strong>ক্যাটাগরি:</strong> {{ content.categories.name_bn }}</li>
-            <li><strong>ফরম্যাট (Format):</strong> {{ content.file_format }}</li>
-            <li><strong>আপলোডের তারিখ:</strong> {{ content.created_at[:10] }}</li>
-        </ul>
-
-        <!-- স্ট্যাটস (Views, Downloads, Likes) -->
-        <div class="stats-box">
-            <div>👁️ {{ content.views }}<br><span style="font-size:0.8rem; color:#666;">ভিউ</span></div>
-            <div>⬇️ {{ content.downloads }}<br><span style="font-size:0.8rem; color:#666;">ডাউনলোড</span></div>
-            <div>❤️ {{ likes_count }}<br><span style="font-size:0.8rem; color:#666;">লাইক</span></div>
-        </div>
-
-        <!-- অ্যাকশন বাটনস (Like & Share) -->
-        <div class="action-btns">
-            <!-- Like Form -->
-            <form action="/like/{{ content.id }}" method="POST" style="flex:1;">
-                <button type="submit" class="btn-action {% if user_liked %}btn-liked{% endif %}" style="width:100%;">
-                    {% if user_liked %}❤️ লাইকড{% else %}🤍 লাইক দিন{% endif %}
+        <!-- Buttons -->
+        <div class="action-buttons">
+            <!-- Share -->
+            <button onclick="copyShareLink()" class="btn-ui"><i class="fa-solid fa-share-nodes"></i> শেয়ার</button>
+            
+            <!-- Like -->
+            <form action="/like/{{ content.id }}" method="POST" style="margin: 0;">
+                <button type="submit" class="btn-ui {% if user_liked %}btn-liked{% endif %}">
+                    {% if user_liked %}<i class="fa-solid fa-heart"></i> লাইকড{% else %}<i class="fa-regular fa-heart"></i> লাইক{% endif %}
                 </button>
             </form>
             
-            <!-- Share Button -->
-            <button onclick="copyShareLink()" class="btn-action" style="flex:1;">🔗 শেয়ার করুন</button>
+            <!-- Download -->
+            <a href="/download/{{ content.id }}" class="btn-download-hero"><i class="fa-solid fa-download"></i> ফ্রি ডাউনলোড</a>
+        </div>
+    </div>
+
+    <!-- 3. Details & Stats -->
+    <div class="content-details">
+        <!-- Left Side: Title, Desc, Meta -->
+        <div class="info-text">
+            <h1>{{ content.title }}</h1>
+            <p>{{ content.description }}</p>
+            
+            <div class="meta-tags">
+                <span><i class="fa-solid fa-folder-open" style="color:var(--accent); margin-right:5px;"></i> {{ content.categories.name_bn }}</span>
+                <span><i class="fa-solid fa-file-image" style="color:var(--accent); margin-right:5px;"></i> {{ content.file_format }}</span>
+                <span><i class="fa-solid fa-calendar-days" style="color:var(--accent); margin-right:5px;"></i> {{ content.created_at[:10] }}</span>
+                
+                {% if content.alt_text %}
+                <span><i class="fa-solid fa-tag" style="color:var(--accent); margin-right:5px;"></i> {{ content.alt_text }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Edit Button if Owner -->
+            {% if session.get('user') and session['user']['id'] == content.user_id %}
+            <a href="/edit-content/{{ content.id }}" class="btn-ui" style="margin-top: 15px; border-color: #4caf50; color: #4caf50;"><i class="fa-solid fa-pen-to-square"></i> তথ্য সম্পাদনা করুন</a>
+            {% endif %}
         </div>
 
-        <!-- Advanced Download -->
-        <a href="/download/{{ content.id }}" class="btn-download-adv" >অ্যাডভান্সড ডাউনলোড</a>
-        <p style="text-align:center; font-size:0.85rem; color:#888; margin-top:10px;">অরিজিনাল হাই-রেজোলিউশন ফাইল ডাউনলোড হবে।</p>
-    </div>
-</div>
-
-<!-- কমেন্ট সেকশন -->
-<div class="comments-section">
-    <h3 style="color: var(--accent); margin-top:0; border-bottom: 2px solid var(--border); padding-bottom: 10px;">মন্তব্য সমূহ ({{ comments|length }})</h3>
-    
-    {% if session.get('user') %}
-    <form action="/comment/{{ content.id }}" method="POST" style="margin-bottom: 25px; display:flex; gap:10px;">
-        <input type="text" name="text" placeholder="আপনার সুন্দর মন্তব্যটি লিখুন..." required style="flex:1; padding:10px; border:1px solid #ccc; border-radius:4px; font-family:inherit;">
-        <button type="submit" class="btn-primary" style="border:none; cursor:pointer;">কমেন্ট করুন</button>
-    </form>
-    {% else %}
-    <p style="color: #666; font-size: 0.95rem; background: #fdfdfd; padding: 10px; border: 1px solid var(--border); text-align: center;">কমেন্ট করতে দয়া করে <a href="/login">লগইন করুন</a>।</p>
-    {% endif %}
-
-    <div>
-        {% for comment in comments %}
-        <div class="comment-item">
-            <img src="{{ comment.profiles.avatar_url }}" alt="User">
-            <div>
-                <a href="/profile/{{ comment.profiles.username }}" style="font-weight: bold; color: var(--text-main); text-decoration: none;">{{ comment.profiles.display_name or comment.profiles.username }}</a>
-                <span style="font-size: 0.8rem; color: #888; margin-left: 10px;">{{ comment.created_at[:10] }}</span>
-                <p style="margin: 5px 0 0 0; color: #444;">{{ comment.text }}</p>
+        <!-- Right Side: Stats Panel -->
+        <div class="stats-box">
+            <h3 style="margin: 0 0 10px 0; color: var(--nav-bg); font-size: 1.2rem; border-bottom: 2px solid var(--accent); padding-bottom: 10px;"><i class="fa-solid fa-chart-simple"></i> কন্টেন্ট স্ট্যাটাস</h3>
+            <div class="stat-item">
+                <span><i class="fa-solid fa-eye"></i> মোট ভিউ</span>
+                <strong>{{ content.views }}</strong>
+            </div>
+            <div class="stat-item">
+                <span><i class="fa-solid fa-download"></i> ডাউনলোডস</span>
+                <strong>{{ content.downloads }}</strong>
+            </div>
+            <div class="stat-item">
+                <span><i class="fa-solid fa-heart"></i> লাইকস</span>
+                <strong>{{ likes_count }}</strong>
             </div>
         </div>
+    </div>
+
+    <!-- 4. Comments Section -->
+    <div class="comments-section">
+        <h3><i class="fa-regular fa-comments" style="color: var(--accent); margin-right: 8px;"></i> মন্তব্য সমূহ ({{ comments|length }})</h3>
+        
+        {% if session.get('user') %}
+        <form action="/comment/{{ content.id }}" method="POST" class="comment-input-row">
+            <input type="text" name="text" placeholder="এই ছবি বা কন্টেন্ট সম্পর্কে আপনার মতামত দিন..." required>
+            <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+        </form>
         {% else %}
-        <p style="color: #888;">এখনো কোনো মন্তব্য করা হয়নি। প্রথম মন্তব্যটি আপনি করুন!</p>
-        {% endfor %}
+        <div style="background: #fdfdfd; padding: 20px; border-radius: 12px; text-align: center; border: 1px dashed #ccc; margin-bottom: 30px;">
+            <p style="color: #666; font-size: 1.05rem; margin: 0;">মন্তব্য করতে দয়া করে <a href="/login" style="color: var(--accent); font-weight: bold; text-decoration: none;">লগইন করুন</a>।</p>
+        </div>
+        {% endif %}
+
+        <div class="comments-list">
+            {% for comment in comments %}
+            <div class="comment-item">
+                <a href="/p/{{ comment.profiles.username }}">
+                    <img src="{{ comment.profiles.avatar_url }}" alt="User">
+                </a>
+                <div class="comment-content">
+                    <h4><a href="/p/{{ comment.profiles.username }}" style="color: var(--nav-bg); text-decoration: none;">{{ comment.profiles.display_name or comment.profiles.username }}</a> <span>{{ comment.created_at[:10] }}</span></h4>
+                    <p>{{ comment.text }}</p>
+                </div>
+            </div>
+            {% else %}
+            <p style="color: #888; text-align: center; font-style: italic;">এখনো কেউ মন্তব্য করেননি। প্রথম মন্তব্যটি আপনিই করুন!</p>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
-<!-- রিলেটেড কন্টেন্ট -->
+<!-- 5. Related Content (Masonry Grid) -->
 {% if related %}
-<div class="related-section">
-    <h3 style="color: var(--accent); margin-top:0; border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 20px;">একই ক্যাটাগরির আরও দেখুন</h3>
-    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+<div style="max-width: 1200px; margin: 0 auto;">
+    <h2 style="color: var(--nav-bg); margin-bottom: 25px; border-bottom: 2px solid rgba(15, 30, 77, 0.08); padding-bottom: 10px;"><i class="fa-solid fa-images" style="color: var(--accent); margin-right: 10px;"></i> এই ক্যাটাগরির আরও দেখুন</h2>
+    
+    <div class="grid">
         {% for item in related %}
         <div class="card">
-            <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" style="height: 150px;">
-            <div class="card-content" style="padding: 10px;">
-                <h4 style="margin:0 0 5px 0; font-size: 1rem;">{{ item.title }}</h4>
-                <a href="/content/{{ item.slug }}" class="btn-primary" style="padding: 5px 10px; font-size: 0.85rem;">বিস্তারিত</a>
-            </div>
+            <a href="{{ get_url(item) }}" class="card-link-wrapper">
+                <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" class="card-img-top">
+                <div class="card-overlay">
+                    <h3>{{ item.title }}</h3>
+                    <p>{{ item.description[:50] }}...</p>
+                    <div class="author-info">
+                        <img src="{{ item.profiles.avatar_url }}" alt="Author">
+                        <span>@{{ item.profiles.username }}</span>
+                    </div>
+                </div>
+            </a>
         </div>
         {% endfor %}
     </div>
 </div>
 {% endif %}
 
-<!-- শেয়ার করার জন্য জাভাস্ক্রিপ্ট -->
 <script>
     function copyShareLink() {
         navigator.clipboard.writeText(window.location.href).then(() => {
             alert('লিংক সফলভাবে কপি করা হয়েছে! এখন আপনি এটি যেকোনো জায়গায় শেয়ার করতে পারবেন।');
-        }).catch(err => {
-            console.error('Failed to copy text: ', err);
         });
     }
 </script>
