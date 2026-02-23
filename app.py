@@ -158,7 +158,22 @@ def follow_user(username):
         flash(f"আপনি {username} কে ফলো করেছেন!", "success")
 
     return redirect(request.referrer)
+# ==========================================
+# ডেডিকেটেড গ্যালারি / ক্যাটাগরি পেজ
+# ==========================================
+@app.route('/c/<category_slug>')
+def category_page(category_slug):
+    # ১. ক্যাটাগরির তথ্য বের করা
+    cat_res = supabase.table('categories').select('*').eq('slug', category_slug).execute()
+    if not cat_res.data:
+        abort(404)
+    category = cat_res.data[0]
 
+    # ২. এই ক্যাটাগরির সব অ্যাপ্রুভড কন্টেন্ট ফেচ করা
+    contents_res = supabase.table('contents').select('*, categories(name_bn, slug), profiles(username, display_name, avatar_url)').eq('category_id', category['id']).eq('is_approved', True).order('created_at', desc=True).execute()
+    contents = contents_res.data
+
+    return render_template('category.html', category=category, contents=contents)
 
 # ==========================================
 # ইনসাইট ও আয় (Insight & Earning) রাউট
