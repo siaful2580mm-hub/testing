@@ -1,5 +1,6 @@
 import os
 import requests
+import random
 from datetime import timedelta  # <--- এটি নতুন ইমপোর্ট করতে হবে
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, session, Response
 from functools import wraps
@@ -232,21 +233,27 @@ def single_content(slug):
     
     content = res.data[0]
     content_id = content['id']
-
-    # ২. স্মার্ট ভিউ (View) কাউন্টার (এক ডিভাইসে/সেশনে মাত্র একবার কাউন্ট হবে)
+# ২. স্মার্ট ভিউ (View) কাউন্টার (৭৫% কাউন্ট হবে, ২৫% স্কিপ হবে)
     viewed_items = session.get('viewed_items', [])
     
     if content_id not in viewed_items:
-        # যদি ইউজার এই কন্টেন্ট আগে না দেখে থাকে, তবেই ভিউ ১ বাড়বে
-        new_views = content.get('views', 0) + 1
-        supabase.table('contents').update({'views': new_views}).eq('id', content_id).execute()
-        content['views'] = new_views
+        # random.random() ০ থেকে ১ এর মধ্যে একটি সংখ্যা দেয়। 
+        # যদি সংখ্যাটি 0.75 এর নিচে হয় (অর্থাৎ ৭৫% সম্ভাবনা), তবেই ভিউ কাউন্ট হবে
+        if random.random() < 0.75:
+            new_views = content.get('views', 0) + 1
+            supabase.table('contents').update({'views': new_views}).eq('id', content_id).execute()
+            content['views'] = new_views # পেজে দেখানোর জন্য আপডেট করা হলো
+        else:
+            # ২৫% সম্ভাবনা: ভিউ কাউন্ট হবে না, স্কিপ করবে।
+            pass 
         
+        # ভিউ কাউন্ট হোক বা স্কিপ হোক— আমরা সেশনে সেভ করে রাখব। 
+        # এতে করে যে ২৫% স্কিপ হয়েছে, সে যদি বারবার রিফ্রেশও দেয়, তবুও তার ভিউ আর কাউন্ট হবে না!
         viewed_items.append(content_id)
         session['viewed_items'] = viewed_items
         session.modified = True
     else:
-        # রিফ্রেশ করলে ডাটাবেসে আর আপডেট হবে না
+        # আগে থেকেই দেখা থাকলে কোনো ডেটাবেস আপডেট হবে না
         pass
 
     # ৩. লাইক (Like) কাউন্ট এবং চেক করা
