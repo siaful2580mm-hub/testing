@@ -1,61 +1,132 @@
 {% extends "base.html" %}
-{% block title %}অ্যাডমিন প্যানেল | সাহিত্যিক সংগ্রহশালা{% endblock %}
+{% block title %}অ্যাডমিন প্যানেল | পিকঘর{% endblock %}
 
 {% block head %}
 <style>
-    .admin-container { background: #fff; padding: 30px; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
-    .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    .admin-table th, .admin-table td { border: 1px solid var(--border); padding: 12px; text-align: left; vertical-align: middle; }
-    .admin-table th { background: var(--bg-color); color: var(--accent); }
-    .admin-table img { width: 80px; height: 60px; object-fit: cover; border-radius: 4px; border: 2px solid #eee; }
+    .admin-container { background: var(--surface-color); padding: 40px; border-radius: 12px; box-shadow: 0 10px 40px rgba(15, 30, 77, 0.05); margin-bottom: 50px; border: 1px solid rgba(15, 30, 77, 0.05); }
     
-    .btn-approve { background: #2e7d32; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 0.9rem; margin-right: 5px; font-weight:bold; }
-    .btn-delete { background: #c62828; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-size: 0.9rem; font-weight:bold; }
-    .btn-approve:hover { background: #1b5e20; }
-    .btn-delete:hover { background: #b71c1c; }
+    .admin-header { text-align: center; margin-bottom: 40px; }
+    .admin-header h2 { color: var(--nav-bg); margin: 0; font-size: 2.2rem; font-weight: 700; }
+    .admin-header p { color: #666; font-size: 1.05rem; margin-top: 5px; }
+
+    .section-title { color: var(--nav-bg); border-bottom: 2px solid rgba(15, 30, 77, 0.08); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.5rem; font-weight: 700; margin-top: 50px; }
+    .section-title i { color: var(--accent); margin-right: 8px; }
+
+    .admin-table-wrapper { overflow-x: auto; border: 1px solid rgba(15, 30, 77, 0.08); border-radius: 8px; box-shadow: 0 5px 20px rgba(15, 30, 77, 0.03); }
+    .admin-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+    .admin-table th, .admin-table td { padding: 15px; text-align: left; vertical-align: middle; border-bottom: 1px solid #eee; }
+    .admin-table th { background: var(--nav-bg) !important; color: var(--accent) !important; font-weight: bold; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.5px; }
+    .admin-table tr:hover { background: #f8f9fa; }
+    .admin-table img { width: 70px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #ddd; }
+    
+    .btn-approve { background: #e8f4e9; color: #2e7d32; padding: 8px 15px; text-decoration: none; border-radius: 30px; font-size: 0.9rem; margin-right: 8px; font-weight: bold; border: 1px solid #c8e6c9; display: inline-block; transition: 0.3s; }
+    .btn-delete { background: #ffebee; color: #c62828; padding: 8px 15px; text-decoration: none; border-radius: 30px; font-size: 0.9rem; font-weight: bold; border: 1px solid #ffcdd2; display: inline-block; transition: 0.3s; }
+    
+    .btn-approve:hover { background: #2e7d32; color: #fff; }
+    .btn-delete:hover { background: #c62828; color: #fff; }
+    
+    .btn-view { background: #f0f4f8; color: var(--nav-bg); padding: 8px 15px; text-decoration: none; border-radius: 30px; font-size: 0.9rem; margin-right: 8px; font-weight: bold; border: 1px solid #d1d9e6; display: inline-block; transition: 0.3s; }
+    .btn-view:hover { background: var(--nav-bg); color: #fff; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="admin-container">
-    <h2 style="color: var(--accent); text-align: center; margin-bottom: 5px;">অ্যাডমিন ড্যাশবোর্ড</h2>
-    <p style="text-align: center; color: #666; margin-bottom: 25px;">যে কন্টেন্টগুলো অনুমোদনের অপেক্ষায় আছে</p>
+    <div class="admin-header">
+        <h2><i class="fa-solid fa-shield-halved" style="color: var(--accent); margin-right: 10px;"></i> অ্যাডমিন ড্যাশবোর্ড</h2>
+        <p>ওয়েবসাইটের সমস্ত কন্টেন্ট এখান থেকে পরিচালনা করুন</p>
+    </div>
 
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>ছবি</th>
-                <th>শিরোনাম ও বিবরণ</th>
-                <th>আপলোডকারী</th>
-                <th>অ্যাকশন</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in pending_contents %}
-            <tr>
-                <td><img src="{{ item.file_url }}" alt="preview"></td>
-                <td>
-                    <strong>{{ item.title }}</strong><br>
-                    <span style="font-size: 0.85rem; color: #666;">বিভাগ: {{ item.categories.name_bn }}</span>
-                </td>
-                <td>
-                    <a href="/profile/{{ item.profiles.username }}" target="_blank" style="color: var(--accent); font-weight: bold; text-decoration: none;">
-                        {{ item.profiles.display_name or item.profiles.username }}
-                    </a>
-                </td>
-                <td style="min-width: 180px;">
-                    <a href="/admin/approve/{{ item.id }}" class="btn-approve">Approve</a>
-                    <a href="/admin/delete/{{ item.id }}" class="btn-delete" onclick="return confirm('আপনি কি নিশ্চিত এটি ডিলিট করতে চান?');">Delete</a>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="4" style="text-align: center; padding: 30px; font-size: 1.1rem; color: #777;">
-                    এই মুহূর্তে কোনো কন্টেন্ট অনুমোদনের অপেক্ষায় নেই।
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- 1. Pending Content Section -->
+    <h3 class="section-title"><i class="fa-solid fa-hourglass-half"></i> অনুমোদনের অপেক্ষায় (Pending)</h3>
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ছবি/কভার</th>
+                    <th>শিরোনাম ও ক্যাটাগরি</th>
+                    <th>আপলোডকারী</th>
+                    <th>তারিখ</th>
+                    <th>অ্যাকশন</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pending_contents %}
+                <tr>
+                    <td><img src="{{ item.file_url }}" alt="preview"></td>
+                    <td>
+                        <strong style="color: var(--nav-bg); font-size: 1.05rem;">{{ item.title }}</strong><br>
+                        <span style="font-size: 0.85rem; color: #666;"><i class="fa-solid fa-folder-open" style="color: var(--accent);"></i> {{ item.categories.name_bn }}</span>
+                    </td>
+                    <td>
+                        <a href="/p/{{ item.profiles.username }}" target="_blank" style="color: var(--nav-bg); font-weight: bold; text-decoration: none;">
+                            {{ item.profiles.display_name or item.profiles.username }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.75rem; color: #888;"></i>
+                        </a>
+                    </td>
+                    <td style="font-size: 0.9rem; color: #555;">{{ item.created_at[:10] }}</td>
+                    <td style="min-width: 200px;">
+                        <a href="/admin/approve/{{ item.id }}" class="btn-approve"><i class="fa-solid fa-check"></i> Approve</a>
+                        <a href="/admin/delete/{{ item.id }}" class="btn-delete" onclick="return confirm('আপনি কি নিশ্চিত এটি ডিলিট করতে চান?');"><i class="fa-solid fa-trash"></i> Reject</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; font-size: 1.1rem; color: #777;">
+                        <i class="fa-solid fa-box-open" style="font-size: 2.5rem; color: #ccc; margin-bottom: 15px; display: block;"></i>
+                        এই মুহূর্তে কোনো কন্টেন্ট অনুমোদনের অপেক্ষায় নেই।
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 2. Published Content Section (Delete any live content) -->
+    <h3 class="section-title"><i class="fa-solid fa-globe"></i> পাবলিশড কন্টেন্ট (Live on Site)</h3>
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ছবি/কভার</th>
+                    <th>শিরোনাম ও ক্যাটাগরি</th>
+                    <th>আপলোডকারী</th>
+                    <th>ভিউ/ডাউনলোড</th>
+                    <th>অ্যাকশন</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in approved_contents %}
+                <tr>
+                    <td><img src="{{ item.file_url }}" alt="preview"></td>
+                    <td>
+                        <strong style="color: var(--nav-bg); font-size: 1.05rem;">{{ item.title }}</strong><br>
+                        <span style="font-size: 0.85rem; color: #666;"><i class="fa-solid fa-folder-open" style="color: var(--accent);"></i> {{ item.categories.name_bn }}</span>
+                    </td>
+                    <td>
+                        <a href="/p/{{ item.profiles.username }}" target="_blank" style="color: var(--nav-bg); font-weight: bold; text-decoration: none;">
+                            {{ item.profiles.display_name or item.profiles.username }}
+                        </a>
+                    </td>
+                    <td style="font-size: 0.95rem; color: #555; font-weight: bold;">
+                        <i class="fa-solid fa-eye" style="color: #2e7d32;"></i> {{ item.views }} &nbsp; 
+                        <i class="fa-solid fa-download" style="color: var(--accent);"></i> {{ item.downloads }}
+                    </td>
+                    <td style="min-width: 200px;">
+                        <!-- View Live Content using Dynamic URL -->
+                        <a href="{{ get_url(item) }}" target="_blank" class="btn-view"><i class="fa-solid fa-eye"></i> View</a>
+                        <!-- Delete Live Content -->
+                        <a href="/admin/delete/{{ item.id }}" class="btn-delete" onclick="return confirm('সতর্কতা: এটি লাইভ সাইট থেকে মুছে যাবে! আপনি কি নিশ্চিত?');"><i class="fa-solid fa-trash-can"></i> Delete</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; font-size: 1.1rem; color: #777;">
+                        সাইটে কোনো কন্টেন্ট নেই।
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}
