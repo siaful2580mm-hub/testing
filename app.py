@@ -77,6 +77,50 @@ def index():
 # ==========================================
 # ইউজার পেআউট ও হিস্ট্রি (User Payout & History)
 # ==========================================
+
+
+# ==========================================
+# কন্টেন্ট এডিট (Edit Content) রাউট
+# ==========================================
+@app.route('/edit-content/<int:content_id>', methods=['GET', 'POST'])
+@login_required
+def edit_content(content_id):
+    # ডেটাবেস থেকে কন্টেন্ট এবং তার ক্যাটাগরি ফেচ করা
+    res = supabase.table('contents').select('*, categories(slug)').eq('id', content_id).execute().data
+    if not res:
+        abort(404)
+        
+    content = res[0]
+    cat_slug = content['categories']['slug']
+    
+    # সিকিউরিটি চেক: শুধুমাত্র কন্টেন্টের মালিক এডিট করতে পারবে
+    if content['user_id'] != session['user']['id']:
+        flash("আপনি এই কন্টেন্টটি এডিট করার অনুমতি রাখেন না!", "error")
+        return redirect(request.referrer or '/')
+
+    if request.method == 'POST':
+        update_data = {
+            "title": request.form.get('title'),
+            "description": request.form.get('description')
+        }
+        
+        # যদি গল্প বা ব্লগ হয়, তবে এই এক্সট্রা ফিল্ডগুলো আপডেট হবে
+        if cat_slug in ['story', 'blog']:
+            update_data["body_text"] = request.form.get('body_text')
+            update_data["next_part_link"] = request.form.get('next_part_link')
+            update_data["genre"] = request.form.get('genre')
+            update_data["is_original"] = True if request.form.get('is_original') == 'true' else False
+
+        # Supabase এ আপডেট করা
+        supabase.table('contents').update(update_data).eq('id', content_id).execute()
+        flash("কন্টেন্ট সফলভাবে আপডেট হয়েছে!", "success")
+        
+        # ক্যাটাগরি অনুযায়ী সঠিক লিংকে ফেরত পাঠানো (Redirect)
+        prefix = '/st/' if cat_slug == 'story' else '/bg/' if cat_slug == 'blog' else '/ft/' if cat_slug == 'font' else '/image/'
+        return redirect(f"{prefix}{content['slug']}")
+
+    return render_template('edit_content.html', content=content, cat_slug=cat_slug)
+    
 @app.route('/payout', methods=['GET', 'POST'])
 @login_required
 def payout_history():
