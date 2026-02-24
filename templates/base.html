@@ -125,7 +125,113 @@
             &copy; ২০২৬ পিকঘর (PicGhor). সর্বস্বত্ব সংরক্ষিত।
         </div>
     </footer>
+<!-- ==========================================
+         Sticky Bottom Ad (Floating Ad with Close Button)
+    =========================================== -->
+    <div id="sticky-bottom-ad" class="sticky-ad-container">
+        <!-- Close (X) Button -->
+        <button class="close-ad-btn" onclick="closeStickyAd()" title="Close Ad">✕</button>
+        
+        <!-- Ad Content Area -->
+        <div class="ad-wrapper">
+            <span class="ad-label">Advertisement</span>
+            
+            <!-- আপনার দেওয়া Ad Network এর কোড -->
+            <script>
+              atOptions = {
+                'key' : '65ec9f7d8d86083bf154bf98b07df8f1',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/65ec9f7d8d86083bf154bf98b07df8f1/invoke.js"></script>
+            
+        </div>
+    </div>
 
+    <!-- Sticky Ad CSS & JS -->
+    <style>
+        /* ওয়েবসাইটের নিচে একটু ফাঁকা জায়গা রাখা যাতে কন্টেন্ট অ্যাডের নিচে ঢাকা না পড়ে */
+        body {
+            padding-bottom: 80px; 
+        }
+
+        /* স্টিকি অ্যাড কন্টেইনার */
+        .sticky-ad-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        /* অ্যাডের র‍্যাপার (মোবাইলে যাতে স্ক্রিনের বাইরে না যায়) */
+        .ad-wrapper {
+            width: 100%;
+            max-width: 468px; /* আপনার অ্যাডের সাইজ অনুযায়ী */
+            overflow: hidden;
+            text-align: center;
+            padding: 5px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Advertisement লেখাটি */
+        .ad-label {
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        /* ক্রস (X) বাটন ডিজাইন (ছবির মতো) */
+        .close-ad-btn {
+            position: absolute;
+            top: -25px;
+            right: 10px;
+            background: #ffffff;
+            color: #333;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 2px 12px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+        }
+
+        .close-ad-btn:hover {
+            background: #f1f1f1;
+            color: red;
+        }
+    </style>
+
+    <script>
+        // অ্যাড কেটে দেওয়ার জাভাস্ক্রিপ্ট ফাংশন
+        function closeStickyAd() {
+            var adContainer = document.getElementById('sticky-bottom-ad');
+            if (adContainer) {
+                // স্মুথভাবে অ্যাডটি নিচে নামিয়ে গায়েব করে দিবে
+                adContainer.style.transform = 'translateY(100%)';
+                setTimeout(() => {
+                    adContainer.style.display = 'none';
+                    document.body.style.paddingBottom = '0'; // অ্যাড কাটার পর বডির প্যাডিং রিমুভ হবে
+                }, 400); // এনিমেশনের সময়
+            }
+        }
+    </script>
+    <!-- ========================================== -->
     <!-- JS File Link -->
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
