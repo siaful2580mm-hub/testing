@@ -570,12 +570,19 @@ def admin_required(f):
 # ==========================================
 # অ্যাডমিন প্যানেল রাউটস (Admin Panel)
 # ==========================================
+# ==========================================
+# অ্যাডমিন প্যানেল রাউটস (Admin Panel)
+# ==========================================
 @app.route('/admin')
 @admin_required
 def admin_panel():
-    # যেসব কন্টেন্ট এখনো অ্যাপ্রুভ হয়নি, সেগুলো ফেচ করা
-    res = supabase.table('contents').select('*, categories(name_bn), profiles(username, display_name)').eq('is_approved', False).order('created_at', desc=True).execute()
-    return render_template('admin.html', pending_contents=res.data)
+    # ১. যেসব কন্টেন্ট এখনো অ্যাপ্রুভ হয়নি (Pending)
+    pending_res = supabase.table('contents').select('*, categories(name_bn, slug), profiles(username, display_name)').eq('is_approved', False).order('created_at', desc=True).execute()
+    
+    # ২. যেসব কন্টেন্ট ইতোমধ্যে পাবলিশ হয়েছে (Approved)
+    approved_res = supabase.table('contents').select('*, categories(name_bn, slug), profiles(username, display_name)').eq('is_approved', True).order('created_at', desc=True).execute()
+    
+    return render_template('admin.html', pending_contents=pending_res.data, approved_contents=approved_res.data)
 
 @app.route('/admin/approve/<int:id>')
 @admin_required
@@ -588,12 +595,10 @@ def approve_content(id):
 @app.route('/admin/delete/<int:id>')
 @admin_required
 def delete_content(id):
-    # কন্টেন্ট রিজেক্ট বা ডিলিট করা
+    # যেকোনো কন্টেন্ট (Pending বা Approved) ডিলিট করা
     supabase.table('contents').delete().eq('id', id).execute()
-    flash('কন্টেন্টটি ডিলিট করা হয়েছে।', 'error')
-    return redirect(url_for('admin_panel'))
-
-
+    flash('কন্টেন্টটি সফলভাবে ডিলিট করা হয়েছে।', 'error')
+    return redirect(request.referrer or url_for('admin_panel'))
 # ==========================================
 # অ্যাডমিন পেআউট কন্ট্রোল প্যানেল (Admin Payouts)
 # ==========================================
