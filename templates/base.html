@@ -33,15 +33,15 @@
 
         <div class="nav-links" id="nav-links">
             <a href="/"><i class="fa-solid fa-house"></i> হোম</a>
-            <a href="#"><i class="fa-solid fa-image"></i> ছবি</a>
-            <a href="#"><i class="fa-solid fa-book-open"></i> গল্প</a>
+            <a href="/c/image"><i class="fa-solid fa-image"></i> ছবি</a>
+            <a href="/c/story"><i class="fa-solid fa-book-open"></i> গল্প</a>
             <a href="#"><i class="fa-solid fa-font"></i> ফন্ট</a>
             <a href="#"><i class="fa-solid fa-blog"></i> ব্লগ</a>
             
             <!-- Auth Logic / Conditional Links -->
             {% if session.get('user') %}
                 <a href="/upload" class="nav-btn-highlight"><i class="fa-solid fa-cloud-arrow-up"></i> আপলোড</a>
-                <a href="/profile/{{ session['user']['username'] }}" style="color: var(--accent);"><i class="fa-solid fa-user-circle"></i> {{ session['user']['username'] }}</a>
+                <a href="/p/{{ session['user']['username'] }}" style="color: var(--accent);"><i class="fa-solid fa-user-circle"></i> {{ session['user']['username'] }}</a>
                 
                 {% if session['user']['email'] == 'admin@gmail.com' %}
                     <a href="/admin" style="color: #4caf50;"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন</a>
@@ -54,26 +54,6 @@
             {% endif %}
         </div>
     </nav>
-
-    <!-- ==========================================
-         Global Advertisement Banner (সব পেজে দেখাবে)
-    =========================================== -->
-    <div style="text-align: center; margin: 30px auto 10px auto; padding: 0 10px; width: 100%; overflow: hidden; display: flex; justify-content: center; align-items: center; flex-direction: column;">
-        <span style="font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Advertisement</span>
-        
-        <!-- আপনার দেওয়া Ad Network এর কোড -->
-        <script>
-          atOptions = {
-            'key' : '65ec9f7d8d86083bf154bf98b07df8f1',
-            'format' : 'iframe',
-            'height' : 60,
-            'width' : 468,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highperformanceformat.com/65ec9f7d8d86083bf154bf98b07df8f1/invoke.js"></script>
-    </div>
-    <!-- ========================================== -->
 
     <!-- Main Content Container -->
     <div class="container">
