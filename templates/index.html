@@ -203,12 +203,12 @@
 {% if images %}
 <div class="section-header">
     <h2><i class="fa-solid fa-camera-retro"></i> নতুন ছবি সমূহ</h2>
-    <a href="#" class="view-all">সব ছবি দেখুন <i class="fa-solid fa-arrow-right"></i></a>
+    <a href="/gallery" class="view-all">সব ছবি দেখুন <i class="fa-solid fa-arrow-right"></i></a>
 </div>
 <div class="grid">
     {% for item in images %}
     <div class="card">
-        <a href="/content/{{ item.slug }}" class="card-link-wrapper">
+        <a href="/image/{{ item.slug }}" class="card-link-wrapper">
             <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" class="card-img-top">
             
             <div class="card-overlay">
@@ -234,7 +234,7 @@
 <div class="grid">
     {% for item in stories %}
     <div class="card">
-        <a href="/content/{{ item.slug }}" class="card-link-wrapper">
+        <a href="/st/{{ item.slug }}" class="card-link-wrapper">
             <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" class="card-img-top">
             
             <div class="card-overlay">
