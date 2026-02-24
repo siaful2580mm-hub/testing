@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}কন্টেন্ট এডিট | পিকঘর{% endblock %}
+
+{% block head %}
+<style>
+    /* =========================================
+       Premium Edit Section Styles
+    ========================================= */
+    .edit-wrapper {
+        max-width: 800px;
+        margin: 0 auto 50px auto;
+        background: var(--surface-color);
+        padding: 40px 50px;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(15, 30, 77, 0.08);
+        border-top: 5px solid var(--accent);
+    }
+
+    .edit-header { text-align: center; margin-bottom: 30px; }
+    .edit-header h2 { font-size: 2.2rem; color: var(--nav-bg); margin: 0 0 10px 0; font-weight: 700; }
+    .edit-header p { color: #666; font-size: 1.05rem; margin: 0; }
+
+    /* Inputs Styling */
+    .form-group { margin-bottom: 20px; }
+    .form-group label { font-size: 0.95rem; color: var(--nav-bg); display: block; margin-bottom: 8px; font-weight: 600; }
+    .form-group label i { color: var(--accent); margin-right: 5px; }
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%; padding: 14px; border: 1px solid #d1d9e6; border-radius: 8px;
+        font-family: inherit; font-size: 1rem; color: var(--text-main); background: #fdfdfd;
+        transition: all 0.3s ease;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        border-color: var(--nav-bg); box-shadow: 0 0 0 3px rgba(15, 30, 77, 0.1); outline: none; background: #fff;
+    }
+
+    /* Story Specific Fields */
+    .story-edit-box {
+        background: #f8fbfd; padding: 30px; border-radius: 12px; border: 1px dashed #b0c4de;
+        margin-top: 30px; margin-bottom: 30px; border-left: 4px solid var(--accent);
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* Buttons */
+    .btn-submit {
+        background: var(--nav-bg); color: var(--surface-color); width: 100%; padding: 16px;
+        font-size: 1.15rem; font-weight: 700; border: none; border-radius: 30px;
+        cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: 0 8px 20px rgba(15, 30, 77, 0.2);
+    }
+    .btn-submit:hover { background: var(--accent); color: var(--nav-bg); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3); }
+
+    .btn-cancel {
+        display: block; text-align: center; margin-top: 20px; color: #c62828; font-weight: bold; text-decoration: none; font-size: 1rem;
+    }
+    .btn-cancel:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+        .grid-2 { grid-template-columns: 1fr; }
+        .edit-wrapper { padding: 30px 20px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-wrapper">
+    <div class="edit-header">
+        <h2><i class="fa-solid fa-pen-to-square" style="color: var(--accent);"></i> কন্টেন্ট সম্পাদনা</h2>
+        <p>আপনার কন্টেন্টের তথ্যগুলো আপডেট করুন</p>
+    </div>
+    
+    <form action="/edit-content/{{ content.id }}" method="POST">
+        
+        <div class="form-group">
+            <label><i class="fa-solid fa-heading"></i> শিরোনাম (Title)</label>
+            <input type="text" name="title" value="{{ content.title }}" required>
+        </div>
+        
+        <div class="form-group">
+            <label><i class="fa-solid fa-align-left"></i> সংক্ষিপ্ত বিবরণ / ক্যাপশন</label>
+            <textarea name="description" rows="3">{{ content.description }}</textarea>
+        </div>
+
+        <!-- যদি ক্যাটাগরি 'গল্প' বা 'ব্লগ' হয়, তবে এই ফিল্ডগুলো দেখাবে -->
+        {% if cat_slug in ['story', 'blog'] %}
+        <div class="story-edit-box">
+            <h3 style="margin-top:0; color:var(--nav-bg); margin-bottom: 20px;"><i class="fa-solid fa-book-open" style="color:var(--accent);"></i> গল্পের বিস্তারিত তথ্য</h3>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>গল্পের ধরন (Genre)</label>
+                    <select name="genre">
+                        <option value="রোমান্টিক" {% if content.genre == 'রোমান্টিক' %}selected{% endif %}>রোমান্টিক</option>
+                        <option value="ভৌতিক" {% if content.genre == 'ভৌতিক' %}selected{% endif %}>ভৌতিক (Horror)</option>
+                        <option value="থ্রিলার" {% if content.genre == 'থ্রিলার' %}selected{% endif %}>থ্রিলার ও সাসপেন্স</option>
+                        <option value="রহস্য" {% if content.genre == 'রহস্য' %}selected{% endif %}>রহস্য (Mystery)</option>
+                        <option value="সায়েন্স ফিকশন" {% if content.genre == 'সায়েন্স ফিকশন' %}selected{% endif %}>সায়েন্স ফিকশন</option>
+                        <option value="সামাজিক" {% if content.genre == 'সামাজিক' %}selected{% endif %}>সামাজিক</option>
+                        <option value="কমেডি" {% if content.genre == 'কমেডি' %}selected{% endif %}>কমেডি ও রম্য</option>
+                        <option value="রূপকথা" {% if content.genre == 'রূপকথা' %}selected{% endif %}>রূপকথা</option>
+                        <option value="অন্যান্য" {% if content.genre == 'অন্যান্য' %}selected{% endif %}>অন্যান্য</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>মৌলিক নাকি সংগৃহীত?</label>
+                    <select name="is_original">
+                        <option value="true" {% if content.is_original %}selected{% endif %}>মৌলিক লেখা</option>
+                        <option value="false" {% if not content.is_original %}selected{% endif %}>সংগৃহীত (Copy)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa-solid fa-forward-step"></i> পরের পর্বের লিংক</label>
+                <input type="text" name="next_part_link" value="{{ content.next_part_link or '' }}" placeholder="যেমন: /st/part-2-slug">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa-solid fa-pen-nib"></i> সম্পূর্ণ গল্প / ব্লগ</label>
+                <textarea name="body_text" rows="15" style="line-height: 1.8; padding: 20px;">{{ content.body_text }}</textarea>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Submit Buttons -->
+        <button type="submit" class="btn-submit"><i class="fa-solid fa-floppy-disk"></i> পরিবর্তনগুলো সেভ করুন</button>
+        
+        <!-- Cancel & Return -->
+        <a href="javascript:history.back()" class="btn-cancel"><i class="fa-solid fa-arrow-left"></i> বাতিল করে ফিরে যান</a>
+    </form>
+</div>
+{% endblock %}
