@@ -168,6 +168,10 @@
                 {% if session['user']['id'] == profile.id %}
                     <!-- নিজের প্রোফাইল হলে -->
                     <a href="/edit-profile" class="btn-primary" style="background: var(--nav-bg); color: #fff !important; margin-top:0;"><i class="fa-solid fa-user-pen"></i> প্রোফাইল এডিট</a>
+            <!-- নিজের প্রোফাইল হলে -->
+                    <a href="/insight" class="btn-primary" style="background: var(--nav-bg); color: #fff !important; margin-top:0;"><i class="fa-solid fa-chert"></i> ইনসাইট</a>
+            <!-- নিজের প্রোফাইল হলে -->
+                    <a href="/payout" class="btn-primary" style="background: var(--nav-bg); color: #fff !important; margin-top:0;"><i class="fa-solid fa-money"></i> টাকা তুলুন</a>
                 {% else %}
                     <!-- অন্যের প্রোফাইল হলে -->
                     <form action="/follow/{{ profile.username }}" method="POST" style="margin: 0;">
