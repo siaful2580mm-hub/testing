@@ -207,10 +207,10 @@
 </div>
 <div class="grid">
     {% for item in images %}
+    <!-- আপনার ছবির মূল কার্ড -->
     <div class="card">
-        <a href="/image/{{ item.slug }}" class="card-link-wrapper">
+        <a href="{{ get_url(item) }}" class="card-link-wrapper">
             <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" class="card-img-top">
-            
             <div class="card-overlay">
                 <h3>{{ item.title }}</h3>
                 <p>{{ item.description[:60] }}...</p>
@@ -221,7 +221,25 @@
             </div>
         </a>
     </div>
+
+    <!-- ==========================================
+         প্রতি ৫টি ছবির পর অ্যাড দেখানোর লজিক
+    =========================================== -->
+    {% if loop.index % 5 == 0 %}
+    <div class="card" style="background: transparent; box-shadow: none; border: none; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 0; break-inside: avoid;">
+        <span style="font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Advertisement</span>
+        
+        <!-- আপনার দেওয়া Ad Network এর কোড -->
+        <script async="async" data-cfasync="false" src="https://pl28514147.effectivegatecpm.com/9bdaa56042780cf3290ef9004bb9bf72/invoke.js"></script>
+        <div id="container-9bdaa56042780cf3290ef9004bb9bf72"></div>
+        
+    </div>
+    {% endif %}
+    <!-- ========================================== -->
+
     {% endfor %}
+</div>
+
 </div>
 {% endif %}
 
