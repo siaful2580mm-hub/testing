@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="space-y-6 pb-32 pt-4">
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-[30px] text-white text-center shadow-lg relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+        <h2 class="text-2xl font-bold mb-1">VIP মেম্বারশিপ</h2>
+        <p class="text-xs text-indigo-100">আপনার লেভেল আপগ্রেড করুন এবং সুবিধা পান</p>
+        
+        <div class="mt-4 bg-white/20 backdrop-blur-md inline-block px-6 py-2 rounded-full border border-white/20">
+            <p class="text-xs font-bold uppercase">Current Level</p>
+            <p class="text-xl font-bold text-yellow-300">
+                {{ 'FREE' if user.current_level == 0 else 'LEVEL ' ~ user.current_level }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Daily Claim (Only if VIP) -->
+    {% if user.current_level > 0 %}
+    <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-50 text-center">
+        <h3 class="font-bold text-slate-700 text-sm mb-2">ডেইলি প্রফিট (VIP)</h3>
+        <form method="POST" action="/vip">
+            <input type="hidden" name="action" value="claim">
+            <button type="submit" class="w-full bg-[#4F46E5] text-white py-3 rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition">
+                ক্লিক করে প্রফিট নিন 💰
+            </button>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Plans Grid -->
+    <div class="grid gap-6">
+        {% for id, plan in plans.items() %}
+        <div class="bg-white p-6 rounded-[30px] shadow-sm border border-slate-50 relative overflow-hidden group hover:border-indigo-100 transition">
+            
+            {% if id == 2 %} <!-- Popular Badge -->
+            <div class="absolute top-0 right-0 bg-yellow-400 text-xs font-bold px-3 py-1 rounded-bl-xl text-[#0A2540]">
+                BEST VALUE
+            </div>
+            {% endif %}
+
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 class="text-xl font-bold text-[#0A2540]">{{ plan.name }}</h3>
+                    <p class="text-xs text-slate-500">Level {{ id }}</p>
+                </div>
+                <div class="text-right">
+                    <h2 class="text-2xl font-bold text-[#4F46E5]">৳{{ plan.price }}</h2>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="space-y-3 mb-6">
+                <div class="flex items-center gap-3 text-sm text-slate-600">
+                    <i class="fa-solid fa-coins text-yellow-500"></i>
+                    <span>দৈনিক আয়: <b>৳{{ plan.daily_profit }}</b></span>
+                </div>
+                <div class="flex items-center gap-3 text-sm text-slate-600">
+                    <i class="fa-regular fa-clock text-blue-500"></i>
+                    <span>মেয়াদ: <b>{{ plan.days }} দিন</b></span>
+                </div>
+                <div class="flex items-center gap-3 text-sm text-slate-600">
+                    <i class="fa-solid fa-check text-green-500"></i>
+                    <span>রেফারেল প্রয়োজন নেই</span>
+                </div>
+                <div class="flex items-center gap-3 text-sm text-slate-600">
+                    <i class="fa-solid fa-bolt text-orange-500"></i>
+                    <span>১ দিনে পেমেন্ট</span>
+                </div>
+                <div class="flex items-center gap-3 text-sm text-slate-600">
+                    <i class="fa-solid fa-sack-dollar text-purple-500"></i>
+                    <span>মোট লাভ: ৳{{ plan.daily_profit * plan.days }}</span>
+                </div>
+            </div>
+
+            <!-- Buy Button -->
+            <a href="/vip/buy/{{ id }}" class="block w-full bg-slate-50 text-slate-700 text-center py-3.5 rounded-xl font-bold hover:bg-[#0A2540] hover:text-white transition">
+                এখনই কিনুন
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
