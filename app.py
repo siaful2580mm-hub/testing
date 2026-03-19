@@ -549,40 +549,53 @@ def download_content(content_id):
 @login_required
 def upload_hub():
     return render_template('upload.html')
-
 # ==========================================
 # নির্দিষ্ট ক্যাটাগরির আপলোড ফর্ম (Dynamic Upload Form)
 # ==========================================
 @app.route('/upload/<upload_type>', methods=['GET', 'POST'])
 @login_required
 def upload_content(upload_type):
-    # ভ্যালিড টাইপ চেক করা
+    # ১. ভ্যালিড টাইপ চেক করা
     valid_types = ['image', 'story', 'font', 'blog']
     if upload_type not in valid_types:
         abort(404)
 
-    # ডেটাবেস থেকে ক্যাটাগরির ID বের করা
-    category_res = supabase.table('categories').select('id, name_bn').eq('slug', upload_type).execute().data
-    if not category_res:
-        flash("এই ক্যাটাগরিটি এখনো তৈরি করা হয়নি!", "error")
+    # ২. ডেটাবেস থেকে ক্যাটাগরির ID বের করা
+    try:
+        category_res = supabase.table('categories').select('id, name_bn').eq('slug', upload_type).execute()
+        if not category_res.data:
+            flash("এই ক্যাটাগরিটি এখনো তৈরি করা হয়নি!", "error")
+            return redirect(url_for('upload_hub'))
+        
+        category_id = category_res.data[0]['id']
+        category_name = category_res.data[0]['name_bn']
+    except Exception as e:
+        flash("ডেটাবেস কানেকশনে সমস্যা হচ্ছে।", "error")
         return redirect(url_for('upload_hub'))
-    
-    category_id = category_res[0]['id']
-    category_name = category_res[0]['name_bn']
 
+    # ৩. ফর্ম সাবমিট হলে (POST Request)
     if request.method == 'POST':
         title = request.form.get('title')
         description = request.form.get('description')
         slug = request.form.get('slug')
         alt_text = request.form.get('alt_text')
+        genre = request.form.get('genre')  # ছবি বা গল্পের সাব-ক্যাটাগরি
+
+        # ৩টি হ্যাশট্যাগ রিসিভ করে ক্লিন করা এবং একসাথে কমা (,) দিয়ে যুক্ত করা
+        h1 = request.form.get('hashtag1', '').strip().replace('#', '')
+        h2 = request.form.get('hashtag2', '').strip().replace('#', '')
+        h3 = request.form.get('hashtag3', '').strip().replace('#', '')
+        hashtags_list = [h for h in[h1, h2, h3] if h]  # যেগুলো ফাঁকা সেগুলো বাদ যাবে
+        hashtags_str = ",".join(hashtags_list)
+
         file = request.files.get('file')
 
         if not file:
-            flash("দয়া করে একটি ফাইল নির্বাচন করুন।", "error")
+            flash("দয়া করে একটি ছবি বা ফাইল নির্বাচন করুন।", "error")
             return redirect(request.url)
 
         try:
-            # ImgBB তে ছবি আপলোড
+            # ImgBB-তে ছবি আপলোড করা
             payload = {'key': IMGBB_API_KEY}
             files = {'image': file.read()}
             imgbb_response = requests.post(IMGBB_UPLOAD_URL, params=payload, files=files)
@@ -591,13 +604,13 @@ def upload_content(upload_type):
             if imgbb_response.status_code == 200 and imgbb_data['success']:
                 file_url = imgbb_data['data']['url']
             else:
-                flash("ছবি আপলোডে সমস্যা হয়েছে।", "error")
+                flash("ছবি আপলোডে সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।", "error")
                 return redirect(request.url)
 
-            # ফাইল ফরম্যাট বের করা
+            # ফাইল ফরম্যাট বের করা (যেমন: JPG, PNG)
             file_format = file.filename.rsplit('.', 1)[1].upper() if '.' in file.filename else 'JPG'
 
-            # Supabase এ ডাটা সেভ
+            # Supabase-এ সেভ করার জন্য ডেটার ডিকশনারি তৈরি
             new_content = {
                 "user_id": session['user']['id'],
                 "title": title,
@@ -607,25 +620,29 @@ def upload_content(upload_type):
                 "category_id": category_id,
                 "file_url": file_url,
                 "file_format": file_format,
-                "is_approved": False 
+                "genre": genre,
+                "hashtags": hashtags_str,
+                "is_approved": False  # অ্যাডমিন প্যানেল থেকে অ্যাপ্রুভ করতে হবে
             }
 
-            # যদি গল্প বা ব্লগ হয়, তবে অতিরিক্ত ডাটা সেভ হবে
-            if upload_type in ['story', 'blog']:
+            # যদি গল্প বা ব্লগ হয়, তবে অতিরিক্ত ডেটাগুলো যুক্ত হবে
+            if upload_type in['story', 'blog']:
                 new_content['body_text'] = request.form.get('body_text')
-                new_content['genre'] = request.form.get('genre')
                 new_content['next_part_link'] = request.form.get('next_part_link')
                 new_content['is_original'] = True if request.form.get('is_original') == 'true' else False
 
+            # ডেটাবেসে ইনসার্ট (Insert) করা
             supabase.table('contents').insert(new_content).execute()
             
             flash(f"আপনার {category_name} সফলভাবে আপলোড হয়েছে এবং অনুমোদনের অপেক্ষায় আছে!", "success")
             return redirect(url_for('index'))
 
         except Exception as e:
+            # কোনো এরর আসলে ইউজারকে মেসেজ দেখাবে
             flash(f"একটি ত্রুটি ঘটেছে: {str(e)}", "error")
             return redirect(request.url)
 
+    # ৪. GET Request এর জন্য ফর্ম পেজ রেন্ডার করা
     return render_template('upload_form.html', upload_type=upload_type, category_id=category_id, category_name=category_name)
     
 # ==========================================
