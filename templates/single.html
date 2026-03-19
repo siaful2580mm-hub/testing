@@ -123,7 +123,7 @@
 
         /* Related Grid Styles */
         .grid { column-count: 4; column-gap: 20px; margin-top: 20px; }
-        .card { margin-bottom: 20px; display: inline-block; width: 100%; break-inside: avoid; border-radius: 12px; overflow: hidden; }
+        .card { margin-bottom: 20px; display: inline-block; width: 100%; break-inside: avoid; border-radius: 12px; overflow: hidden; background: transparent;}
         .card-link-wrapper { display: block; position: relative; border-radius: 12px; overflow: hidden; background: var(--surface-color); box-shadow: 0 4px 10px rgba(15, 30, 77, 0.05); }
         .card-img-top { width: 100%; height: auto; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
         .card-link-wrapper:hover .card-img-top { transform: scale(1.08); }
@@ -209,11 +209,19 @@
          Static Banner Ad Section
     =========================================== -->
     <div style="text-align: center; margin: 0 40px 40px 40px; padding: 20px; background: #f8fbfd; border-radius: 12px; border: 1px dashed #b0c4de;">
-        <span style="font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px;">Advertisement</span>
+        <span style="font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 10px;">Advertisement</span>
         
-        <!-- আপনার সাধারণ ব্যানার অ্যাডের কোড এখানে বসান -->
-        <!-- <script src="..."></script> -->
-        <div style="width: 100%; height: 90px; display: flex; align-items: center; justify-content: center; color: #888; font-weight: bold;">Banner Ad Area</div>
+        <!-- আপনার ব্যানার অ্যাডের কোড -->
+        <script>
+          atOptions = {
+            'key' : '65ec9f7d8d86083bf154bf98b07df8f1',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highperformanceformat.com/65ec9f7d8d86083bf154bf98b07df8f1/invoke.js"></script>
         
     </div>
 
@@ -245,7 +253,7 @@
     </div>
 </div>
 
-<!-- 5. Related Content (Masonry Grid) -->
+<!-- 5. Related Content (Masonry Grid + Ads) -->
 {% if related %}
 <div style="max-width: 1200px; margin: 0 auto;">
     <h2 style="color: var(--nav-bg); margin-bottom: 25px; border-bottom: 2px solid rgba(15, 30, 77, 0.08); padding-bottom: 10px;"><i class="fa-solid fa-images" style="color: var(--accent); margin-right: 10px;"></i> এই ক্যাটাগরির আরও দেখুন</h2>
@@ -264,6 +272,21 @@
                 </div>
             </a>
         </div>
+
+        <!-- ==========================================
+             প্রতি ৫টি ছবির পর অ্যাড দেখানোর লজিক
+        =========================================== -->
+        {% if loop.index % 5 == 0 %}
+        <div class="card" style="background: transparent; box-shadow: none; border: none; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 0; break-inside: avoid;">
+            <span style="font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Sponsored</span>
+            
+            <!-- আপনার Native Ad এর কোড -->
+            <script async="async" data-cfasync="false" src="https://pl28514147.effectivegatecpm.com/9bdaa56042780cf3290ef9004bb9bf72/invoke.js"></script>
+            <div id="container-9bdaa56042780cf3290ef9004bb9bf72"></div>
+            
+        </div>
+        {% endif %}
+
         {% endfor %}
     </div>
 </div>
