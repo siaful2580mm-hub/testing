@@ -59,6 +59,10 @@
         .meta-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
         .meta-tags span { background: #f0f4f8; color: #444; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid #e2e8f0; }
         
+        .hashtags-container { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .hashtags-container span { color: var(--accent); font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        .hashtags-container span:hover { color: var(--nav-bg); }
+
         /* Stats Box */
         .stats-box { background: #fdfdfd; padding: 25px; border-radius: 12px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 20px; }
         .stat-item { display: flex; align-items: center; justify-content: space-between; font-size: 1.05rem; color: #555; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
@@ -172,9 +176,21 @@
             
             <div class="meta-tags">
                 <span><i class="fa-solid fa-folder-open" style="color:var(--accent); margin-right:5px;"></i> {{ content.categories.name_bn }}</span>
+                {% if content.genre %}
+                <span><i class="fa-solid fa-layer-group" style="color:var(--accent); margin-right:5px;"></i> {{ content.genre }}</span>
+                {% endif %}
                 <span><i class="fa-solid fa-file-image" style="color:var(--accent); margin-right:5px;"></i> {{ content.file_format }}</span>
                 <span><i class="fa-solid fa-calendar-days" style="color:var(--accent); margin-right:5px;"></i> {{ content.created_at[:10] }}</span>
             </div>
+
+            <!-- Hashtags -->
+            {% if content.hashtags %}
+            <div class="hashtags-container">
+                {% for tag in content.hashtags.split(',') %}
+                    <span>#{{ tag.strip() }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
 
             {% if session.get('user') and session['user']['id'] == content.user_id %}
             <a href="/edit-content/{{ content.id }}" class="btn-ui" style="margin-top: 15px; border-color: #4caf50; color: #4caf50;"><i class="fa-solid fa-pen-to-square"></i> তথ্য সম্পাদনা করুন</a>
@@ -194,16 +210,11 @@
     =========================================== -->
     <div style="text-align: center; margin: 0 40px 40px 40px; padding: 20px; background: #f8fbfd; border-radius: 12px; border: 1px dashed #b0c4de;">
         <span style="font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px;">Advertisement</span>
-        <script>
-  atOptions = {
-    'key' : '65ec9f7d8d86083bf154bf98b07df8f1',
-    'format' : 'iframe',
-    'height' : 60,
-    'width' : 468,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/65ec9f7d8d86083bf154bf98b07df8f1/invoke.js"></script>
+        
+        <!-- আপনার সাধারণ ব্যানার অ্যাডের কোড এখানে বসান -->
+        <!-- <script src="..."></script> -->
+        <div style="width: 100%; height: 90px; display: flex; align-items: center; justify-content: center; color: #888; font-weight: bold;">Banner Ad Area</div>
+        
     </div>
 
     <!-- 4. Comments Section -->
@@ -223,9 +234,9 @@
         <div class="comments-list">
             {% for comment in comments %}
             <div class="comment-item">
-                <img src="{{ comment.profiles.avatar_url }}" alt="User">
+                <a href="/p/{{ comment.profiles.username }}"><img src="{{ comment.profiles.avatar_url }}" alt="User"></a>
                 <div class="comment-content">
-                    <h4>{{ comment.profiles.display_name or comment.profiles.username }} <span style="font-weight: normal; font-size: 0.8rem; color: #888; margin-left: 10px;">{{ comment.created_at[:10] }}</span></h4>
+                    <h4><a href="/p/{{ comment.profiles.username }}" style="color: var(--nav-bg); text-decoration:none;">{{ comment.profiles.display_name or comment.profiles.username }}</a> <span style="font-weight: normal; font-size: 0.8rem; color: #888; margin-left: 10px;">{{ comment.created_at[:10] }}</span></h4>
                     <p>{{ comment.text }}</p>
                 </div>
             </div>
@@ -234,7 +245,7 @@
     </div>
 </div>
 
-<!-- 5. Related Content -->
+<!-- 5. Related Content (Masonry Grid) -->
 {% if related %}
 <div style="max-width: 1200px; margin: 0 auto;">
     <h2 style="color: var(--nav-bg); margin-bottom: 25px; border-bottom: 2px solid rgba(15, 30, 77, 0.08); padding-bottom: 10px;"><i class="fa-solid fa-images" style="color: var(--accent); margin-right: 10px;"></i> এই ক্যাটাগরির আরও দেখুন</h2>
