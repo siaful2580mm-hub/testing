@@ -543,25 +543,46 @@ def download_content(content_id):
         return redirect(request.referrer)
 
 # ==========================================
-# আপলোড রাউট (সঠিক User ID সহ)
+# আপলোড হাব (Upload Hub) - অপশন সিলেক্ট করার পেজ
 # ==========================================
-@app.route('/upload', methods=['GET', 'POST'])
-@login_required   # এই ডেকোরেটরটি নিশ্চিত করবে যে ইউজার লগইন করা আছে
-def upload_content():
+@app.route('/upload')
+@login_required
+def upload_hub():
+    return render_template('upload.html')
+
+# ==========================================
+# নির্দিষ্ট ক্যাটাগরির আপলোড ফর্ম (Dynamic Upload Form)
+# ==========================================
+@app.route('/upload/<upload_type>', methods=['GET', 'POST'])
+@login_required
+def upload_content(upload_type):
+    # ভ্যালিড টাইপ চেক করা
+    valid_types = ['image', 'story', 'font', 'blog']
+    if upload_type not in valid_types:
+        abort(404)
+
+    # ডেটাবেস থেকে ক্যাটাগরির ID বের করা
+    category_res = supabase.table('categories').select('id, name_bn').eq('slug', upload_type).execute().data
+    if not category_res:
+        flash("এই ক্যাটাগরিটি এখনো তৈরি করা হয়নি!", "error")
+        return redirect(url_for('upload_hub'))
+    
+    category_id = category_res[0]['id']
+    category_name = category_res[0]['name_bn']
+
     if request.method == 'POST':
         title = request.form.get('title')
         description = request.form.get('description')
         slug = request.form.get('slug')
         alt_text = request.form.get('alt_text')
-        category_id = request.form.get('category_id')
         file = request.files.get('file')
 
         if not file:
             flash("দয়া করে একটি ফাইল নির্বাচন করুন।", "error")
             return redirect(request.url)
 
-        # ImgBB তে ছবি আপলোড
         try:
+            # ImgBB তে ছবি আপলোড
             payload = {'key': IMGBB_API_KEY}
             files = {'image': file.read()}
             imgbb_response = requests.post(IMGBB_UPLOAD_URL, params=payload, files=files)
@@ -573,9 +594,10 @@ def upload_content():
                 flash("ছবি আপলোডে সমস্যা হয়েছে।", "error")
                 return redirect(request.url)
 
-            # ফাইলের এক্সটেনশন বের করা (যেমন: JPG, PNG)
+            # ফাইল ফরম্যাট বের করা
             file_format = file.filename.rsplit('.', 1)[1].upper() if '.' in file.filename else 'JPG'
 
+            # Supabase এ ডাটা সেভ
             new_content = {
                 "user_id": session['user']['id'],
                 "title": title,
@@ -584,23 +606,28 @@ def upload_content():
                 "alt_text": alt_text,
                 "category_id": category_id,
                 "file_url": file_url,
-                "file_format": file_format, # <--- নতুন যুক্ত করা হলো
+                "file_format": file_format,
                 "is_approved": False 
             }
+
+            # যদি গল্প বা ব্লগ হয়, তবে অতিরিক্ত ডাটা সেভ হবে
+            if upload_type in ['story', 'blog']:
+                new_content['body_text'] = request.form.get('body_text')
+                new_content['genre'] = request.form.get('genre')
+                new_content['next_part_link'] = request.form.get('next_part_link')
+                new_content['is_original'] = True if request.form.get('is_original') == 'true' else False
+
             supabase.table('contents').insert(new_content).execute()
             
-            flash("কন্টেন্ট সফলভাবে আপলোড হয়েছে!", "success")
+            flash(f"আপনার {category_name} সফলভাবে আপলোড হয়েছে এবং অনুমোদনের অপেক্ষায় আছে!", "success")
             return redirect(url_for('index'))
 
         except Exception as e:
             flash(f"একটি ত্রুটি ঘটেছে: {str(e)}", "error")
             return redirect(request.url)
 
-    # ফর্ম দেখানোর জন্য ক্যাটাগরি ফেচ
-    categories = supabase.table('categories').select('*').execute().data
-    return render_template('upload.html', categories=categories)
-# অ্যাডমিন প্যানেল ভিউ
-
+    return render_template('upload_form.html', upload_type=upload_type, category_id=category_id, category_name=category_name)
+    
 # ==========================================
 # লগআউট (Logout) রাউট
 # ==========================================
