@@ -3,37 +3,74 @@
 
 {% block head %}
 <style>
-    .upload-wrapper { max-width: 850px; margin: 0 auto 50px auto; background: var(--surface-color); padding: 40px 50px; border-radius: 12px; box-shadow: 0 15px 40px rgba(15, 30, 77, 0.08); border-top: 5px solid var(--accent); }
+    /* =========================================
+       Advanced Upload Section Styles
+    ========================================= */
+    .upload-wrapper {
+        max-width: 850px;
+        margin: 0 auto 50px auto;
+        background: var(--surface-color);
+        padding: 40px 50px;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(15, 30, 77, 0.08);
+        border-top: 5px solid var(--accent);
+    }
+
     .upload-header { text-align: center; margin-bottom: 40px; position: relative; }
     .upload-header h2 { font-size: 2.2rem; color: var(--nav-bg); margin: 0 0 10px 0; font-weight: 700; }
+    .upload-header p { color: #666; font-size: 1.05rem; margin: 0; }
     
     .back-btn { position: absolute; left: 0; top: 5px; color: #888; font-size: 1.5rem; text-decoration: none; transition: 0.3s; }
     .back-btn:hover { color: var(--nav-bg); transform: translateX(-5px); }
 
+    /* Form Layout */
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .full-width { grid-column: 1 / -1; }
 
     /* Drag & Drop Zone */
-    .drag-drop-zone { border: 2px dashed #b0c4de; border-radius: 12px; padding: 40px 20px; text-align: center; background: #f8fbfd; cursor: pointer; transition: all 0.3s; position: relative; min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .drag-drop-zone {
+        border: 2px dashed #b0c4de; border-radius: 12px; padding: 40px 20px; text-align: center;
+        background: #f8fbfd; cursor: pointer; transition: all 0.3s; position: relative;
+        min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    }
     .drag-drop-zone:hover { border-color: var(--accent); background: rgba(255, 215, 0, 0.05); }
     .drag-drop-zone i { font-size: 3.5rem; color: var(--accent); margin-bottom: 15px; }
+    .drag-drop-zone h3 { margin: 0 0 5px 0; color: var(--nav-bg); font-size: 1.3rem; }
+    .drag-drop-zone p { margin: 0; color: #888; font-size: 0.95rem; }
     .drag-drop-zone input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
 
+    /* Image Preview */
     #imagePreviewBox { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; border-radius: 12px; overflow: hidden; background: #fff; z-index: 10;}
-    #imagePreview { width: 100%; height: 100%; object-fit: contain; }
-    #removeImageBtn { position: absolute; top: 15px; right: 15px; background: rgba(255,0,0,0.8); color: #fff; border: none; padding: 8px 15px; border-radius: 30px; cursor: pointer; font-size: 0.85rem; font-weight: bold;}
+    #imagePreview { width: 100%; height: 100%; object-fit: contain; background: #f4f6f9; }
+    #removeImageBtn {
+        position: absolute; top: 15px; right: 15px; background: rgba(255, 0, 0, 0.85); color: #fff;
+        border: none; padding: 8px 15px; border-radius: 30px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: 0.3s;
+    }
+    #removeImageBtn:hover { background: red; }
 
-    /* Inputs */
+    /* Inputs Styling */
     .form-group label { font-size: 0.95rem; color: var(--nav-bg); display: block; margin-bottom: 8px; font-weight: 600; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 15px; border: 1px solid #d1d9e6; border-radius: 8px; font-family: inherit; font-size: 1rem; background: #fdfdfd; transition: 0.3s; }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--nav-bg); box-shadow: 0 0 0 3px rgba(15, 30, 77, 0.1); outline: none; background: #fff; }
+    .form-group label i { color: var(--accent); margin-right: 5px; }
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%; padding: 15px; border: 1px solid #d1d9e6; border-radius: 8px; font-family: inherit;
+        font-size: 1rem; background: #fdfdfd; color: var(--text-main); transition: 0.3s;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+        border-color: var(--nav-bg); box-shadow: 0 0 0 3px rgba(15, 30, 77, 0.1); outline: none; background: #fff;
+    }
     
     .url-preview { background: #f0f4f8; padding: 10px 15px; border-radius: 6px; font-size: 0.85rem; color: #555; margin-top: 5px; font-family: monospace; }
     
-    .story-box { background: #fff; border: 1px solid #eee; padding: 30px; border-radius: 12px; margin-top: 10px; border-left: 4px solid var(--nav-bg); }
+    /* Story Box */
+    .story-box { background: #fdfdfd; border: 1px solid #eee; padding: 30px; border-radius: 12px; margin-top: 10px; border-left: 4px solid var(--accent); }
 
-    .btn-submit { background: var(--nav-bg); color: var(--surface-color); width: 100%; padding: 16px; font-size: 1.15rem; font-weight: 700; border: none; border-radius: 30px; cursor: pointer; transition: 0.3s; margin-top: 30px; box-shadow: 0 8px 20px rgba(15, 30, 77, 0.2); }
-    .btn-submit:hover { background: var(--accent); color: var(--nav-bg); transform: translateY(-3px); }
+    /* Submit Button */
+    .btn-submit {
+        background: var(--nav-bg); color: var(--surface-color); width: 100%; padding: 16px; font-size: 1.15rem;
+        font-weight: 700; border: none; border-radius: 30px; cursor: pointer; transition: 0.3s; margin-top: 30px;
+        box-shadow: 0 8px 20px rgba(15, 30, 77, 0.2);
+    }
+    .btn-submit:hover { background: var(--accent); color: var(--nav-bg); transform: translateY(-3px); box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3); }
 
     @media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } .upload-wrapper { padding: 30px 20px; } }
 </style>
@@ -49,13 +86,15 @@
     
     <form action="/upload/{{ upload_type }}" method="POST" enctype="multipart/form-data">
         
+        <!-- 1. Drag & Drop File Area -->
         <div class="form-group full-width" style="margin-bottom: 30px;">
             <div class="drag-drop-zone" id="dropZone">
                 <i class="fa-solid fa-image"></i>
                 <h3>{% if upload_type == 'story' or upload_type == 'blog' %}কভার ছবি{% else %}মূল ছবি{% endif %} এখানে টানুন</h3>
-                <p>অথবা ব্রাউজ করতে ক্লিক করুন</p>
+                <p>অথবা ব্রাউজ করতে ক্লিক করুন (JPEG, PNG, JPG)</p>
                 <input type="file" name="file" id="fileInput" accept="image/*" required>
                 
+                <!-- Image Preview Box -->
                 <div id="imagePreviewBox">
                     <img id="imagePreview" alt="Preview">
                     <button type="button" id="removeImageBtn"><i class="fa-solid fa-trash"></i> ছবি পরিবর্তন করুন</button>
@@ -64,33 +103,83 @@
         </div>
 
         <div class="form-grid">
+            <!-- 2. Title -->
             <div class="form-group">
-                <label>শিরোনাম (Title)</label>
+                <label><i class="fa-solid fa-heading"></i> শিরোনাম (Title)</label>
                 <input type="text" name="title" required placeholder="যেমন: মেঘলা দিনের গল্প">
             </div>
 
+            <!-- 3. URL Slug & Live Preview -->
             <div class="form-group">
-                <label>URL স্লাগ (ইংরেজিতে)</label>
+                <label><i class="fa-solid fa-link"></i> URL স্লাগ (ইংরেজিতে)</label>
                 <input type="text" name="slug" id="slugInput" required placeholder="meghla-diner-golpo">
                 <div class="url-preview">
                     লিংক: picghor.com/<b style="color:var(--accent);">{% if upload_type == 'story' %}st{% elif upload_type == 'blog' %}bg{% elif upload_type == 'font' %}ft{% else %}image{% endif %}</b>/<b id="slugLivePreview" style="color:var(--nav-bg);">meghla-diner-golpo</b>
                 </div>
             </div>
 
+            <!-- 4. Description -->
             <div class="form-group full-width">
-                <label>সংক্ষিপ্ত বিবরণ / ক্যাপশন</label>
-                <textarea name="description" rows="3" placeholder="কন্টেন্টের মূলভাব ছোট করে লিখুন... (Enter চেপে নতুন লাইন তৈরি করতে পারবেন)" style="resize:vertical;"></textarea>
+                <label><i class="fa-solid fa-align-left"></i> সংক্ষিপ্ত বিবরণ (ক্যাপশন / ডেসক্রিপশন)</label>
+                <textarea name="description" rows="4" placeholder="আপনার ছবি বা লেখার মূলভাব সুন্দরভাবে প্যারাগ্রাফ করে লিখুন... (Enter চেপে নতুন লাইন তৈরি করতে পারবেন)" style="resize:vertical; line-height: 1.8; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);"></textarea>
             </div>
-            
+
+            <!-- ==========================================
+                 Image Specific Fields (20+ Categories & Alt Text)
+            ========================================== -->
             {% if upload_type == 'image' %}
-            <div class="form-group full-width">
-                <label>Alt Text (SEO এর জন্য)</label>
-                <input type="text" name="alt_text" placeholder="ছবির সংক্ষিপ্ত বর্ণনা (যেমন: মেঘলা আকাশে উড়ন্ত পাখি)">
+            <div class="form-group">
+                <label><i class="fa-solid fa-list-ul"></i> ছবির ধরন (Image Genre)</label>
+                <select name="genre" required>
+                    <option value="">-- ছবির ধরন সিলেক্ট করুন --</option>
+                    <option value="প্রকৃতি">প্রকৃতি (Nature)</option>
+                    <option value="প্রতিকৃতি">প্রতিকৃতি (Portrait)</option>
+                    <option value="ল্যান্ডস্কেপ">ল্যান্ডস্কেপ (Landscape)</option>
+                    <option value="বন্যপ্রাণী">বন্যপ্রাণী (Wildlife)</option>
+                    <option value="ম্যাক্রো">ম্যাক্রো (Macro)</option>
+                    <option value="আর্কিটেকচার">আর্কিটেকচার (Architecture)</option>
+                    <option value="স্ট্রিট">স্ট্রিট (Street Photography)</option>
+                    <option value="রাতের আকাশ">রাতের আকাশ (Astrophotography)</option>
+                    <option value="বিমূর্ত">বিমূর্ত (Abstract)</option>
+                    <option value="লাইফস্টাইল">লাইফস্টাইল (Lifestyle)</option>
+                    <option value="ফ্যাশন">ফ্যাশন (Fashion)</option>
+                    <option value="প্রোডাক্ট">প্রোডাক্ট (Product)</option>
+                    <option value="ট্রাভেল">ট্রাভেল (Travel)</option>
+                    <option value="স্পোর্টস">স্পোর্টস (Sports)</option>
+                    <option value="ইভেন্ট/উৎসব">ইভেন্ট/উৎসব (Event)</option>
+                    <option value="সাদাকালো">সাদাকালো (Black & White)</option>
+                    <option value="ড্রোন/এরিয়াল">ড্রোন/এরিয়াল (Aerial)</option>
+                    <option value="খাবার">খাবার (Food)</option>
+                    <option value="টেকনোলজি">টেকনোলজি (Technology)</option>
+                    <option value="টেক্সচার/প্যাটার্ন">টেক্সচার/প্যাটার্ন (Texture)</option>
+                    <option value="ভিনটেজ">ভিনটেজ (Vintage)</option>
+                    <option value="অন্যান্য">অন্যান্য (Others)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fa-brands fa-searchengin"></i> Alt Text (SEO এর জন্য)</label>
+                <input type="text" name="alt_text" placeholder="ছবির বর্ণনা (যেমন: আকাশে উড়ন্ত পাখি)">
             </div>
             {% endif %}
+
+            <!-- ==========================================
+                 Hashtags (For All Upload Types)
+            ========================================== -->
+            <div class="form-group full-width">
+                <label><i class="fa-solid fa-hashtag"></i> হ্যাশট্যাগ (সর্বোচ্চ ৩টি)</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    <input type="text" name="hashtag1" placeholder="ট্যাগ ১ (যেমন: nature)">
+                    <input type="text" name="hashtag2" placeholder="ট্যাগ ২ (যেমন: sky)">
+                    <input type="text" name="hashtag3" placeholder="ট্যাগ ৩ (ঐচ্ছিক)">
+                </div>
+                <small style="color: #888; font-size: 0.85rem; margin-top: 8px; display: block;">* হ্যাশট্যাগ (#) দেওয়ার দরকার নেই, সিস্টেম স্বয়ংক্রিয়ভাবে বসিয়ে নেবে।</small>
+            </div>
         </div>
 
-        <!-- শুধুমাত্র গল্প বা ব্লগের জন্য স্পেশাল ফিল্ড -->
+        <!-- ==========================================
+             Story & Blog Specific Fields
+        ========================================== -->
         {% if upload_type in ['story', 'blog'] %}
         <div class="story-box full-width">
             <h3 style="margin-top:0; color:var(--nav-bg); margin-bottom: 20px;"><i class="fa-solid fa-feather-pointed" style="color:var(--accent);"></i> বিস্তারিত তথ্য</h3>
@@ -98,19 +187,22 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>ধরন (Genre)</label>
-                    <select name="genre">
+                    <select name="genre" required>
+                        <option value="">-- ধরন সিলেক্ট করুন --</option>
                         <option value="রোমান্টিক">রোমান্টিক</option>
                         <option value="ভৌতিক">ভৌতিক (Horror)</option>
                         <option value="থ্রিলার">থ্রিলার ও সাসপেন্স</option>
                         <option value="রহস্য">রহস্য (Mystery)</option>
+                        <option value="সায়েন্স ফিকশন">সায়েন্স ফিকশন</option>
                         <option value="সামাজিক">সামাজিক</option>
+                        <option value="কমেডি">কমেডি ও রম্য</option>
                         <option value="রূপকথা">রূপকথা</option>
                         <option value="অন্যান্য">অন্যান্য</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>মৌলিক নাকি সংগৃহীত?</label>
-                    <select name="is_original">
+                    <label>লেখাটি কি আপনার নিজের?</label>
+                    <select name="is_original" required>
                         <option value="true">হ্যাঁ, এটি আমার মৌলিক লেখা</option>
                         <option value="false">না, এটি সংগৃহীত (Copy)</option>
                     </select>
@@ -118,50 +210,70 @@
             </div>
 
             <div class="form-group" style="margin-top: 15px;">
-                <label>পরের পর্বের লিংক (যদি থাকে)</label>
+                <label><i class="fa-solid fa-forward-step"></i> পরের পর্বের লিংক (যদি থাকে)</label>
                 <input type="text" name="next_part_link" placeholder="যেমন: /st/part-2-slug (ঐচ্ছিক)">
             </div>
 
             <div class="form-group" style="margin-top: 15px;">
-                <label>সম্পূর্ণ লেখাটি এখানে লিখুন</label>
-                <textarea name="body_text" rows="12" placeholder="আপনার চমৎকার লেখাটি বিস্তারিতভাবে এখানে লিখুন..." style="line-height: 1.8; padding: 20px; resize:vertical;"></textarea>
+                <label><i class="fa-solid fa-pen-nib"></i> সম্পূর্ণ লেখাটি এখানে লিখুন</label>
+                <textarea name="body_text" rows="15" placeholder="আপনার চমৎকার লেখাটি বিস্তারিতভাবে এখানে লিখুন... (প্যারাগ্রাফ করতে Enter চাপুন)" style="line-height: 1.9; padding: 25px; resize:vertical; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);" required></textarea>
             </div>
         </div>
         {% endif %}
 
+        <!-- Submit Button -->
         <button type="submit" class="btn-submit"><i class="fa-solid fa-paper-plane"></i> কন্টেন্ট পাবলিশ করুন</button>
     </form>
 </div>
 
+<!-- ==========================================
+     Advanced JS for UI Interaction
+========================================== -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Drag & Drop Preview
+        
+        // 1. Drag & Drop Image Preview Logic
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
         const previewBox = document.getElementById('imagePreviewBox');
         const previewImg = document.getElementById('imagePreview');
         const removeBtn = document.getElementById('removeImageBtn');
 
-        fileInput.addEventListener('change', () => {
+        // Handle Drag Hover Effects
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--accent)"; });
+        dropZone.addEventListener('dragleave', () => dropZone.style.borderColor = "#b0c4de");
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.style.borderColor = "#b0c4de"; fileInput.files = e.dataTransfer.files; showPreview(); });
+
+        // Handle File Select
+        fileInput.addEventListener('change', showPreview);
+
+        function showPreview() {
             const file = fileInput.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = (e) => { previewImg.src = e.target.result; previewBox.style.display = 'block'; }
                 reader.readAsDataURL(file);
             }
-        });
+        }
 
+        // Remove Image Button
         removeBtn.addEventListener('click', (e) => {
-            e.preventDefault(); fileInput.value = ''; previewBox.style.display = 'none'; previewImg.src = '';
+            e.preventDefault();
+            fileInput.value = ''; // Reset input
+            previewBox.style.display = 'none';
+            previewImg.src = '';
         });
 
-        // Live Slug Preview
+        // 2. Live Slug Generator & Preview
         const slugInput = document.getElementById('slugInput');
         const slugLivePreview = document.getElementById('slugLivePreview');
 
         slugInput.addEventListener('input', function() {
+            // Auto Format Slug (Lowercase, replace space with hyphen, remove special chars)
             let val = this.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
             this.value = val;
+            
+            // Update Preview Text
             slugLivePreview.textContent = val ? val : 'your-slug-here';
         });
     });
