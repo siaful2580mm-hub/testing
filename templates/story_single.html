@@ -13,68 +13,114 @@
     ========================================= */
     .reading-container {
         max-width: 800px; /* পড়ার সুবিধার জন্য প্রস্থ কমানো হয়েছে */
-        margin: 0 auto 50px auto;
+        margin: 0 auto 40px auto;
         background: var(--surface-color);
         padding: 50px;
         border-radius: 12px;
         box-shadow: 0 10px 40px rgba(15, 30, 77, 0.05);
+        border: 1px solid rgba(15, 30, 77, 0.05);
     }
 
     /* Story Header */
     .story-header { text-align: center; margin-bottom: 30px; }
-    .story-title { font-size: 2.8rem; color: var(--nav-bg); margin: 0 0 15px 0; font-weight: 700; line-height: 1.3; }
+    .story-title { font-size: 2.6rem; color: var(--nav-bg); margin: 0 0 15px 0; font-weight: 700; line-height: 1.3; letter-spacing: -0.5px;}
     
-    .story-badges { margin-bottom: 20px; }
-    .badge-genre { background: var(--nav-bg); color: #fff; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; margin-right: 10px; }
-    .badge-original { background: #e8f4e9; color: #2e7d32; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid #c8e6c9;}
-    .badge-copied { background: #fff3e0; color: #e65100; padding: 6px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; border: 1px solid #ffe0b2;}
+    .story-badges { margin-bottom: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;}
+    .badge-genre { background: var(--nav-bg); color: #fff; padding: 6px 15px; border-radius: 30px; font-size: 0.9rem; }
+    .badge-original { background: #e8f4e9; color: #2e7d32; padding: 6px 15px; border-radius: 30px; font-size: 0.9rem; font-weight: bold; border: 1px solid #c8e6c9;}
+    .badge-copied { background: #fff3e0; color: #e65100; padding: 6px 15px; border-radius: 30px; font-size: 0.9rem; font-weight: bold; border: 1px solid #ffe0b2;}
 
     /* Author Info */
     .story-meta { display: flex; align-items: center; justify-content: center; gap: 15px; color: #666; font-size: 0.95rem; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0; margin-bottom: 30px; }
     .story-meta img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent); }
     .story-meta a { color: var(--nav-bg); font-weight: bold; text-decoration: none; font-size: 1.1rem; }
-    .story-meta span { display: flex; align-items: center; gap: 5px; }
+    .story-meta-stats { display: flex; gap: 15px; margin-top: 5px; font-size: 0.85rem; font-weight: normal; }
+    .story-meta-stats span { display: flex; align-items: center; gap: 5px; }
 
     /* Story Cover Image */
-    .story-cover { width: 100%; height: 400px; object-fit: cover; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+    .story-cover { width: 100%; height: auto; max-height: 450px; object-fit: cover; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
 
     /* Story Body (Reading Area) */
     .story-body {
         font-size: 1.25rem; /* পড়ার জন্য বড় ফন্ট */
-        line-height: 2.2;
+        line-height: 2.1;
         color: #2c3e50;
-        white-space: pre-wrap;
+        white-space: pre-wrap; /* লাইন ব্রেক ঠিক রাখার ম্যাজিক */
         text-align: justify;
+        margin-bottom: 30px;
     }
+    
+    /* Drop Cap (বইয়ের মতো প্রথম অক্ষর বড়) */
     .story-body::first-letter {
-        font-size: 3.5rem;
-        font-weight: bold;
+        font-size: 4rem;
+        font-weight: 700;
         color: var(--accent);
         float: left;
-        line-height: 1;
-        margin-right: 10px;
-        margin-top: 5px;
+        line-height: 0.8;
+        margin-right: 12px;
+        margin-top: 8px;
     }
 
+    /* Hashtags */
+    .hashtags-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 30px; }
+    .hashtags-container span { color: var(--accent); font-weight: bold; font-size: 1.05rem; cursor: pointer; transition: 0.3s; }
+    .hashtags-container span:hover { color: var(--nav-bg); }
+
     /* Actions & Next Part */
-    .story-footer { margin-top: 50px; border-top: 2px dashed #eee; padding-top: 30px; text-align: center; }
+    .story-footer { margin-top: 20px; border-top: 2px dashed #eee; padding-top: 30px; text-align: center; }
     
-    .btn-next-part { display: inline-block; background: var(--nav-bg); color: #fff !important; padding: 15px 40px; font-size: 1.2rem; border-radius: 30px; text-decoration: none; font-weight: bold; box-shadow: 0 5px 15px rgba(15, 30, 77, 0.2); transition: 0.3s; margin-bottom: 30px;}
+    .btn-next-part { display: inline-block; background: var(--nav-bg); color: #fff !important; padding: 15px 40px; font-size: 1.15rem; border-radius: 30px; text-decoration: none; font-weight: bold; box-shadow: 0 5px 15px rgba(15, 30, 77, 0.2); transition: 0.3s; margin-bottom: 30px;}
     .btn-next-part:hover { transform: translateY(-3px); background: var(--accent); color: var(--nav-bg) !important; }
 
     /* Like & Share Action */
-    .action-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 40px; }
-    .btn-action { background: #fdfdfd; border: 1px solid #ddd; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 1rem; color: var(--nav-bg); transition: 0.3s; }
-    .btn-action:hover { background: #eee; }
+    .action-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+    .btn-action { background: #fdfdfd; border: 1px solid #ddd; padding: 12px 30px; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 1.05rem; color: var(--nav-bg); transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;}
+    .btn-action:hover { background: #eee; transform: translateY(-2px);}
     .btn-liked { background: #ffebee; color: #c62828; border-color: #ffcdd2; }
 
-    /* Responsive */
+    /* Responsive for Reading Area */
     @media (max-width: 768px) {
-        .reading-container { padding: 25px; }
+        .reading-container { padding: 30px 20px; }
         .story-title { font-size: 2rem; }
-        .story-body { font-size: 1.15rem; line-height: 2; }
-        .story-cover { height: 250px; }
+        .story-body { font-size: 1.15rem; line-height: 1.9; }
+        .action-row { flex-direction: column; gap: 10px; }
+        .btn-action { width: 100%; justify-content: center; }
     }
+
+    /* =========================================
+       Comments Section & Forms
+    ========================================= */
+    .comments-section { padding: 0 50px 40px 50px; max-width: 800px; margin: 0 auto; }
+    .comments-section h3 { color: var(--nav-bg); border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 25px; }
+    .comment-input-row { display: flex; gap: 15px; margin-bottom: 30px; }
+    .comment-input-row input { flex: 1; padding: 15px 25px; border: 1px solid #ddd; border-radius: 30px; font-size: 1rem; outline: none; background: #f8f9fa; transition: 0.3s;}
+    .comment-input-row input:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+    .comment-input-row button { background: var(--nav-bg); color: #fff; border: none; padding: 0 30px; border-radius: 30px; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+    .comment-input-row button:hover { background: var(--accent); color: var(--nav-bg); }
+    .comment-item { display: flex; margin-bottom: 20px; background: #fff; padding: 15px; border-radius: 12px; border: 1px solid rgba(15,30,77,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.02);}
+    .comment-item img { width: 45px; height: 45px; border-radius: 50%; margin-right: 15px; object-fit: cover; border: 1px solid #eee;}
+    .comment-content h4 { margin: 0 0 5px 0; font-size: 1.05rem; color: var(--nav-bg); }
+    .comment-content p { margin: 0; color: #444; font-size: 1rem; line-height: 1.5; }
+    
+    @media (max-width: 768px) { .comments-section { padding: 0 20px 30px 20px; } }
+
+    /* =========================================
+       Related Grid Layout
+    ========================================= */
+    .grid { column-count: 4; column-gap: 20px; margin-top: 20px; }
+    .card { margin-bottom: 20px; display: inline-block; width: 100%; break-inside: avoid; border-radius: 12px; overflow: hidden; background: transparent;}
+    .card-link-wrapper { display: block; position: relative; border-radius: 12px; overflow: hidden; background: var(--surface-color); box-shadow: 0 4px 10px rgba(15, 30, 77, 0.05); }
+    .card-img-top { width: 100%; height: auto; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
+    .card-link-wrapper:hover .card-img-top { transform: scale(1.08); }
+    .card-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to top, rgba(15, 30, 77, 0.95) 0%, rgba(15, 30, 77, 0.2) 60%, transparent 100%); opacity: 0; transition: opacity 0.3s ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 18px; color: #fff; z-index: 2; }
+    .card-link-wrapper:hover .card-overlay { opacity: 1; }
+    .card-overlay h3 { color: #fff; margin: 0 0 5px 0; font-size: 1.1rem; font-weight: 700; transform: translateY(15px); transition: transform 0.4s ease; }
+    .card-overlay p { color: #e0e6ed; font-size: 0.85rem; margin-bottom: 10px; transform: translateY(15px); transition: transform 0.4s ease 0.05s; }
+    .card-link-wrapper:hover .card-overlay h3, .card-link-wrapper:hover .card-overlay p { transform: translateY(0); }
+    
+    @media (max-width: 1100px) { .grid { column-count: 3; } }
+    @media (max-width: 768px) { .grid { column-count: 2; column-gap: 15px; } .card { margin-bottom: 15px; } }
+    @media (max-width: 480px) { .grid { column-count: 2; column-gap: 10px; } .card { margin-bottom: 10px; } .card-overlay { padding: 12px; } .card-overlay h3 { font-size: 0.95rem; } .card-overlay p { display: none; } }
 </style>
 {% endblock %}
 
@@ -84,6 +130,7 @@
     <!-- 1. Header (Title & Badges) -->
     <header class="story-header">
         <div class="story-badges">
+            <span class="badge-genre"><i class="fa-solid fa-folder-open"></i> {{ content.categories.name_bn }}</span>
             {% if content.genre %}
                 <span class="badge-genre"><i class="fa-solid fa-tags"></i> {{ content.genre }}</span>
             {% endif %}
@@ -96,26 +143,26 @@
         </div>
         
         <h1 class="story-title">{{ content.title }}</h1>
-        <p style="color: #666; font-size: 1.1rem; font-style: italic;">{{ content.description }}</p>
+        <p style="color: #666; font-size: 1.15rem; font-style: italic; line-height: 1.6; white-space: pre-wrap;">{{ content.description }}</p>
     </header>
 
     <!-- 2. Meta Info (Author, Date, Views) -->
     <div class="story-meta">
-        <img src="{{ content.profiles.avatar_url }}" alt="Author">
+        <a href="/p/{{ content.profiles.username }}"><img src="{{ content.profiles.avatar_url }}" alt="Author"></a>
         <div>
             <a href="/p/{{ content.profiles.username }}">{{ content.profiles.display_name or content.profiles.username }}</a>
-            <div style="display: flex; gap: 15px; margin-top: 5px; font-size: 0.85rem; font-weight: normal;">
+            <div class="story-meta-stats">
                 <span><i class="fa-regular fa-calendar"></i> {{ content.created_at[:10] }}</span>
-                <span><i class="fa-regular fa-eye"></i> {{ content.views }} ভিউ</span>
-                <span><i class="fa-regular fa-heart"></i> {{ likes_count }} লাইক</span>
+                <span><i class="fa-regular fa-eye" style="color: #2e7d32;"></i> {{ content.views }}</span>
+                <span><i class="fa-regular fa-heart" style="color: #c62828;"></i> {{ likes_count }}</span>
             </div>
         </div>
     </div>
 
     <!-- 3. Edit Button (If Owner) -->
     {% if session.get('user') and session['user']['id'] == content.user_id %}
-    <div style="text-align: center; margin-bottom: 20px;">
-        <a href="/edit-content/{{ content.id }}" class="btn-primary" style="background: #4caf50; font-size: 0.9rem;"><i class="fa-solid fa-pen-to-square"></i> লেখাটি এডিট করুন</a>
+    <div style="text-align: center; margin-bottom: 30px;">
+        <a href="/edit-content/{{ content.id }}" class="btn-primary" style="background: #4caf50; font-size: 0.95rem; border-radius: 30px; padding: 8px 20px;"><i class="fa-solid fa-pen-to-square"></i> লেখাটি এডিট করুন</a>
     </div>
     {% endif %}
 
@@ -125,9 +172,17 @@
     <!-- 5. Main Story Body -->
     <div class="story-body">{{ content.body_text }}</div>
 
-    <!-- 6. Footer Actions -->
+    <!-- 6. Hashtags -->
+    {% if content.hashtags %}
+    <div class="hashtags-container">
+        {% for tag in content.hashtags.split(',') %}
+            <span>#{{ tag.strip() }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- 7. Footer Actions & Next Part -->
     <footer class="story-footer">
-        
         <!-- Next Part Button -->
         {% if content.next_part_link %}
             <a href="{{ content.next_part_link }}" class="btn-next-part">পরের পর্ব পড়ুন <i class="fa-solid fa-arrow-right-long" style="margin-left: 8px;"></i></a>
@@ -135,39 +190,60 @@
 
         <!-- Like & Share -->
         <div class="action-row">
-            <form action="/like/{{ content.id }}" method="POST" style="margin: 0;">
-                <button type="submit" class="btn-action {% if user_liked %}btn-liked{% endif %}">
+            <form action="/like/{{ content.id }}" method="POST" style="margin: 0; flex: 1; max-width: 250px;">
+                <button type="submit" class="btn-action {% if user_liked %}btn-liked{% endif %}" style="width: 100%; justify-content: center;">
                     {% if user_liked %}<i class="fa-solid fa-heart"></i> লাইকড{% else %}<i class="fa-regular fa-heart"></i> লাইক দিন{% endif %}
                 </button>
             </form>
-            <button onclick="copyShareLink()" class="btn-action"><i class="fa-solid fa-share-nodes"></i> শেয়ার করুন</button>
+            <button onclick="copyShareLink()" class="btn-action" style="flex: 1; max-width: 250px; justify-content: center;"><i class="fa-solid fa-share-nodes"></i> শেয়ার করুন</button>
         </div>
     </footer>
 </article>
 
 <!-- ==========================================
-     Comments Section (গল্পের নিচে কমেন্ট বক্স)
+     Static Banner Ad Section (পাঠকদের জন্য)
 =========================================== -->
-<div class="reading-container" style="padding: 30px 50px;">
-    <h3 style="color: var(--nav-bg); margin-top:0; border-bottom: 2px solid #eee; padding-bottom: 10px;"><i class="fa-regular fa-comments"></i> মন্তব্য সমূহ ({{ comments|length }})</h3>
+<div style="text-align: center; margin: 0 auto 40px auto; padding: 20px; background: #f8fbfd; border-radius: 12px; border: 1px dashed #b0c4de; max-width: 800px;">
+    <span style="font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px;">Advertisement</span>
+    
+    <!-- আপনার 468x60 ব্যানার অ্যাডের কোড -->
+    <script>
+      atOptions = {
+        'key' : '65ec9f7d8d86083bf154bf98b07df8f1',
+        'format' : 'iframe',
+        'height' : 60,
+        'width' : 468,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/65ec9f7d8d86083bf154bf98b07df8f1/invoke.js"></script>
+    
+</div>
+
+<!-- ==========================================
+     Comments Section
+=========================================== -->
+<div class="comments-section">
+    <h3><i class="fa-regular fa-comments" style="color: var(--accent); margin-right: 8px;"></i> মন্তব্য সমূহ ({{ comments|length }})</h3>
     
     {% if session.get('user') %}
-    <form action="/comment/{{ content.id }}" method="POST" style="margin-bottom: 25px; display:flex; gap:10px;">
-        <input type="text" name="text" placeholder="আপনার সুন্দর মন্তব্যটি লিখুন..." required style="flex:1; padding:12px; border:1px solid #ccc; border-radius:30px; font-family:inherit;">
-        <button type="submit" class="btn-primary" style="border:none; cursor:pointer; border-radius:30px; padding: 0 25px;"><i class="fa-solid fa-paper-plane"></i></button>
+    <form action="/comment/{{ content.id }}" method="POST" class="comment-input-row">
+        <input type="text" name="text" placeholder="এই গল্প সম্পর্কে আপনার মতামত দিন..." required>
+        <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
     </form>
     {% else %}
-    <p style="color: #666; font-size: 0.95rem; background: #fdfdfd; padding: 15px; border: 1px solid #eee; text-align: center; border-radius: 8px;">মন্তব্য করতে দয়া করে <a href="/login" style="color: var(--accent); font-weight: bold;">লগইন করুন</a>।</p>
+    <div style="background: #fdfdfd; padding: 20px; border-radius: 12px; text-align: center; border: 1px dashed #ccc; margin-bottom: 30px;">
+        <p style="color: #666; font-size: 1.05rem; margin: 0;">মন্তব্য করতে দয়া করে <a href="/login" style="color: var(--accent); font-weight: bold; text-decoration: none;">লগইন করুন</a>।</p>
+    </div>
     {% endif %}
 
     <div>
         {% for comment in comments %}
-        <div style="display: flex; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed #eee;">
-            <img src="{{ comment.profiles.avatar_url }}" alt="User" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 15px; object-fit: cover;">
-            <div>
-                <a href="/p/{{ comment.profiles.username }}" style="font-weight: bold; color: var(--nav-bg); text-decoration: none;">{{ comment.profiles.display_name or comment.profiles.username }}</a>
-                <span style="font-size: 0.8rem; color: #888; margin-left: 10px;">{{ comment.created_at[:10] }}</span>
-                <p style="margin: 5px 0 0 0; color: #444; font-size: 1rem;">{{ comment.text }}</p>
+        <div class="comment-item">
+            <a href="/p/{{ comment.profiles.username }}"><img src="{{ comment.profiles.avatar_url }}" alt="User"></a>
+            <div class="comment-content">
+                <h4><a href="/p/{{ comment.profiles.username }}" style="color: var(--nav-bg); text-decoration: none;">{{ comment.profiles.display_name or comment.profiles.username }}</a> <span style="font-weight: normal; font-size: 0.8rem; color: #888; margin-left: 10px;">{{ comment.created_at[:10] }}</span></h4>
+                <p>{{ comment.text }}</p>
             </div>
         </div>
         {% endfor %}
@@ -175,22 +251,43 @@
 </div>
 
 <!-- ==========================================
-     Related Stories (একই ক্যাটাগরির অন্য গল্প)
+     Related Stories (Masonry Grid + In-feed Ads)
 =========================================== -->
 {% if related %}
-<div class="reading-container" style="background: transparent; box-shadow: none; padding: 0;">
-    <h3 style="color: var(--nav-bg); margin-bottom: 20px;"><i class="fa-solid fa-layer-group"></i> আরও পড়ুন</h3>
-    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));">
+<div style="max-width: 1200px; margin: 0 auto;">
+    <h2 style="color: var(--nav-bg); margin-bottom: 25px; border-bottom: 2px solid rgba(15, 30, 77, 0.08); padding-bottom: 10px;"><i class="fa-solid fa-layer-group" style="color: var(--accent); margin-right: 10px;"></i> এই ক্যাটাগরির আরও পড়ুন</h2>
+    
+    <div class="grid">
         {% for item in related %}
-        <div class="card" style="background: var(--surface-color);">
-            <a href="{{ get_url(item) }}" style="display: block; text-decoration: none; color: inherit;">
-                <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" style="height: 160px;">
-                <div style="padding: 15px;">
-                    <h4 style="margin:0 0 5px 0; font-size: 1.1rem; color: var(--nav-bg);">{{ item.title }}</h4>
-                    <p style="font-size: 0.85rem; color: #666; margin:0;">{{ item.profiles.display_name or item.profiles.username }}</p>
+        <div class="card">
+            <a href="{{ get_url(item) }}" class="card-link-wrapper">
+                <img src="{{ item.file_url }}" alt="{{ item.alt_text }}" class="card-img-top">
+                <div class="card-overlay">
+                    <h3>{{ item.title }}</h3>
+                    <p style="font-style: italic;">"{{ item.description[:50] }}..."</p>
+                    <div class="author-info">
+                        <img src="{{ item.profiles.avatar_url }}" alt="Author">
+                        <span>@{{ item.profiles.username }}</span>
+                    </div>
                 </div>
             </a>
         </div>
+
+        <!-- ==========================================
+             প্রতি ৫টি গল্পের পর অ্যাড দেখানোর লজিক
+        =========================================== -->
+        {% if loop.index % 5 == 0 %}
+        <div class="card" style="background: transparent; box-shadow: none; border: none; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px 0; break-inside: avoid;">
+            <span style="font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">Sponsored</span>
+            
+            <!-- আপনার Native Ad এর কোড -->
+            <script async="async" data-cfasync="false" src="https://pl28514147.effectivegatecpm.com/9bdaa56042780cf3290ef9004bb9bf72/invoke.js"></script>
+            <div id="container-9bdaa56042780cf3290ef9004bb9bf72"></div>
+            
+        </div>
+        {% endif %}
+        <!-- ========================================== -->
+
         {% endfor %}
     </div>
 </div>
