@@ -5,15 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}পিকঘর | নান্দনিক সংগ্রহশালা{% endblock %}</title>
     
-    <!-- Google Fonts (বাংলা ფন্ট) -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome Icons (ফন্ট অসাম আইকন) -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- CSS File Link -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
+    <style>
+        /* =========================================
+           1. Navbar Line-Break Fix & Premium UI
+        ========================================= */
+        .navbar {
+            position: sticky; top: 0; z-index: 1050;
+            background: rgba(10, 11, 16, 0.95); /* Deep Dark Background */
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+        
+        .logo a { font-size: 1.8rem; color: #fff; font-weight: 700; text-decoration: none; letter-spacing: 1px; }
+        .logo a span { color: #FFD700; }
+
+        /* ফ্লেক্সবক্স এবং গ্যাপ ব্যবহার করে লাইন ব্রেক ফিক্স করা হলো */
+        .nav-links { display: flex; align-items: center; gap: 20px; }
+        
+        .nav-links a {
+            color: #e0e6ed; text-decoration: none; font-size: 0.95rem; font-weight: 600;
+            white-space: nowrap; /* কোনোভাবেই লেখা নিচে নামবে না */
+            transition: 0.3s; padding: 5px 0;
+        }
+        .nav-links a:hover { color: #FFD700; }
+        
+        .nav-btn-highlight { background: #FFD700; color: #000 !important; padding: 8px 18px !important; border-radius: 30px; font-weight: 700; border: 1px solid #FFD700;}
+        .nav-btn-highlight:hover { background: transparent; color: #FFD700 !important; }
+
+        /* =========================================
+           2. Hamburger Menu Fix (Mobile Responsive)
+        ========================================= */
+        .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 5px; z-index: 1100; }
+        .hamburger span { width: 28px; height: 3px; background: #FFD700; border-radius: 5px; transition: 0.4s; }
+
+        /* ১১০০ পিক্সেলের নিচে গেলে মেনু অটোমেটিক মোবাইলের মতো সাইডবার হয়ে যাবে */
+        @media (max-width: 1100px) {
+            .navbar { padding: 15px 20px; }
+            .hamburger { display: flex; }
+            .nav-links {
+                position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
+                background: #0a0b10; flex-direction: column; align-items: flex-start;
+                padding-top: 80px; gap: 15px; padding-left: 30px;
+                box-shadow: -10px 0 30px rgba(0,0,0,0.8); transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            }
+            .nav-links.active { right: 0; }
+            .hamburger.toggle-icon span:nth-child(1) { transform: translateY(8px) rotate(45deg); background: #ff4d4d; }
+            .hamburger.toggle-icon span:nth-child(2) { opacity: 0; }
+            .hamburger.toggle-icon span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); background: #ff4d4d; }
+        }
+
+        /* Footer Improvement */
+        .footer { background: #0a0b10; border-top: 2px solid #FFD700; font-family: 'Hind Siliguri', sans-serif;}
+        .footer h2, .footer h3 { color: #fff; }
+        .footer-links a:hover { color: #FFD700; padding-left: 5px; }
+        .social-icons a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #FFD700; }
+        .social-icons a:hover { background: #FFD700; color: #000; transform: translateY(-3px); }
+    </style>
     {% block head %}{% endblock %}
 </head>
 <body>
@@ -21,27 +81,29 @@
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="/"><i class="fa-solid fa-camera-retro" style="color: var(--accent); margin-right: 5px;"></i>পিক<span>ঘর</span></a>
+            <a href="/"><i class="fa-solid fa-camera-retro" style="color: #FFD700; margin-right: 5px;"></i>পিক<span>ঘর</span></a>
         </div>
         
         <!-- Hamburger Icon for Mobile -->
-        <div class="hamburger" id="hamburger">
+        <div class="hamburger" id="hamburgerBtn">
             <span></span>
             <span></span>
             <span></span>
         </div>
 
-        <div class="nav-links" id="nav-links">
+        <div class="nav-links" id="navMenu">
             <a href="/"><i class="fa-solid fa-house"></i> হোম</a>
             <a href="/c/image"><i class="fa-solid fa-image"></i> ছবি</a>
             <a href="/c/story"><i class="fa-solid fa-book-open"></i> গল্প</a>
-            <a href="#"><i class="fa-solid fa-font"></i> ফন্ট</a>
-            <a href="#"><i class="fa-solid fa-blog"></i> ব্লগ</a>
+            <a href="/c/font"><i class="fa-solid fa-font"></i> ফন্ট</a>
+            <a href="/c/blog"><i class="fa-solid fa-blog"></i> ব্লগ</a>
             
-            <!-- Auth Logic / Conditional Links -->
             {% if session.get('user') %}
                 <a href="/upload" class="nav-btn-highlight"><i class="fa-solid fa-cloud-arrow-up"></i> আপলোড</a>
-                <a href="/p/{{ session['user']['username'] }}" style="color: var(--accent);"><i class="fa-solid fa-user-circle"></i> {{ session['user']['username'] }}</a>
+                
+                <a href="/p/{{ session['user']['username'] }}" style="color: #FFD700; border: 1px solid #FFD700; padding: 5px 15px; border-radius: 20px;">
+                    <i class="fa-solid fa-user-circle"></i> {{ session['user']['username'] }}
+                </a>
                 
                 {% if session['user']['email'] == 'admin@gmail.com' %}
                     <a href="/admin" style="color: #4caf50;"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন</a>
@@ -57,8 +119,6 @@
 
     <!-- Main Content Container -->
     <div class="container">
-        
-        <!-- Flash Messages (Alerts) -->
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             <div class="flash-messages">
@@ -69,16 +129,14 @@
           {% endif %}
         {% endwith %}
 
-        <!-- Dynamic Page Content -->
         {% block content %}{% endblock %}
-        
     </div>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-about">
-                <h2><i class="fa-solid fa-camera-retro" style="color: var(--accent); margin-right: 5px;"></i>পিক<span>ঘর</span></h2>
+                <h2><i class="fa-solid fa-camera-retro" style="color: #FFD700; margin-right: 5px;"></i>পিক<span>ঘর</span></h2>
                 <p>পিকঘর হলো নান্দনিক ছবি, গল্প, ফন্ট এবং ব্লগের একটি প্রিমিয়াম ডিজিটাল সংগ্রহশালা। আমাদের ক্রিয়েটিভ কমিউনিটিতে যুক্ত হোন, আপনার শিল্প শেয়ার করুন এবং আয় করুন।</p>
             </div>
             <div class="footer-links">
@@ -87,131 +145,82 @@
                 <a href="/about"><i class="fa-solid fa-angle-right"></i> আমাদের সম্পর্কে</a>
                 <a href="/contact"><i class="fa-solid fa-angle-right"></i> যোগাযোগ করুন</a>
                 <a href="/upload"><i class="fa-solid fa-angle-right"></i> কন্টেন্ট আপলোড</a>
-        </div>
+            </div>
             <div class="footer-contact">
                 <h3><i class="fa-solid fa-address-book"></i> যোগাযোগ</h3>
-                <p><i class="fa-solid fa-envelope" style="color: var(--accent); margin-right: 8px;"></i> info@picghor.com</p>
-                <p><i class="fa-solid fa-location-dot" style="color: var(--accent); margin-right: 8px;"></i> ঢাকা, বাংলাদেশ</p>
+                <p><i class="fa-solid fa-envelope" style="color: #FFD700; margin-right: 8px;"></i> info@picghor.com</p>
+                <p><i class="fa-solid fa-location-dot" style="color: #FFD700; margin-right: 8px;"></i> ঢাকা, বাংলাদেশ</p>
                 <div class="social-icons">
                     <a href="https://www.facebook.com/profile.php?id=61588378066038" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
                     <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@alihosen.typography?_r=1&_t=ZS-94F5TWVJBqr" title="Twitter"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://www.tiktok.com/@alihosen.typography?_r=1&_t=ZS-94F5TWVJBqr" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                     <a href="https://pin.it/5QiXRSpBl" title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            &copy; ২০২৬ পিকঘর (PicGhor). সর্বস্বত্ব সংরক্ষিত। Devloped by <a href="https://alihosenofficial.github.io/" style="color: #fff;">Ali Hosen</a>
+            &copy; ২০২৬ পিকঘর (PicGhor). সর্বস্বত্ব সংরক্ষিত। Developed by <a href="https://alihosenofficial.github.io/" style="color: #FFD700; font-weight: bold; text-decoration: none;">Ali Hosen</a>
         </div>
     </footer>
-<!-- ==========================================
-         Sticky Bottom Ad (Floating Ad with Close Button)
+
+    <!-- ==========================================
+         Sticky Bottom Ad (Grand Opening পেজে দেখাবে না)
     =========================================== -->
+    {% if request.path != '/grand-opening' %}
     <div id="sticky-bottom-ad" class="sticky-ad-container">
-        <!-- Close (X) Button -->
         <button class="close-ad-btn" onclick="closeStickyAd()" title="Close Ad">✕</button>
-        
-        <!-- Ad Content Area -->
         <div class="ad-wrapper">
             <span class="ad-label">Advertisement</span>
-            
-            <!-- আপনার দেওয়া Ad Network এর কোড -->
             <script>
-              atOptions = {
-                'key' : '65ec9f7d8d86083bf154bf98b07df8f1',
-                'format' : 'iframe',
-                'height' : 60,
-                'width' : 468,
-                'params' : {}
-              };
+              atOptions = { 'key' : '65ec9f7d8d86083bf154bf98b07df8f1', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
             </script>
             <script src="https://www.highperformanceformat.com/65ec9f7d8d86083bf154bf98b07df8f1/invoke.js"></script>
-            
         </div>
     </div>
 
-    <!-- Sticky Ad CSS & JS -->
     <style>
-        /* ওয়েবসাইটের নিচে একটু ফাঁকা জায়গা রাখা যাতে কন্টেন্ট অ্যাডের নিচে ঢাকা না পড়ে */
-        body {
-            padding-bottom: 80px; 
-        }
-
-        /* স্টিকি অ্যাড কন্টেইনার */
-        .sticky-ad-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.4s ease-in-out;
-        }
-
-        /* অ্যাডের র‍্যাপার (মোবাইলে যাতে স্ক্রিনের বাইরে না যায়) */
-        .ad-wrapper {
-            width: 100%;
-            max-width: 468px; /* আপনার অ্যাডের সাইজ অনুযায়ী */
-            overflow: hidden;
-            text-align: center;
-            padding: 5px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Advertisement লেখাটি */
-        .ad-label {
-            font-size: 10px;
-            color: #999;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 2px;
-        }
-
-        /* ক্রস (X) বাটন ডিজাইন (ছবির মতো) */
-        .close-ad-btn {
-            position: absolute;
-            top: -25px;
-            right: 10px;
-            background: #ffffff;
-            color: #333;
-            border: 1px solid #ddd;
-            border-bottom: none;
-            border-radius: 5px 5px 0 0;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 2px 12px;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
-        }
-
-        .close-ad-btn:hover {
-            background: #f1f1f1;
-            color: red;
-        }
+        body { padding-bottom: 80px; }
+        .sticky-ad-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: transform 0.4s ease-in-out; }
+        .ad-wrapper { width: 100%; max-width: 468px; overflow: hidden; text-align: center; padding: 5px 0; display: flex; flex-direction: column; align-items: center; }
+        .ad-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+        .close-ad-btn { position: absolute; top: -25px; right: 10px; background: #ffffff; color: #333; border: 1px solid #ddd; border-bottom: none; border-radius: 5px 5px 0 0; font-size: 16px; font-weight: bold; cursor: pointer; padding: 2px 12px; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
+        .close-ad-btn:hover { background: #f1f1f1; color: red; }
     </style>
-
     <script>
-        // অ্যাড কেটে দেওয়ার জাভাস্ক্রিপ্ট ফাংশন
         function closeStickyAd() {
             var adContainer = document.getElementById('sticky-bottom-ad');
             if (adContainer) {
-                // স্মুথভাবে অ্যাডটি নিচে নামিয়ে গায়েব করে দিবে
                 adContainer.style.transform = 'translateY(100%)';
-                setTimeout(() => {
-                    adContainer.style.display = 'none';
-                    document.body.style.paddingBottom = '0'; // অ্যাড কাটার পর বডির প্যাডিং রিমুভ হবে
-                }, 400); // এনিমেশনের সময়
+                setTimeout(() => { adContainer.style.display = 'none'; document.body.style.paddingBottom = '0'; }, 400);
             }
         }
     </script>
+    {% endif %}
     <!-- ========================================== -->
-    <!-- JS File Link -->
+
+    <!-- Navbar Toggle Fixed Script (Added directly here for perfect execution) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const hamburger = document.getElementById('hamburgerBtn');
+            const navMenu = document.getElementById('navMenu');
+
+            if(hamburger && navMenu) {
+                hamburger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    navMenu.classList.toggle('active');
+                    hamburger.classList.toggle('toggle-icon');
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
+                        navMenu.classList.remove('active');
+                        hamburger.classList.remove('toggle-icon');
+                    }
+                });
+            }
+        });
+    </script>
+    
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
