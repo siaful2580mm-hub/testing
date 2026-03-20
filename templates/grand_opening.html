@@ -7,39 +7,50 @@
 
 <style>
     /* =========================================
-       1. Cinematic Curtain & Ribbon
+       1. New Theme Variables & Cinematic Curtain
     ========================================= */
+    :root {
+        --go-bg: #0a0b10; /* Midnight Black */
+        --go-card: #12141d; /* Deep Dark Blue-ish Gray */
+        --go-gold: #d4af37; /* Royal Gold */
+        --go-gold-light: rgba(212, 175, 55, 0.1);
+        --go-text: #e0e6ed;
+    }
+
+    body { background-color: var(--go-bg); color: var(--go-text); overflow-x: hidden; }
+
     .curtain-container {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 999999;
         display: flex; justify-content: center; align-items: center; overflow: hidden;
-        background: #050505;
+        background: #000;
     }
     .curtain-left, .curtain-right {
         position: absolute; top: 0; width: 50%; height: 100%;
-        background: linear-gradient(90deg, #0a0a0a 0%, #1a1c29 100%);
-        border-right: 2px solid rgba(255,215,0,0.5);
+        background: linear-gradient(90deg, #3b0918 0%, #1a0208 100%); /* Velvet Dark Red */
+        border-right: 4px solid var(--go-gold);
         transition: transform 2s cubic-bezier(0.77, 0, 0.175, 1); z-index: 1;
+        box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
     }
-    .curtain-right { left: 50%; border-left: 2px solid rgba(255,215,0,0.5); border-right: none; background: linear-gradient(270deg, #0a0a0a 0%, #1a1c29 100%); }
+    .curtain-right { left: 50%; border-left: 4px solid var(--go-gold); border-right: none; background: linear-gradient(270deg, #3b0918 0%, #1a0208 100%); }
     
     .ribbon-red {
         position: absolute; width: 100%; height: 80px; 
-        background: linear-gradient(to bottom, #d32f2f, #900000, #d32f2f);
+        background: linear-gradient(to bottom, #d4af37, #aa8a26, #d4af37); /* Gold Ribbon */
         top: 50%; transform: translateY(-50%); z-index: 2;
         box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
         transition: opacity 0.5s, transform 0.8s; display: flex; align-items: center; justify-content: center;
     }
-    .ribbon-text { color: #fff; font-size: 2rem; font-weight: 900; letter-spacing: 25px; text-transform: uppercase; text-shadow: 0 0 20px rgba(255,215,0,0.5); }
+    .ribbon-text { color: #000; font-size: 2.2rem; font-weight: 900; letter-spacing: 20px; text-transform: uppercase; }
 
     .scissor-btn {
-        position: absolute; z-index: 3; background: linear-gradient(135deg, #FFDF00, #D4AF37); color: #000;
+        position: absolute; z-index: 3; background: #fff; color: #000;
         width: 100px; height: 100px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 3rem;
-        cursor: pointer; border: 5px solid #fff; box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        cursor: pointer; border: 4px solid var(--go-gold); box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
         transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); animation: pulseGold 2s infinite;
     }
-    .scissor-btn:hover { transform: scale(1.2) rotate(-25deg); box-shadow: 0 0 50px rgba(255, 215, 0, 0.8); }
+    .scissor-btn:hover { transform: scale(1.2) rotate(-25deg); box-shadow: 0 0 60px rgba(212, 175, 55, 1); background: var(--go-gold); color: #fff;}
 
-    @keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.6); } 70% { box-shadow: 0 0 0 20px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
+    @keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); } 70% { box-shadow: 0 0 0 25px rgba(212, 175, 55, 0); } 100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); } }
 
     .curtain-container.opened .curtain-left { transform: translateX(-100%); }
     .curtain-container.opened .curtain-right { transform: translateX(100%); }
@@ -47,82 +58,116 @@
     .curtain-container.opened .scissor-btn { opacity: 0; transform: scale(0); }
 
     /* =========================================
-       2. Smooth Scroll Reveal Animations
+       2. Scroll Reveal Animations
     ========================================= */
-    .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
-    .reveal.active { opacity: 1; transform: translateY(0); }
+    .reveal-up { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+    .reveal-left { opacity: 0; transform: translateX(-40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+    .reveal-right { opacity: 0; transform: translateX(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
+    .reveal-up.active, .reveal-left.active, .reveal-right.active { opacity: 1; transform: translate(0); }
 
     /* =========================================
-       3. Main Layout & Typography
+       3. Typography & Layout
     ========================================= */
-    .opening-wrapper { max-width: 1000px; margin: 60px auto; padding: 0 20px; text-align: center; }
+    .opening-wrapper { max-width: 1100px; margin: 80px auto; padding: 0 20px; text-align: center; }
     
-    .welcome-text { font-size: 4rem; color: var(--nav-bg); margin-bottom: 10px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.2; }
-    .welcome-text span { background: linear-gradient(135deg, #FFD700, #D4AF37); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    
-    /* Guest & Intro Section */
-    .guest-intro-box { background: #fff; padding: 50px; border-radius: 20px; box-shadow: 0 20px 40px rgba(15,30,77,0.06); border: 1px solid rgba(15,30,77,0.05); margin-bottom: 50px; position: relative; }
-    .guest-intro-box::before { content: '\f10d'; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; top: 20px; left: 30px; font-size: 4rem; color: rgba(255,215,0,0.1); }
-    
-    .guest-intro-box p { font-size: 1.2rem; color: #444; line-height: 1.9; text-align: justify; margin-bottom: 25px; }
-    .intro-title { color: var(--nav-bg); font-size: 2.2rem; font-weight: 700; margin-bottom: 20px; text-align: center; border-bottom: 2px solid rgba(255,215,0,0.3); padding-bottom: 15px; display: inline-block;}
+    .welcome-text { font-size: 4.5rem; color: #fff; margin-bottom: 10px; font-weight: 800; letter-spacing: -2px; line-height: 1.1; }
+    .welcome-text span { background: linear-gradient(135deg, var(--go-gold), #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .welcome-subtitle { font-size: 1.3rem; color: #888; margin-bottom: 60px; font-weight: 500; letter-spacing: 1px; }
 
-    /* Premium Features Grid */
+    /* Glassmorphism Intro Box */
+    .guest-intro-box { background: var(--go-card); padding: 50px; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 60px; position: relative; text-align: left; }
+    .guest-intro-box::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--go-gold); border-radius: 24px 0 0 24px; }
+    
+    .intro-title { color: #fff; font-size: 2.2rem; font-weight: 700; margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;}
+    .intro-title i { color: var(--go-gold); }
+    .guest-intro-box p { font-size: 1.15rem; color: #bbb; line-height: 1.9; margin-bottom: 15px; }
+    .guest-intro-box p strong { color: var(--go-gold); }
+
+    /* =========================================
+       4. Gallery Showcase (New Addition)
+    ========================================= */
+    .gallery-showcase { margin-bottom: 70px; }
+    .gallery-title { font-size: 2.5rem; color: #fff; margin-bottom: 30px; font-weight: 700; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .g-card { border-radius: 16px; overflow: hidden; position: relative; aspect-ratio: 4/5; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; cursor: pointer; }
+    .g-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+    .g-card:hover img { transform: scale(1.1); }
+    .g-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); opacity: 0; transition: 0.4s; }
+    .g-card:hover::after { opacity: 1; }
+    .g-info { position: absolute; bottom: -30px; left: 20px; right: 20px; z-index: 2; opacity: 0; transition: 0.4s; text-align: left; }
+    .g-card:hover .g-info { bottom: 20px; opacity: 1; }
+    .g-info h4 { color: #fff; margin: 0 0 5px 0; font-size: 1.2rem; }
+    .g-info span { color: var(--go-gold); font-size: 0.9rem; font-weight: bold; }
+
+    /* =========================================
+       5. Premium Features Grid
+    ========================================= */
     .achieve-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 60px; }
-    .achieve-card { background: linear-gradient(145deg, #ffffff, #f8f9fa); padding: 40px 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #eee; transition: 0.4s; position: relative; overflow: hidden; z-index: 1;}
-    .achieve-card::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 0; background: var(--accent); transition: 0.4s; z-index: -1; }
-    .achieve-card:hover::after { height: 100%; }
-    .achieve-card:hover { transform: translateY(-10px); border-color: var(--accent); }
-    .achieve-card:hover i, .achieve-card:hover h3, .achieve-card:hover p { color: var(--nav-bg); }
-    
-    .achieve-card i { font-size: 3.2rem; color: var(--accent); margin-bottom: 20px; transition: 0.4s;}
-    .achieve-card h3 { color: var(--nav-bg); font-size: 1.4rem; margin: 0 0 10px 0; transition: 0.4s;}
-    .achieve-card p { font-size: 1rem; color: #666; margin: 0; transition: 0.4s; line-height: 1.6;}
+    .achieve-card { background: var(--go-card); padding: 40px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; text-align: center; }
+    .achieve-card:hover { transform: translateY(-10px); border-color: var(--go-gold); background: rgba(212, 175, 55, 0.05); box-shadow: 0 15px 40px rgba(212, 175, 55, 0.1); }
+    .achieve-card i { font-size: 3rem; color: var(--go-gold); margin-bottom: 20px; }
+    .achieve-card h3 { color: #fff; font-size: 1.3rem; margin: 0 0 10px 0; }
+    .achieve-card p { font-size: 0.95rem; color: #888; margin: 0; line-height: 1.6;}
 
     /* =========================================
-       4. Palestine Donation Section
+       6. Enhanced Share Section (New Addition)
+    ========================================= */
+    .share-box { background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), transparent); border: 1px solid rgba(212, 175, 55, 0.2); padding: 40px; border-radius: 20px; margin-bottom: 60px; backdrop-filter: blur(10px); }
+    .share-box h3 { color: #fff; font-size: 2rem; margin-top: 0; margin-bottom: 10px; }
+    .share-box p { color: #aaa; margin-bottom: 25px; font-size: 1.1rem; }
+    
+    .share-row { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+    .share-btn { display: flex; align-items: center; gap: 10px; padding: 12px 25px; border-radius: 30px; font-weight: bold; text-decoration: none; color: #fff; font-size: 1.05rem; transition: 0.3s; cursor: pointer; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
+    .share-btn:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); filter: brightness(1.1); }
+    
+    .btn-fb { background: #1877F2; } 
+    .btn-wa { background: #25D366; color: #000 !important; } 
+    .btn-tw { background: #000000; border: 1px solid #333; } 
+    .btn-copy { background: #fff; color: #000 !important; }
+
+    /* =========================================
+       7. Palestine Donation Section (Emotional)
     ========================================= */
     .salami-banner {
-        background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%); color: #fff;
-        padding: 60px 40px; border-radius: 20px; text-align: center; margin-bottom: 60px;
-        position: relative; border: 1px solid #333; box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        background: #050505; color: #fff; padding: 60px 40px; border-radius: 24px; text-align: center; margin-bottom: 60px;
+        position: relative; border: 1px solid #222; box-shadow: 0 30px 60px rgba(0,0,0,0.8); overflow: hidden;
     }
-    .salami-banner::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: linear-gradient(90deg, #111 25%, #fff 25%, #fff 50%, #198754 50%, #198754 75%, #dc3545 75%); }
+    .salami-banner::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: linear-gradient(90deg, #000 25%, #fff 25%, #fff 50%, #198754 50%, #198754 75%, #dc3545 75%); }
     
-    .emotional-quote { font-size: 2.8rem; font-weight: 800; color: #fff; line-height: 1.4; margin-bottom: 20px; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+    .emotional-quote { font-size: 3rem; font-weight: 800; color: #fff; line-height: 1.3; margin-bottom: 15px; text-shadow: 0 5px 20px rgba(220, 53, 69, 0.4); letter-spacing: -1px; }
     .emotional-quote span { color: #dc3545; }
 
-    .embassy-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 16px; text-align: left; max-width: 650px; margin: 30px auto 0; backdrop-filter: blur(10px); }
+    .embassy-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 30px; border-radius: 16px; text-align: left; max-width: 700px; margin: 30px auto 0; }
     .embassy-box h4 { color: #198754; font-size: 1.5rem; margin-top: 0; display: flex; align-items: center; gap: 10px; }
-    .embassy-text { color: #ddd; font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px; }
-
+    
     .btn-row { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 25px; }
-    .btn-video { flex: 1; min-width: 250px; background: transparent; color: #fff; padding: 15px; border-radius: 30px; font-weight: bold; font-size: 1.1rem; text-decoration: none; transition: 0.3s; border: 2px solid #dc3545; text-align: center;}
+    .btn-video { flex: 1; background: transparent; color: #fff; padding: 15px; border-radius: 30px; font-weight: bold; font-size: 1.1rem; text-decoration: none; transition: 0.3s; border: 2px solid #dc3545; text-align: center;}
     .btn-video:hover { background: #dc3545; }
-    .btn-bkash { flex: 1; min-width: 250px; background: #e2136e; color: #fff; padding: 15px; border-radius: 30px; font-weight: bold; font-size: 1.1rem; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 20px rgba(226, 19, 110, 0.2); text-align: center; border: 2px solid #e2136e;}
+    .btn-bkash { flex: 1; background: #e2136e; color: #fff; padding: 15px; border-radius: 30px; font-weight: bold; font-size: 1.1rem; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 20px rgba(226, 19, 110, 0.2); text-align: center; border: 2px solid #e2136e;}
     .btn-bkash:hover { background: #c20e5c; border-color: #c20e5c; transform: translateY(-3px); }
 
     /* =========================================
-       5. Telegram Feedback Form
+       8. Telegram Feedback Form
     ========================================= */
-    .feedback-box { background: var(--surface-color); padding: 50px; border-radius: 20px; margin-bottom: 50px; box-shadow: 0 20px 40px rgba(15, 30, 77, 0.05); border: 1px solid rgba(15,30,77,0.05); }
-    .feedback-box h3 { color: var(--nav-bg); font-size: 2rem; margin-top: 0; margin-bottom: 10px; }
+    .feedback-box { background: var(--go-card); padding: 50px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); text-align: left; }
+    .feedback-box h3 { color: #fff; font-size: 2.2rem; margin-top: 0; margin-bottom: 10px; text-align: center; }
+    .feedback-box p { text-align: center; color: #888; margin-bottom: 30px; }
     
-    .fb-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; text-align: left; }
+    .fb-form { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .fb-full { grid-column: 1 / -1; }
-    .fb-form label { font-weight: 600; color: var(--nav-bg); margin-bottom: 8px; display: block; }
-    .fb-form input, .fb-form textarea { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #ddd; font-size: 1.05rem; font-family: inherit; background: #f8f9fa; transition: 0.3s; outline: none; box-sizing: border-box;}
-    .fb-form input:focus, .fb-form textarea:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 15px rgba(255,215,0,0.2); }
+    .fb-form label { font-weight: 600; color: #bbb; margin-bottom: 8px; display: block; }
+    .fb-form input, .fb-form textarea { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); font-size: 1.05rem; font-family: inherit; background: #0a0b10; color: #fff; transition: 0.3s; outline: none; box-sizing: border-box;}
+    .fb-form input:focus, .fb-form textarea:focus { border-color: var(--go-gold); box-shadow: 0 0 15px var(--go-gold-light); }
     
-    .btn-submit-feedback { grid-column: 1 / -1; background: var(--nav-bg); color: #fff; border: none; padding: 16px; border-radius: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(15, 30, 77, 0.2); }
-    .btn-submit-feedback:hover { background: var(--accent); color: var(--nav-bg); transform: translateY(-3px); }
+    .btn-submit-feedback { grid-column: 1 / -1; background: var(--go-gold); color: #000; border: none; padding: 16px; border-radius: 30px; font-weight: 800; font-size: 1.2rem; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px var(--go-gold-light); }
+    .btn-submit-feedback:hover { background: #fff; transform: translateY(-3px); }
 
-    /* Responsive */
     @media (max-width: 768px) {
         .welcome-text { font-size: 2.8rem; }
-        .guest-intro-box, .salami-banner, .feedback-box { padding: 30px 20px; }
+        .guest-intro-box, .salami-banner, .feedback-box, .share-box { padding: 30px 20px; }
         .emotional-quote { font-size: 2rem; }
         .fb-form { grid-template-columns: 1fr; }
+        .btn-row { flex-direction: column; }
     }
 </style>
 {% endblock %}
@@ -133,7 +178,7 @@
 <div class="curtain-container" id="curtainOverlay">
     <div class="curtain-left"></div>
     <div class="curtain-right"></div>
-    <div class="ribbon-red"><span class="ribbon-text">GRAND OPENING</span></div>
+    <div class="ribbon-red"><span class="ribbon-text">OPEN</span></div>
     <div class="scissor-btn" id="scissorBtn" title="উদ্বোধন করুন"><i class="fa-solid fa-scissors"></i></div>
 </div>
 
@@ -141,7 +186,7 @@
 <div class="opening-wrapper">
     
     <!-- Hero Title -->
-    <div class="reveal">
+    <div class="reveal-up">
         <h1 class="welcome-text">
             {% if guest_name %}
                 স্বাগতম, <span>{{ guest_name }}!</span>
@@ -149,12 +194,12 @@
                 পিক<span>ঘর</span>-এ স্বাগতম!
             {% endif %}
         </h1>
-        <p class="welcome-subtitle">২০২৬ সালের সবচেয়ে আধুনিক ও প্রিমিয়াম ডিজিটাল আর্কাইভের যাত্রা শুরু হলো।</p>
+        <p class="welcome-subtitle">২০২৬ সালের সবচেয়ে প্রিমিয়াম ডিজিটাল আর্কাইভের যাত্রা শুরু হলো।</p>
     </div>
 
     <!-- Guest Text & PicGhor Intro -->
-    <div class="guest-intro-box reveal">
-        <h2 class="intro-title">পিকঘর কী এবং কেন?</h2>
+    <div class="guest-intro-box reveal-up">
+        <h2 class="intro-title"><i class="fa-solid fa-compass"></i> পিকঘর কী এবং কেন?</h2>
         
         {% if guest_name %}
         <p><strong>প্রিয় {{ guest_name }},</strong> পিকঘরের এই উদ্বোধনী আয়োজনে আপনাকে আমাদের মাঝে পেয়ে আমরা সত্যিই অনেক আনন্দিত। আপনার মতো সৃজনশীল মানুষের পদচারণাতেই আমাদের এই প্ল্যাটফর্ম পূর্ণতা পাবে।</p>
@@ -168,47 +213,77 @@
         </p>
     </div>
 
+    <!-- NEW: Gallery Showcase -->
+    {% if images %}
+    <div class="gallery-showcase reveal-up">
+        <h2 class="gallery-title">এক নজরে গ্যালারি</h2>
+        <div class="gallery-grid">
+            {% for item in images %}
+            <div class="g-card">
+                <img src="{{ item.file_url }}" alt="{{ item.title }}">
+                <div class="g-info">
+                    <h4>{{ item.title }}</h4>
+                    <span><i class="fa-solid fa-camera-retro"></i> @{{ item.profiles.username }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Premium Features Grid -->
-    <div class="achieve-grid reveal">
-        <div class="achieve-card">
+    <div class="achieve-grid">
+        <div class="achieve-card reveal-left">
             <i class="fa-solid fa-shield-halved"></i>
             <h3>DMCA প্রটেকশন</h3>
             <p>আপনার কন্টেন্ট ১০০% কপিরাইট সুরক্ষিত এবং নিরাপদ।</p>
         </div>
-        <div class="achieve-card">
+        <div class="achieve-card reveal-up">
             <i class="fa-solid fa-server"></i>
             <h3>সুপারফাস্ট সার্ভার</h3>
             <p>জিরো ডাউনটাইম ও লেটেন্সি ফ্রি স্মুথ ব্রাউজিং।</p>
         </div>
-        <div class="achieve-card">
+        <div class="achieve-card reveal-up">
             <i class="fa-solid fa-sack-dollar"></i>
             <h3>অ্যাডভান্সড রয়্যালটি</h3>
             <p>ভিউ এবং ডাউনলোডের ভিত্তিতে ডাইনামিক আয় সিস্টেম।</p>
         </div>
-        <div class="achieve-card">
+        <div class="achieve-card reveal-right">
             <i class="fa-solid fa-users-viewfinder"></i>
             <h3>হিউজ কমিউনিটি</h3>
             <p>প্রতিদিন হাজারো শিল্পীর সাথে যুক্ত হওয়ার সুযোগ।</p>
         </div>
     </div>
 
-    <!-- 3. Emotional Palestine Donation Section -->
-    <div class="salami-banner reveal">
+    <!-- NEW: Advanced Share Section -->
+    <div class="share-box reveal-up">
+        <h3><i class="fa-solid fa-bullhorn" style="color: var(--go-gold); margin-right: 10px;"></i> উদ্বোধনী পেজটি ছড়িয়ে দিন</h3>
+        <p>আপনার বন্ধুদের এবং অন্যান্য ক্রিয়েটরদের পিকঘরে আমন্ত্রণ জানান।</p>
+        <div class="share-row">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url }}" target="_blank" class="share-btn btn-fb"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+            <a href="https://api.whatsapp.com/send?text=পিকঘরের গ্র্যান্ড ওপেনিংয়ে আপনাকে স্বাগতম! ভিজিট করুন: {{ request.url }}" target="_blank" class="share-btn btn-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+            <a href="https://twitter.com/intent/tweet?text=পিকঘরের গ্র্যান্ড ওপেনিং!&url={{ request.url }}" target="_blank" class="share-btn btn-tw"><i class="fa-brands fa-x-twitter"></i> X (Twitter)</a>
+            <button onclick="copyLink()" class="share-btn btn-copy"><i class="fa-solid fa-link"></i> Copy Link</button>
+        </div>
+    </div>
+
+    <!-- Emotional Palestine Donation Section -->
+    <div class="salami-banner reveal-up">
         <div class="emotional-quote">
             "সালামি দিন, আমাকে না! <span>ফিলিস্তিনকে</span>"
         </div>
-        <p style="color: #ccc; font-size: 1.15rem; max-width: 700px; margin: 0 auto;">যাদের পাশে আজ কেউ দাঁড়ায় না, ঈদের এই খুশির দিনে আপনার একটি ছোট সালামি ফিলিস্তিনের একটি ক্ষুধার্ত শিশুর মুখে হাসি ফোটাতে পারে।</p>
+        <p style="color: #bbb; font-size: 1.15rem; max-width: 700px; margin: 0 auto;">যাদের পাশে আজ কেউ দাঁড়ায় না, ঈদের এই খুশির দিনে আপনার একটি ছোট সালামি ফিলিস্তিনের একটি ক্ষুধার্ত শিশুর মুখে হাসি ফোটাতে পারে।</p>
         
         <div class="embassy-box">
             <h4><i class="fa-solid fa-building-columns"></i> ফিলিস্তিন দূতাবাস, বাংলাদেশ</h4>
-            <p class="embassy-text">
+            <p style="color: #ddd; font-size: 1.05rem; line-height: 1.8; margin-bottom: 20px;">
                 আমরা কোনো থার্ড-পার্টি মাধ্যমে নয়, সরাসরি <strong>Embassy of the State of Palestine in Bangladesh</strong>-এর অফিসিয়াল অ্যাকাউন্টে ডোনেট করার জন্য অনুরোধ করছি। কীভাবে নিরাপদে আপনার সালামিটি পাঠাবেন, তা জানতে নিচের টিউটোরিয়ালটি দেখুন।
             </p>
 
             <div class="btn-row">
                 <!-- Tutorial Video Link (আপনার ভিডিও লিংকটি href এ বসিয়ে দিন) -->
                 <a href="https://youtube.com/your-tutorial-link" target="_blank" class="btn-video">
-                    <i class="fa-solid fa-circle-play"></i> টিউটোরিয়াল ভিডিও দেখুন
+                    <i class="fa-solid fa-circle-play"></i> ডোনেশন টিউটোরিয়াল
                 </a>
                 
                 <!-- Open bKash App directly -->
@@ -220,10 +295,10 @@
         </div>
     </div>
 
-    <!-- 4. Telegram Integrated Feedback Form -->
-    <div class="feedback-box reveal">
-        <h3><i class="fa-solid fa-comment-dots" style="color: var(--accent);"></i> আপনার মূল্যবান মতামত</h3>
-        <p style="color: #666; font-size: 1.1rem; margin-bottom: 0;">পিকঘর-এর ডিজাইন এবং আইডিয়া আপনার কেমন লেগেছে? আমাদের জানান!</p>
+    <!-- Telegram Integrated Feedback Form -->
+    <div class="feedback-box reveal-up">
+        <h3><i class="fa-solid fa-comment-dots" style="color: var(--go-gold);"></i> আপনার মূল্যবান মতামত</h3>
+        <p>পিকঘর-এর ডিজাইন এবং আইডিয়া আপনার কেমন লেগেছে? আমাদের জানান!</p>
         
         <form class="fb-form" id="telegramFeedbackForm" onsubmit="sendToTelegram(event)">
             <div>
@@ -250,12 +325,12 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         
-        // 1. Ribbon Cutting Animation
+        // 1. Ribbon Cutting
         const scissorBtn = document.getElementById('scissorBtn');
         const curtainOverlay = document.getElementById('curtainOverlay');
 
         scissorBtn.addEventListener('click', function() {
-            scissorBtn.style.transform = "rotate(-45deg) scale(1.2)";
+            scissorBtn.style.transform = "rotate(-45deg) scale(1.3)";
             setTimeout(() => {
                 curtainOverlay.classList.add('opened');
                 fireConfetti();
@@ -266,14 +341,14 @@
         function fireConfetti() {
             var duration = 4 * 1000; var end = Date.now() + duration;
             (function frame() {
-                confetti({ particleCount: 7, angle: 60, spread: 70, origin: { x: 0 }, colors:['#FFD700', '#0F1E4D', '#198754', '#dc3545'] });
-                confetti({ particleCount: 7, angle: 120, spread: 70, origin: { x: 1 }, colors:['#FFD700', '#0F1E4D', '#198754', '#dc3545'] });
+                confetti({ particleCount: 7, angle: 60, spread: 70, origin: { x: 0 }, colors:['#d4af37', '#ffffff', '#198754', '#dc3545'] });
+                confetti({ particleCount: 7, angle: 120, spread: 70, origin: { x: 1 }, colors:['#d4af37', '#ffffff', '#198754', '#dc3545'] });
                 if (Date.now() < end) requestAnimationFrame(frame);
             }());
         }
 
-        // 2. Scroll Reveal Animation (Intersection Observer)
-        const reveals = document.querySelectorAll('.reveal');
+        // 2. Scroll Reveal Animations
+        const reveals = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
         const revealOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
         
         const revealOnScroll = new IntersectionObserver(function(entries, observer) {
@@ -287,7 +362,12 @@
         reveals.forEach(reveal => { revealOnScroll.observe(reveal); });
     });
 
-    // 3. Telegram Bot Integration via API Fetch
+    // 3. Share Function
+    function copyLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => alert('লিংক কপি হয়েছে! বন্ধুদের পাঠিয়ে দিন।'));
+    }
+
+    // 4. Telegram Bot API
     async function sendToTelegram(e) {
         e.preventDefault();
         
@@ -296,16 +376,13 @@
         const email = document.getElementById('fbEmail').value;
         const message = document.getElementById('fbMessage').value;
         
-        // Telegram Bot Credentials
         const botToken = '8591835982:AAHzjD8URhF6FiY0qoH5CMTLR7HQN05uka8';
         const chatId = '7360769822';
         
-        // Message Formatting
-        const textData = `🔔 *New Feedback from PicGhor*\n\n👤 *Name:* ${name}\n📧 *Email:* ${email}\n📝 *Message:* ${message}`;
+        const textData = `🔔 *Grand Opening Feedback*\n\n👤 *Name:* ${name}\n📧 *Email:* ${email}\n📝 *Message:* ${message}`;
         const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
-        btn.style.opacity = '0.7';
         btn.disabled = true;
 
         try {
@@ -325,7 +402,6 @@
             alert('ইন্টারনেট কানেকশন চেক করুন।');
         } finally {
             btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> মতামত জমা দিন';
-            btn.style.opacity = '1';
             btn.disabled = false;
         }
     }
