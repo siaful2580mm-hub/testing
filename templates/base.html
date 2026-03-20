@@ -17,22 +17,31 @@
     
     <style>
         /* =========================================
-           1. Navbar Line-Break Fix & Premium UI
+           1. Global Reset & Navbar Line-Break Fix
         ========================================= */
-        body { margin: 0; padding: 0; font-family: 'Hind Siliguri', sans-serif; background-color: #Faf8f5; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Hind Siliguri', sans-serif; background-color: #Faf8f5; }
 
         .navbar {
             position: sticky; top: 0; z-index: 1050;
-            background: rgba(10, 11, 16, 0.95); /* Deep Dark Background */
+            background: rgba(10, 11, 16, 0.95); 
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-            padding: 15px 40px; 
-            display: flex; justify-content: space-between; align-items: center; /* লোগো এবং মেনু পাশাপাশি রাখবে */
-            width: 100%; box-sizing: border-box;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            padding: 15px 5%; /* পারফেক্ট স্পেসিং */
+            
+            /* ম্যাজিক ফিক্স: লোগো ও মেনু সবসময় এক লাইনে থাকবে */
+            display: flex; flex-direction: row; flex-wrap: nowrap; 
+            justify-content: space-between; align-items: center;
+            
+            width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         
-        .logo a { font-size: 1.8rem; color: #fff; font-weight: 700; text-decoration: none; letter-spacing: 1px; display: flex; align-items: center;}
+        .logo a { 
+            display: flex; align-items: center; font-size: 1.8rem; color: #fff; 
+            font-weight: 700; text-decoration: none; letter-spacing: 1px; 
+            white-space: nowrap; /* লোগো ভাঙবে না */
+        }
+        .logo a i { color: #FFD700; margin-right: 8px; }
         .logo a span { color: #FFD700; }
 
         .nav-links { display: flex; align-items: center; gap: 20px; }
@@ -40,55 +49,75 @@
         .nav-links a {
             color: #e0e6ed; text-decoration: none; font-size: 0.95rem; font-weight: 600;
             white-space: nowrap; transition: 0.3s; padding: 5px 0;
+            display: flex; align-items: center;
         }
-        .nav-links a i { width: 20px; text-align: center; margin-right: 5px; } /* আইকনগুলো সমান সাইজের হবে */
+        .nav-links a i { margin-right: 6px; }
         .nav-links a:hover { color: #FFD700; }
         
-        .nav-btn-highlight { background: #FFD700; color: #000 !important; padding: 8px 18px !important; border-radius: 30px; font-weight: 700; border: 1px solid #FFD700;}
+        .nav-btn-highlight { background: #FFD700; color: #000 !important; padding: 8px 20px !important; border-radius: 30px; font-weight: 700; border: 1px solid #FFD700; transition: 0.3s;}
         .nav-btn-highlight:hover { background: transparent; color: #FFD700 !important; }
 
         /* =========================================
-           2. Mobile Hamburger Menu (Perfectly Fixed)
+           2. Hamburger Icon Fix
         ========================================= */
-        .hamburger { display: none; cursor: pointer; flex-direction: column; gap: 6px; z-index: 1100; }
-        .hamburger span { width: 30px; height: 3px; background: #FFD700; border-radius: 5px; transition: 0.4s; }
+        .hamburger { 
+            display: none; cursor: pointer; flex-direction: column; 
+            justify-content: space-between; width: 28px; height: 20px; z-index: 1100; flex-shrink: 0;
+        }
+        .hamburger span { width: 100%; height: 3px; background: #FFD700; border-radius: 5px; transition: 0.4s; }
 
+        /* =========================================
+           3. Premium Mobile Sidebar Menu
+        ========================================= */
         @media (max-width: 1100px) {
             .navbar { padding: 15px 20px; }
-            .hamburger { display: flex; margin-left: auto; } /* আইকন সবসময় ডানদিকে থাকবে */
+            .hamburger { display: flex; }
             
             .nav-links {
-                position: fixed; top: 0; right: -100%; width: 260px; height: 100vh;
+                position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
                 background: #0a0b10; flex-direction: column; align-items: flex-start;
                 padding-top: 80px; gap: 0; 
-                box-shadow: -10px 0 30px rgba(0,0,0,0.8); transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+                box-shadow: -10px 0 40px rgba(0,0,0,0.8); transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
                 z-index: 1040; overflow-y: auto;
             }
             .nav-links.active { right: 0; }
             
-            /* সাইডবারের ভেতরের লিংকগুলোর ডিজাইন */
+            /* মেনুর ভেতরের লেখার পারফেক্ট অ্যালাইনমেন্ট */
             .nav-links a {
-                width: 100%; padding: 15px 30px; font-size: 1.1rem;
-                border-bottom: 1px solid rgba(255,255,255,0.05); display: block; box-sizing: border-box; text-align: left;
+                width: 100%; padding: 15px 30px; font-size: 1.1rem; color: #e0e6ed;
+                border-bottom: 1px solid rgba(255,255,255,0.05); display: flex !important; align-items: center; text-align: left;
             }
             
-            /* হাইলাইট বাটন ডিজাইন ফিক্স */
-            .nav-btn-highlight { margin: 20px 30px; width: calc(100% - 60px); text-align: center; padding: 12px !important; }
+            /* আইকনগুলো একদম সমানভাবে সাজানো থাকবে */
+            .nav-links a i {
+                width: 25px; /* ফিক্সড সাইজ */
+                text-align: left; color: #FFD700; margin-right: 12px; font-size: 1.15rem;
+            }
             
-            /* ৩ দাগ থেকে X (ক্রস) এনিমেশন */
-            .hamburger.toggle-icon span:nth-child(1) { transform: translateY(9px) rotate(45deg); background: #ff4d4d; }
+            .nav-links a:hover { background: rgba(255, 215, 0, 0.05); padding-left: 35px; }
+
+            .nav-btn-highlight { margin: 20px 30px !important; width: calc(100% - 60px) !important; justify-content: center; padding: 12px !important; }
+            
+            /* X Animation */
+            .hamburger.toggle-icon span:nth-child(1) { transform: translateY(8.5px) rotate(45deg); background: #ff4d4d; }
             .hamburger.toggle-icon span:nth-child(2) { opacity: 0; }
-            .hamburger.toggle-icon span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); background: #ff4d4d; }
+            .hamburger.toggle-icon span:nth-child(3) { transform: translateY(-8.5px) rotate(-45deg); background: #ff4d4d; }
         }
 
         /* =========================================
-           3. Footer & Other Global Styles
+           4. Footer & Globals
         ========================================= */
-        .footer { background: #0a0b10; border-top: 2px solid #FFD700; font-family: 'Hind Siliguri', sans-serif;}
-        .footer h2, .footer h3 { color: #fff; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .footer { background: #0a0b10; border-top: 2px solid #FFD700; font-family: 'Hind Siliguri', sans-serif; margin-top: 60px;}
+        .footer-container { max-width: 1200px; margin: 0 auto; padding: 50px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .footer h2, .footer h3 { color: #fff; margin-bottom: 20px; }
+        .footer-about p, .footer-links a, .footer-contact p { color: #aaa; line-height: 1.8; text-decoration: none; font-size: 0.95rem;}
+        .footer-links a { display: block; margin-bottom: 10px; transition: 0.3s; }
         .footer-links a:hover { color: #FFD700; padding-left: 5px; }
-        .social-icons a { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #FFD700; }
+        .social-icons { margin-top: 20px; }
+        .social-icons a { display: inline-flex; justify-content: center; align-items: center; width: 35px; height: 35px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #FFD700; border-radius: 50%; margin-right: 10px; transition: 0.3s; text-decoration: none;}
         .social-icons a:hover { background: #FFD700; color: #000; transform: translateY(-3px); }
+        .footer-bottom { text-align: center; padding: 25px 20px; color: #666; font-size: 0.9rem; }
     </style>
     {% block head %}{% endblock %}
 </head>
@@ -97,7 +126,7 @@
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="/"><i class="fa-solid fa-camera-retro" style="color: #FFD700; margin-right: 5px;"></i>পিক<span>ঘর</span></a>
+            <a href="/"><i class="fa-solid fa-camera-retro"></i>পিক<span>ঘর</span></a>
         </div>
         
         <!-- Hamburger Icon for Mobile -->
@@ -116,13 +145,10 @@
             
             {% if session.get('user') %}
                 <a href="/upload" class="nav-btn-highlight"><i class="fa-solid fa-cloud-arrow-up"></i> আপলোড</a>
-                
-                <a href="/p/{{ session['user']['username'] }}" style="color: #FFD700; border: 1px solid #FFD700; padding: 5px 15px; border-radius: 20px;">
-                    <i class="fa-solid fa-user-circle"></i> {{ session['user']['username'] }}
-                </a>
+                <a href="/p/{{ session['user']['username'] }}"><i class="fa-solid fa-user-circle"></i> {{ session['user']['username'] }}</a>
                 
                 {% if session['user']['email'] == 'admin@gmail.com' %}
-                    <a href="/admin" style="color: #4caf50;"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন</a>
+                    <a href="/admin"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন</a>
                 {% endif %}
                 
                 <a href="/logout" style="color: #ff4d4d;"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</a>
@@ -137,7 +163,7 @@
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
-            <div class="flash-messages">
+            <div class="flash-messages" style="margin-top: 20px;">
               {% for category, message in messages %} 
                 <p class="{{ category }}">{{ message }}</p> 
               {% endfor %}
@@ -156,20 +182,20 @@
                 <p>পিকঘর হলো নান্দনিক ছবি, গল্প, ফন্ট এবং ব্লগের একটি প্রিমিয়াম ডিজিটাল সংগ্রহশালা। আমাদের ক্রিয়েটিভ কমিউনিটিতে যুক্ত হোন, আপনার শিল্প শেয়ার করুন এবং আয় করুন।</p>
             </div>
             <div class="footer-links">
-                <h3><i class="fa-solid fa-link"></i> প্রয়োজনীয় লিংক</h3>
-                <a href="/"><i class="fa-solid fa-angle-right"></i> হোমপেজ</a>
-                <a href="/about"><i class="fa-solid fa-angle-right"></i> আমাদের সম্পর্কে</a>
-                <a href="/contact"><i class="fa-solid fa-angle-right"></i> যোগাযোগ করুন</a>
-                <a href="/upload"><i class="fa-solid fa-angle-right"></i> কন্টেন্ট আপলোড</a>
+                <h3><i class="fa-solid fa-link" style="color: #FFD700; margin-right: 8px;"></i> প্রয়োজনীয় লিংক</h3>
+                <a href="/">হোমপেজ</a>
+                <a href="/about">আমাদের সম্পর্কে</a>
+                <a href="/contact">যোগাযোগ করুন</a>
+                <a href="/upload">কন্টেন্ট আপলোড</a>
             </div>
             <div class="footer-contact">
-                <h3><i class="fa-solid fa-address-book"></i> যোগাযোগ</h3>
+                <h3><i class="fa-solid fa-address-book" style="color: #FFD700; margin-right: 8px;"></i> যোগাযোগ</h3>
                 <p><i class="fa-solid fa-envelope" style="color: #FFD700; margin-right: 8px;"></i> info@picghor.com</p>
                 <p><i class="fa-solid fa-location-dot" style="color: #FFD700; margin-right: 8px;"></i> ঢাকা, বাংলাদেশ</p>
                 <div class="social-icons">
                     <a href="https://www.facebook.com/profile.php?id=61588378066038" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
                     <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@alihosen.typography?_r=1&_t=ZS-94F5TWVJBqr" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://www.tiktok.com/@alihosen.typography" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                     <a href="https://pin.it/5QiXRSpBl" title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
                 </div>
             </div>
@@ -212,9 +238,10 @@
         }
     </script>
     {% endif %}
-    <!-- ========================================== -->
 
-    <!-- Navbar Toggle Fixed Script (Added directly here for perfect execution) -->
+    <!-- ==========================================
+         Navbar Toggle Script
+    =========================================== -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const hamburger = document.getElementById('hamburgerBtn');
