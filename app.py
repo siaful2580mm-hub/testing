@@ -120,6 +120,21 @@ def edit_content(content_id):
         return redirect(f"{prefix}{content['slug']}")
 
     return render_template('edit_content.html', content=content, cat_slug=cat_slug)
+    # ==========================================
+# গ্র্যান্ড ওপেনিং (Grand Opening / Welcome Page)
+# ==========================================
+@app.route('/grand-opening')
+def grand_opening():
+    # URL থেকে নাম রিসিভ করা (যেমন: /grand-opening?id=sadiya)
+    guest_name = request.args.get('id', '')
+    if guest_name:
+        guest_name = guest_name.capitalize() # নামের প্রথম অক্ষর বড় হাতের করবে
+
+    # গ্যালারির জন্য কয়েকটি লেটেস্ট ছবি ফেচ করা
+    res = supabase.table('contents').select('*, categories(name_bn, slug), profiles(username, display_name)').eq('is_approved', True).order('created_at', desc=True).limit(4).execute()
+    images = res.data if res.data else[]
+
+    return render_template('grand_opening.html', guest_name=guest_name, images=images)
     
 @app.route('/payout', methods=['GET', 'POST'])
 @login_required
