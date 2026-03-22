@@ -61,40 +61,74 @@
         /* =========================================
            3. Premium Mobile Sidebar Menu (Sleek UI)
         ========================================= */
-        @media (max-width: 1100px) {
-            .navbar { padding: 0 20px; }
-            .hamburger { display: flex; }
-            
-            .nav-links {
-                position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
-                background: #0a0b10; flex-direction: column; align-items: flex-start;
-                padding-top: 80px; gap: 0; 
-                box-shadow: -10px 0 40px rgba(0,0,0,0.8); transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-                z-index: 1040; overflow-y: auto;
-            }
-            .nav-links.active { right: 0; }
-            
-            /* সাইডবারের সবগুলো লিংক এবং বাটনের ডিজাইন একদম একরকম করা হলো */
-            .nav-links a {
-                width: 100%; padding: 16px 30px; font-size: 1.1rem; color: #e0e6ed !important;
-                border-bottom: 1px solid rgba(255,255,255,0.05); display: flex !important; align-items: center;
-                background: transparent !important; /* হলুদ বক্স মুছে ফেলা হলো */
-                border-radius: 0 !important;
-            }
-            
-            .nav-links a i { width: 30px; text-align: left; color: #FFD700; margin-right: 10px; font-size: 1.2rem; }
-            
-            /* মোবাইলে স্পেশাল কালার কোডিং */
-            .nav-links a[href="/upload"] { color: #FFD700 !important; font-weight: bold; }
-            .nav-links a[href="/admin"] { color: #4caf50 !important; }
-            .nav-links a[href="/logout"] { color: #ff4d4d !important; border-bottom: none; }
-            .nav-links a[href="/logout"] i { color: #ff4d4d; }
-            
-            /* X Animation */
-            .hamburger.toggle-icon span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); background: #ff4d4d; }
-            .hamburger.toggle-icon span:nth-child(2) { opacity: 0; }
-            .hamburger.toggle-icon span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); background: #ff4d4d; }
-        }
+/* =========================================
+   Premium Mobile Sidebar Menu (Modern UI)
+========================================= */
+@media (max-width: 1100px) {
+    .navbar { padding: 0 15px; }
+    .hamburger { display: flex; }
+    
+    .nav-links {
+        position: fixed; 
+        top: 0; 
+        right: -100%; 
+        width: 260px; /* একটু চিকন করা হয়েছে */
+        height: 100vh;
+        background: rgba(10, 11, 16, 0.98); 
+        backdrop-filter: blur(10px); /* পেছনে ঝাপসা ইফেক্ট */
+        flex-direction: column; 
+        align-items: flex-start;
+        padding: 90px 10px 30px 10px; /* প্যাডিং ঠিক করা হয়েছে */
+        gap: 8px; 
+        box-shadow: -5px 0 25px rgba(0,0,0,0.5); 
+        transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 1040;
+    }
+    
+    .nav-links.active { right: 0; }
+    
+    .nav-links a {
+        width: 100%; 
+        padding: 12px 20px; 
+        font-size: 1rem; 
+        color: #e0e6ed !important;
+        border-radius: 12px !important; /* চারকোনা থেকে কার্ভ করা হয়েছে */
+        display: flex !important; 
+        align-items: center;
+        background: transparent;
+        transition: 0.2s ease;
+        border-bottom: none !important; /* নিচের বর্ডার সরিয়ে ফেলা হয়েছে */
+    }
+
+    /* হোভার করলে হালকা ব্যাকগ্রাউন্ড আসবে */
+    .nav-links a:hover {
+        background: rgba(255, 215, 0, 0.1) !important;
+        color: #FFD700 !important;
+    }
+    
+    .nav-links a i { 
+        width: 35px; 
+        font-size: 1.1rem; 
+        color: #FFD700; 
+    }
+    
+    /* স্পেশাল বাটন হাইলাইট */
+    .nav-links a.nav-btn-highlight {
+        background: linear-gradient(90deg, #FFD700, #ffcc00) !important;
+        color: #000 !important;
+        margin-top: 10px;
+        font-weight: 700;
+    }
+
+    .nav-links a.nav-btn-highlight i { color: #000; }
+    
+    /* Logout বাটন একটু আলাদা লালচে ভাব */
+    .nav-links a[href="/logout"] {
+        margin-top: auto; /* একদম নিচে নিয়ে যাওয়ার চেষ্টা */
+        color: #ff6b6b !important;
+    }
+    .nav-links a[href="/logout"] i { color: #ff6b6b; }
+}
 
         /* =========================================
            4. Footer & In-Feed Ad Fix
