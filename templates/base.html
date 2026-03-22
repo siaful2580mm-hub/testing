@@ -7,6 +7,9 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- External CSS for global styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
     <style>
         :root {
@@ -14,63 +17,67 @@
             --dark: #0a0b10;
             --dark-light: #15171e;
             --text-muted: #aaa;
-            --bg-body: #f8fafc;
+            --bg-body: #Faf8f5;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg-body); padding-bottom: 80px; transition: padding 0.3s; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg-body); padding-bottom: 80px; transition: padding 0.3s; color: #333; }
 
         /* --- NAVBAR --- */
         .navbar {
             position: sticky; top: 0; z-index: 1050;
-            background: var(--dark); height: 70px;
+            background: rgba(10, 11, 16, 0.95); backdrop-filter: blur(10px); height: 70px;
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 5%; border-bottom: 2px solid rgba(255, 215, 0, 0.3);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .logo a { color: #fff; font-size: 1.6rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .logo a i { color: var(--primary); }
         .logo span { color: var(--primary); }
 
         .nav-links { display: flex; gap: 20px; align-items: center; }
-        .nav-links a { color: #eee; text-decoration: none; font-size: 1rem; font-weight: 500; transition: 0.3s; }
+        .nav-links a { color: #eee; text-decoration: none; font-size: 1rem; font-weight: 500; transition: 0.3s; display: flex; align-items: center; gap: 6px;}
         .nav-links a:hover { color: var(--primary); }
-        .nav-links a i { margin-right: 5px; font-size: 0.9rem; color: var(--primary); }
 
         .nav-btn { background: var(--primary); color: #000 !important; padding: 8px 18px; border-radius: 50px; font-weight: 600; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2); }
         .nav-btn:hover { transform: translateY(-2px); opacity: 0.9; }
 
         /* --- MOBILE MENU --- */
         .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
-        .hamburger span { width: 28px; height: 3px; background: var(--primary); border-radius: 2px; }
+        .hamburger span { width: 28px; height: 3px; background: var(--primary); border-radius: 2px; transition: 0.3s; }
 
         @media(max-width: 992px) {
             .hamburger { display: flex; }
             .nav-links {
                 position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
                 background: var(--dark-light); flex-direction: column; align-items: flex-start;
-                padding: 80px 30px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1040;
+                padding: 80px 30px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1040; gap: 10px;
             }
             .nav-links.active { right: 0; }
-            .nav-links a { width: 100%; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 1.1rem; }
+            .nav-links a { width: 100%; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 1.1rem; }
+            .nav-btn { text-align: center; justify-content: center; width: 100%; margin-top: 15px;}
             .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1030; }
             .overlay.active { opacity: 1; visibility: visible; }
         }
 
-        /* --- CONTAINER --- */
-        .container { max-width: 1200px; margin: auto; padding: 40px 20px; min-height: 70vh; }
+        /* --- CONTAINER (Flash Messages & Content) --- */
+        .container { max-width: 1200px; margin: auto; padding: 20px; min-height: 60vh; }
+        
+        .flash-messages p { background: #fff; color: var(--dark); padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); font-weight: 600; }
+        .flash-messages p.error { border-left-color: #ff4d4d; }
 
         /* --- MODERN FOOTER --- */
-        .footer { background: var(--dark); color: #fff; padding: 60px 20px 30px; border-top: 4px solid var(--primary); }
+        .footer { background: var(--dark); color: #fff; padding: 60px 20px 30px; border-top: 4px solid var(--primary); margin-top: 50px;}
         .footer-content { max-width: 1200px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; text-align: left; }
-        .footer-logo { font-size: 1.8rem; font-weight: 700; margin-bottom: 15px; display: block; }
+        .footer-logo { font-size: 1.8rem; font-weight: 700; margin-bottom: 15px; display: block; text-decoration: none; color: #fff; }
         .footer-logo span { color: var(--primary); }
         .footer-about p { color: var(--text-muted); line-height: 1.6; font-size: 0.95rem; }
-        .footer-links h4 { margin-bottom: 20px; position: relative; padding-bottom: 10px; }
+        .footer-links h4 { margin-bottom: 20px; position: relative; padding-bottom: 10px; color: #fff; font-size: 1.1rem; }
         .footer-links h4::after { content: ''; position: absolute; left: 0; bottom: 0; width: 40px; height: 2px; background: var(--primary); }
         .footer-links ul { list-style: none; }
         .footer-links ul li { margin-bottom: 10px; }
-        .footer-links ul li a { color: var(--text-muted); text-decoration: none; transition: 0.3s; }
+        .footer-links ul li a { color: var(--text-muted); text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 8px;}
         .footer-links ul li a:hover { color: var(--primary); padding-left: 5px; }
         
         .social-icons { display: flex; gap: 15px; margin-top: 20px; }
@@ -78,21 +85,23 @@
         .social-icons a:hover { background: var(--primary); color: #000; transform: translateY(-5px); }
 
         .footer-bottom { text-align: center; margin-top: 50px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text-muted); font-size: 0.9rem; }
+        .footer-bottom a { color: var(--primary); text-decoration: none; font-weight: bold; }
 
         /* --- AD STYLES --- */
         .sticky-ad-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.15); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: transform 0.4s ease-in-out; }
-        .ad-wrapper { width: 100%; max-width: 468px; overflow: hidden; text-align: center; padding: 8px 0; display: flex; flex-direction: column; align-items: center; }
+        .ad-wrapper { width: 100%; max-width: 468px; overflow: hidden; text-align: center; padding: 8px 0; display: flex; flex-direction: column; align-items: center; position: relative;}
         .ad-label { font-size: 9px; color: #bbb; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
-        .close-ad-btn { position: absolute; top: -30px; right: 20px; background: #fff; color: #333; border: none; border-radius: 8px 8px 0 0; font-size: 14px; font-weight: bold; cursor: pointer; padding: 5px 15px; box-shadow: 0 -3px 10px rgba(0,0,0,0.1); }
-        .close-ad-btn:hover { color: #e74c3c; }
+        .close-ad-btn { position: absolute; top: -30px; right: 20px; background: #fff; color: #333; border: none; border-radius: 8px 8px 0 0; font-size: 14px; font-weight: bold; cursor: pointer; padding: 5px 15px; box-shadow: 0 -3px 10px rgba(0,0,0,0.1); transition: 0.3s; }
+        .close-ad-btn:hover { color: #e74c3c; background: #f8f9fa; }
     </style>
     {% block head %}{% endblock %}
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar">
     <div class="logo">
-        <a href="/">📸 পিক<span>ঘর</span></a>
+        <a href="/"><i class="fa-solid fa-camera-retro"></i> পিক<span>ঘর</span></a>
     </div>
 
     <div class="hamburger" id="hamburger">
@@ -103,10 +112,20 @@
         <a href="/"><i class="fa fa-home"></i> হোম</a>
         <a href="/c/image"><i class="fa fa-image"></i> ছবি</a>
         <a href="/c/story"><i class="fa fa-book"></i> গল্প</a>
-        <a href="/c/font"><i class="fa fa-font"></i> ফন্ট</a>
+        <a href="/c/blog"><i class="fa-solid fa-blog"></i> ব্লগ</a>
 
+        <!-- Auth Links -->
         {% if session.get('user') %}
             <a href="/upload" class="nav-btn"><i class="fa fa-cloud-upload-alt"></i> আপলোড</a>
+            
+            <!-- User Profile Link -->
+            <a href="/p/{{ session['user']['username'] }}" style="color: var(--primary);"><i class="fa-solid fa-circle-user"></i> প্রোফাইল</a>
+            
+            <!-- Admin Panel Link -->
+            {% if session['user']['email'] == 'admin@gmail.com' %}
+                <a href="/admin" style="color: #4caf50;"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন</a>
+            {% endif %}
+            
             <a href="/logout" style="color: #ff6b6b;"><i class="fa fa-sign-out-alt"></i> লগআউট</a>
         {% else %}
             <a href="/login"><i class="fa fa-user"></i> লগইন</a>
@@ -115,52 +134,66 @@
     </div>
 </nav>
 
+<!-- OVERLAY FOR MOBILE MENU -->
 <div class="overlay" id="overlay"></div>
 
+<!-- MAIN CONTENT -->
 <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %} 
+            <p class="{{ category }}">{{ message }}</p> 
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     {% block content %}{% endblock %}
 </div>
 
+<!-- FOOTER -->
 <footer class="footer">
     <div class="footer-content">
         <div class="footer-about">
-            <a href="/" class="footer-logo">📸 পিক<span>ঘর</span></a>
-            <p>আপনার সৃজনশীলতাকে ফুটিয়ে তুলতে আমরা দিচ্ছি নান্দনিক সব ছবি, গল্প এবং ফন্ট এর এক বিশাল ভাণ্ডার। যুক্ত থাকুন পিকঘরের সাথে।</p>
+            <a href="/" class="footer-logo"><i class="fa-solid fa-camera-retro"></i> পিক<span>ঘর</span></a>
+            <p>আপনার সৃজনশীলতাকে ফুটিয়ে তুলতে আমরা দিচ্ছি নান্দনিক সব ছবি, গল্প, ফন্ট এবং ব্লগের এক বিশাল ভাণ্ডার। আজই যুক্ত হোন পিকঘরের সাথে।</p>
             <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61588378066038" target="_blank"><i class="fab fa-facebook-f"></i></a>
                 <a href="#"><i class="fab fa-instagram"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@alihosen.typography" target="_blank"><i class="fab fa-tiktok"></i></a>
+                <a href="https://pin.it/5QiXRSpBl" target="_blank"><i class="fab fa-pinterest-p"></i></a>
             </div>
         </div>
         <div class="footer-links">
             <h4>দ্রুত লিঙ্ক</h4>
             <ul>
-                <li><a href="/">হোম পেজ</a></li>
-                <li><a href="/c/image">ছবি গ্যালারি</a></li>
-                <li><a href="/c/font">প্রিমিয়াম ফন্ট</a></li>
-                <li><a href="/privacy">প্রাইভেসি পলিসি</a></li>
+                <li><a href="/"><i class="fa-solid fa-angle-right"></i> হোম পেজ</a></li>
+                <li><a href="/c/image"><i class="fa-solid fa-angle-right"></i> ছবি গ্যালারি</a></li>
+                <li><a href="/c/story"><i class="fa-solid fa-angle-right"></i> সেরা গল্প</a></li>
+                <li><a href="/upload"><i class="fa-solid fa-angle-right"></i> কন্টেন্ট আপলোড</a></li>
             </ul>
         </div>
         <div class="footer-links">
-            <h4>সহযোগিতা</h4>
+            <h4>সহযোগিতা ও তথ্য</h4>
             <ul>
-                <li><a href="/contact">যোগাযোগ করুন</a></li>
-                <li><a href="/terms">শর্তাবলী</a></li>
-                <li><a href="/about">আমাদের সম্পর্কে</a></li>
-                <li><a href="/faq">সাধারণ জিজ্ঞাসা</a></li>
+                <li><a href="/insight"><i class="fa-solid fa-angle-right"></i> ইনসাইট ও আয়</a></li>
+                <li><a href="/about"><i class="fa-solid fa-angle-right"></i> আমাদের সম্পর্কে</a></li>
+                <li><a href="/contact"><i class="fa-solid fa-angle-right"></i> যোগাযোগ করুন</a></li>
+                <li><a href="/privacy"><i class="fa-solid fa-angle-right"></i> প্রাইভেসি পলিসি</a></li>
             </ul>
         </div>
     </div>
     <div class="footer-bottom">
-        © ২০২৬ <strong>পিকঘর</strong> — ডিজাইন ও ডেভেলপমেন্ট টিম পিকঘর।
+        © ২০২৬ <strong>পিকঘর (PicGhor)</strong> — সর্বস্বত্ব সংরক্ষিত। Developed by <a href="https://alihosenofficial.github.io/" target="_blank">Ali Hosen</a>
     </div>
 </footer>
 
+<!-- STICKY BOTTOM AD (Grond Opening এ দেখাবে না) -->
 {% if request.path != '/grand-opening' %}
 <div id="sticky-bottom-ad" class="sticky-ad-container">
-    <button class="close-ad-btn" onclick="closeStickyAd()" title="Close Ad">বন্ধ করুন ✕</button>
     <div class="ad-wrapper">
+        <button class="close-ad-btn" onclick="closeStickyAd()" title="Close Ad">বন্ধ করুন ✕</button>
         <span class="ad-label">Advertisement</span>
         <script>
           atOptions = { 'key' : '65ec9f7d8d86083bf154bf98b07df8f1', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
@@ -170,23 +203,26 @@
 </div>
 {% endif %}
 
+<!-- JS SCRIPTS -->
 <script>
     // Menu Logic
     const hamburger = document.getElementById("hamburger");
     const navMenu = document.getElementById("navMenu");
     const overlay = document.getElementById("overlay");
 
-    hamburger.onclick = () => {
-        navMenu.classList.toggle("active");
-        overlay.classList.toggle("active");
+    if(hamburger && navMenu && overlay) {
+        hamburger.onclick = () => {
+            navMenu.classList.toggle("active");
+            overlay.classList.toggle("active");
+        }
+
+        overlay.onclick = () => {
+            navMenu.classList.remove("active");
+            overlay.classList.remove("active");
+        }
     }
 
-    overlay.onclick = () => {
-        navMenu.classList.remove("active");
-        overlay.classList.remove("active");
-    }
-
-    // Ad Logic
+    // Ad Close Logic
     function closeStickyAd() {
         const adContainer = document.getElementById('sticky-bottom-ad');
         if (adContainer) { 
@@ -199,8 +235,7 @@
     }
 </script>
 
-    
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
 </html>
