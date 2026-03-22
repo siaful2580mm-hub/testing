@@ -1,296 +1,201 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}পিকঘর | নান্দনিক সংগ্রহশালা{% endblock %}</title>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
-    <!-- CSS File Link -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
-    <style>
-        /* =========================================
-           1. Global Reset & Perfect Navbar Alignment
-        ========================================= */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Hind Siliguri', sans-serif; background-color: #Faf8f5; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}পিকঘর | নান্দনিক সংগ্রহশালা{% endblock %}</title>
 
-        .navbar {
-            position: sticky; top: 0; z-index: 1050;
-            background: rgba(10, 11, 16, 0.95); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-            padding: 0 5%; height: 70px; /* ফিক্সড হাইট দেওয়া হলো যাতে এলাইনমেন্ট না ভাঙে */
-            display: flex; justify-content: space-between; align-items: center;
-            width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-        
-        .logo { display: flex; align-items: center; height: 100%; }
-        .logo a { font-size: 1.8rem; color: #fff; font-weight: 700; text-decoration: none; letter-spacing: 1px; display: flex; align-items: center;}
-        .logo a i { color: #FFD700; margin-right: 8px; }
-        .logo a span { color: #FFD700; }
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        .nav-links { display: flex; align-items: center; gap: 20px; height: 100%; }
-        
-        .nav-links a {
-            color: #e0e6ed; text-decoration: none; font-size: 0.95rem; font-weight: 600;
-            transition: 0.3s; display: flex; align-items: center;
-        }
-        .nav-links a i { width: 20px; text-align: center; margin-right: 5px; }
-        .nav-links a:hover { color: #FFD700; }
-        
-        .nav-btn-highlight { background: #FFD700; color: #000 !important; padding: 8px 18px !important; border-radius: 30px; font-weight: 700; border: 1px solid #FFD700;}
-        .nav-btn-highlight:hover { background: transparent; color: #FFD700 !important; }
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-        /* =========================================
-           2. Hamburger Icon Fix
-        ========================================= */
-        .hamburger { 
-            display: none; cursor: pointer; flex-direction: column; 
-            justify-content: space-between; width: 26px; height: 18px; z-index: 1100;
-        }
-        .hamburger span { width: 100%; height: 3px; background: #FFD700; border-radius: 5px; transition: 0.4s; }
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Hind Siliguri',sans-serif;background:#Faf8f5}
 
-        /* =========================================
-           3. Premium Mobile Sidebar Menu (Sleek UI)
-        ========================================= */
-/* =========================================
-   Premium Mobile Sidebar Menu (Modern UI)
-========================================= */
-@media (max-width: 1100px) {
-    .navbar { padding: 0 15px; }
-    .hamburger { display: flex; }
-    
-    .nav-links {
-        position: fixed; 
-        top: 0; 
-        right: -100%; 
-        width: 260px; /* একটু চিকন করা হয়েছে */
-        height: 100vh;
-        background: rgba(10, 11, 16, 0.98); 
-        backdrop-filter: blur(10px); /* পেছনে ঝাপসা ইফেক্ট */
-        flex-direction: column; 
-        align-items: flex-start;
-        padding: 90px 10px 30px 10px; /* প্যাডিং ঠিক করা হয়েছে */
-        gap: 8px; 
-        box-shadow: -5px 0 25px rgba(0,0,0,0.5); 
-        transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        z-index: 1040;
-    }
-    
-    .nav-links.active { right: 0; }
-    
-    .nav-links a {
-        width: 100%; 
-        padding: 12px 20px; 
-        font-size: 1rem; 
-        color: #e0e6ed !important;
-        border-radius: 12px !important; /* চারকোনা থেকে কার্ভ করা হয়েছে */
-        display: flex !important; 
-        align-items: center;
-        background: transparent;
-        transition: 0.2s ease;
-        border-bottom: none !important; /* নিচের বর্ডার সরিয়ে ফেলা হয়েছে */
-    }
-
-    /* হোভার করলে হালকা ব্যাকগ্রাউন্ড আসবে */
-    .nav-links a:hover {
-        background: rgba(255, 215, 0, 0.1) !important;
-        color: #FFD700 !important;
-    }
-    
-    .nav-links a i { 
-        width: 35px; 
-        font-size: 1.1rem; 
-        color: #FFD700; 
-    }
-    
-    /* স্পেশাল বাটন হাইলাইট */
-    .nav-links a.nav-btn-highlight {
-        background: linear-gradient(90deg, #FFD700, #ffcc00) !important;
-        color: #000 !important;
-        margin-top: 10px;
-        font-weight: 700;
-    }
-
-    .nav-links a.nav-btn-highlight i { color: #000; }
-    
-    /* Logout বাটন একটু আলাদা লালচে ভাব */
-    .nav-links a[href="/logout"] {
-        margin-top: auto; /* একদম নিচে নিয়ে যাওয়ার চেষ্টা */
-        color: #ff6b6b !important;
-    }
-    .nav-links a[href="/logout"] i { color: #ff6b6b; }
+/* NAVBAR */
+.navbar{
+    position:sticky;
+    top:0;
+    z-index:1050;
+    background:#0a0b10;
+    height:60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 20px;
+    border-bottom:1px solid rgba(255,215,0,.2)
 }
 
-        /* =========================================
-           4. Footer & In-Feed Ad Fix
-        ========================================= */
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        
-        /* ছবির মাঝখানের অ্যাড যাতে গ্রিড না ভাঙে তার ম্যাজিক কোড */
-        .ad-card {
-            display: inline-block; width: 100%; margin-bottom: 15px;
-            break-inside: avoid; page-break-inside: avoid; -webkit-column-break-inside: avoid;
-            background: transparent; box-shadow: none; border: none; text-align: center;
-        }
+.logo a{
+    color:#fff;
+    font-size:1.5rem;
+    font-weight:700;
+    text-decoration:none;
+}
+.logo span{color:#FFD700}
 
-        .footer { background: #0a0b10; border-top: 2px solid #FFD700; font-family: 'Hind Siliguri', sans-serif; margin-top: 60px;}
-        .footer-container { max-width: 1200px; margin: 0 auto; padding: 50px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .footer h2, .footer h3 { color: #fff; margin-bottom: 20px; }
-        .footer-about p, .footer-links a, .footer-contact p { color: #aaa; line-height: 1.8; text-decoration: none; font-size: 0.95rem;}
-        .footer-links a { display: block; margin-bottom: 10px; transition: 0.3s; }
-        .footer-links a:hover { color: #FFD700; padding-left: 5px; }
-        .social-icons { margin-top: 20px; }
-        .social-icons a { display: inline-flex; justify-content: center; align-items: center; width: 35px; height: 35px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #FFD700; border-radius: 50%; margin-right: 10px; transition: 0.3s; text-decoration: none;}
-        .social-icons a:hover { background: #FFD700; color: #000; transform: translateY(-3px); }
-        .footer-bottom { text-align: center; padding: 25px 20px; color: #666; font-size: 0.9rem; }
-    </style>
-    {% block head %}{% endblock %}
+/* NAV LINKS */
+.nav-links{
+    display:flex;
+    gap:18px;
+    align-items:center;
+}
+
+.nav-links a{
+    color:#ddd;
+    text-decoration:none;
+    font-size:.95rem;
+    display:flex;
+    align-items:center;
+}
+.nav-links a i{margin-right:6px}
+
+.nav-btn{
+    background:#FFD700;
+    color:#000!important;
+    padding:6px 14px;
+    border-radius:20px;
+}
+
+/* HAMBURGER */
+.hamburger{
+    display:none;
+    flex-direction:column;
+    cursor:pointer;
+}
+.hamburger span{
+    width:25px;height:3px;background:#FFD700;margin:4px 0;
+}
+
+/* MOBILE */
+@media(max-width:992px){
+
+.hamburger{display:flex}
+
+.nav-links{
+    position:fixed;
+    top:0;
+    right:-100%;
+    width:260px;
+    height:100vh;
+    background:#0a0b10;
+    flex-direction:column;
+    align-items:flex-start;
+    padding-top:70px;
+    transition:.4s;
+    z-index:1040;
+}
+
+.nav-links.active{right:0}
+
+.nav-links a{
+    width:100%;
+    padding:14px 25px;
+    border-bottom:1px solid rgba(255,255,255,.05)
+}
+
+/* overlay */
+.overlay{
+    position:fixed;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.5);
+    opacity:0;
+    visibility:hidden;
+    transition:.3s;
+}
+
+.overlay.active{
+    opacity:1;
+    visibility:visible;
+}
+
+}
+
+/* CONTAINER */
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+}
+
+/* FOOTER */
+.footer{
+    background:#0a0b10;
+    color:#aaa;
+    margin-top:60px;
+    padding:40px 20px;
+    text-align:center;
+    border-top:2px solid #FFD700;
+}
+</style>
+
+{% block head %}{% endblock %}
 </head>
+
 <body>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="logo">
-            <a href="/"><i class="fa-solid fa-camera-retro"></i>পিক<span>ঘর</span></a>
-        </div>
-        
-        <!-- Hamburger Icon for Mobile -->
-        <div class="hamburger" id="hamburgerBtn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-
-        <div class="nav-links" id="navMenu">
-            <a href="/"><i class="fa-solid fa-house"></i> হোম</a>
-            <a href="/c/image"><i class="fa-solid fa-image"></i> ছবি</a>
-            <a href="/c/story"><i class="fa-solid fa-book-open"></i> গল্প</a>
-            <a href="/c/font"><i class="fa-solid fa-font"></i> ফন্ট</a>
-            <a href="/c/blog"><i class="fa-solid fa-blog"></i> ব্লগ</a>
-            
-            {% if session.get('user') %}
-                <a href="/upload" class="nav-btn-highlight"><i class="fa-solid fa-cloud-arrow-up"></i> আপলোড</a>
-                <a href="/p/{{ session['user']['username'] }}"><i class="fa-solid fa-user-circle"></i> প্রোফাইল</a>
-                
-                {% if session['user']['email'] == 'admin@gmail.com' %}
-                    <a href="/admin"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন</a>
-                {% endif %}
-                
-                <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</a>
-            {% else %}
-                <a href="/login"><i class="fa-solid fa-right-to-bracket"></i> লগইন</a>
-                <a href="/signup" class="nav-btn-highlight"><i class="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন</a>
-            {% endif %}
-        </div>
-    </nav>
-
-    <!-- Main Content Container -->
-    <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            <div class="flash-messages" style="margin-top: 20px;">
-              {% for category, message in messages %} 
-                <p class="{{ category }}">{{ message }}</p> 
-              {% endfor %}
-            </div>
-          {% endif %}
-        {% endwith %}
-
-        {% block content %}{% endblock %}
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="logo">
+        <a href="/">📸 পিক<span>ঘর</span></a>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-about">
-                <h2><i class="fa-solid fa-camera-retro" style="color: #FFD700; margin-right: 5px;"></i>পিক<span>ঘর</span></h2>
-                <p>পিকঘর হলো নান্দনিক ছবি, গল্প, ফন্ট এবং ব্লগের একটি প্রিমিয়াম ডিজিটাল সংগ্রহশালা। আমাদের ক্রিয়েটিভ কমিউনিটিতে যুক্ত হোন, আপনার শিল্প শেয়ার করুন এবং আয় করুন।</p>
-            </div>
-            <div class="footer-links">
-                <h3><i class="fa-solid fa-link" style="color: #FFD700; margin-right: 8px;"></i> প্রয়োজনীয় লিংক</h3>
-                <a href="/">হোমপেজ</a>
-                <a href="/about">আমাদের সম্পর্কে</a>
-                <a href="/contact">যোগাযোগ করুন</a>
-                <a href="/upload">কন্টেন্ট আপলোড</a>
-            </div>
-            <div class="footer-contact">
-                <h3><i class="fa-solid fa-address-book" style="color: #FFD700; margin-right: 8px;"></i> যোগাযোগ</h3>
-                <p><i class="fa-solid fa-envelope" style="color: #FFD700; margin-right: 8px;"></i> info@picghor.com</p>
-                <p><i class="fa-solid fa-location-dot" style="color: #FFD700; margin-right: 8px;"></i> ঢাকা, বাংলাদেশ</p>
-                <div class="social-icons">
-                    <a href="https://www.facebook.com/profile.php?id=61588378066038" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@alihosen.typography" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
-                    <a href="https://pin.it/5QiXRSpBl" title="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            &copy; ২০২৬ পিকঘর (PicGhor). সর্বস্বত্ব সংরক্ষিত। Developed by <a href="https://alihosenofficial.github.io/" style="color: #FFD700; font-weight: bold; text-decoration: none;">Ali Hosen</a>
-        </div>
-    </footer>
-
-    <!-- Sticky Bottom Ad -->
-    {% if request.path != '/grand-opening' %}
-    <div id="sticky-bottom-ad" class="sticky-ad-container">
-        <button class="close-ad-btn" onclick="closeStickyAd()" title="Close Ad">✕</button>
-        <div class="ad-wrapper">
-            <span class="ad-label">Advertisement</span>
-            <script>
-              atOptions = { 'key' : '65ec9f7d8d86083bf154bf98b07df8f1', 'format' : 'iframe', 'height' : 60, 'width' : 468, 'params' : {} };
-            </script>
-            <script src="https://www.highperformanceformat.com/65ec9f7d8d86083bf154bf98b07df8f1/invoke.js"></script>
-        </div>
+    <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
     </div>
 
-    <style>
-        body { padding-bottom: 80px; }
-        .sticky-ad-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: transform 0.4s ease-in-out; }
-        .ad-wrapper { width: 100%; max-width: 468px; overflow: hidden; text-align: center; padding: 5px 0; display: flex; flex-direction: column; align-items: center; }
-        .ad-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
-        .close-ad-btn { position: absolute; top: -25px; right: 10px; background: #ffffff; color: #333; border: 1px solid #ddd; border-bottom: none; border-radius: 5px 5px 0 0; font-size: 16px; font-weight: bold; cursor: pointer; padding: 2px 12px; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); }
-        .close-ad-btn:hover { background: #f1f1f1; color: red; }
-    </style>
-    <script>
-        function closeStickyAd() {
-            var adContainer = document.getElementById('sticky-bottom-ad');
-            if (adContainer) { adContainer.style.transform = 'translateY(100%)'; setTimeout(() => { adContainer.style.display = 'none'; document.body.style.paddingBottom = '0'; }, 400); }
-        }
-    </script>
-    {% endif %}
+    <div class="nav-links" id="navMenu">
+        <a href="/"><i class="fa fa-home"></i> হোম</a>
+        <a href="/c/image"><i class="fa fa-image"></i> ছবি</a>
+        <a href="/c/story"><i class="fa fa-book"></i> গল্প</a>
+        <a href="/c/font"><i class="fa fa-font"></i> ফন্ট</a>
 
-    <!-- Navbar Toggle Script -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const hamburger = document.getElementById('hamburgerBtn');
-            const navMenu = document.getElementById('navMenu');
+        {% if session.get('user') %}
+        <a href="/upload" class="nav-btn"><i class="fa fa-upload"></i> আপলোড</a>
+        <a href="/logout"><i class="fa fa-sign-out"></i> লগআউট</a>
+        {% else %}
+        <a href="/login"><i class="fa fa-sign-in"></i> লগইন</a>
+        <a href="/signup" class="nav-btn">রেজিস্ট্রেশন</a>
+        {% endif %}
+    </div>
+</nav>
 
-            if(hamburger && navMenu) {
-                hamburger.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    navMenu.classList.toggle('active');
-                    hamburger.classList.toggle('toggle-icon');
-                });
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
 
-                document.addEventListener('click', function(e) {
-                    if (!navMenu.contains(e.target) && !hamburger.contains(e.target)) {
-                        navMenu.classList.remove('active');
-                        hamburger.classList.remove('toggle-icon');
-                    }
-                });
-            }
-        });
-    </script>
-    
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<!-- CONTENT -->
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    © ২০২৬ পিকঘর — All rights reserved
+</footer>
+
+<!-- JS -->
+<script>
+const hamburger=document.getElementById("hamburger");
+const navMenu=document.getElementById("navMenu");
+const overlay=document.getElementById("overlay");
+
+hamburger.onclick=()=>{
+    navMenu.classList.toggle("active");
+    overlay.classList.toggle("active");
+}
+
+overlay.onclick=()=>{
+    navMenu.classList.remove("active");
+    overlay.classList.remove("active");
+}
+</script>
+
 </body>
 </html>
