@@ -1,201 +1,248 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}পিকঘর | নান্দনিক সংগ্রহশালা{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}পিকঘর | নান্দনিক সংগ্রহশালা{% endblock %}</title>
 
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- External CSS Link -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-<!-- FontAwesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* =========================================
+           1. Root Variables (থিমের কালার ও ডিজাইন কন্ট্রোল)
+        ========================================= */
+        :root {
+            --nav-bg: rgba(10, 11, 16, 0.95); /* Deep Dark */
+            --bg-main: #Faf8f5; /* Off-white / Cream */
+            --accent: #FFD700; /* Premium Gold */
+            --text-light: #e0e6ed;
+            --text-dark: #333;
+            --danger: #ff4d4d;
+            --success: #4caf50;
+            --transition: 0.3s ease;
+        }
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Hind Siliguri',sans-serif;background:#Faf8f5}
+        /* =========================================
+           2. Global Reset & Basic Setup
+        ========================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg-main); color: var(--text-dark); padding-bottom: 80px; /* অ্যাডের জন্য নিচে ফাঁকা জায়গা */ }
 
-/* NAVBAR */
-.navbar{
-    position:sticky;
-    top:0;
-    z-index:1050;
-    background:#0a0b10;
-    height:60px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 20px;
-    border-bottom:1px solid rgba(255,215,0,.2)
-}
+        /* =========================================
+           3. Navbar (Glassmorphism UI)
+        ========================================= */
+        .navbar {
+            position: sticky; top: 0; z-index: 1050;
+            background: var(--nav-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            height: 70px; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5%; border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
 
-.logo a{
-    color:#fff;
-    font-size:1.5rem;
-    font-weight:700;
-    text-decoration:none;
-}
-.logo span{color:#FFD700}
+        .logo a { color: #fff; font-size: 1.8rem; font-weight: 700; text-decoration: none; display: flex; align-items: center; letter-spacing: 1px;}
+        .logo a i { color: var(--accent); margin-right: 8px; font-size: 1.6rem;}
+        .logo span { color: var(--accent); }
 
-/* NAV LINKS */
-.nav-links{
-    display:flex;
-    gap:18px;
-    align-items:center;
-}
+        /* Nav Links */
+        .nav-links { display: flex; gap: 20px; align-items: center; height: 100%; }
+        .nav-links a { color: var(--text-light); text-decoration: none; font-size: 1rem; font-weight: 600; display: flex; align-items: center; transition: var(--transition); padding: 5px 0;}
+        .nav-links a i { margin-right: 6px; font-size: 1.1rem; width: 20px; text-align: center; color: var(--accent); }
+        .nav-links a:hover { color: var(--accent); transform: translateY(-2px); }
 
-.nav-links a{
-    color:#ddd;
-    text-decoration:none;
-    font-size:.95rem;
-    display:flex;
-    align-items:center;
-}
-.nav-links a i{margin-right:6px}
+        /* Buttons */
+        .nav-btn { background: var(--accent); color: #000 !important; padding: 8px 20px !important; border-radius: 30px; font-weight: 700; border: 1px solid var(--accent); transition: var(--transition); }
+        .nav-btn:hover { background: transparent; color: var(--accent) !important; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        .nav-btn i { color: #000 !important; }
+        .nav-btn:hover i { color: var(--accent) !important; }
 
-.nav-btn{
-    background:#FFD700;
-    color:#000!important;
-    padding:6px 14px;
-    border-radius:20px;
-}
+        /* =========================================
+           4. Hamburger Icon (Animated)
+        ========================================= */
+        .hamburger { display: none; flex-direction: column; cursor: pointer; justify-content: space-between; height: 20px; width: 28px; z-index: 1100; }
+        .hamburger span { width: 100%; height: 3px; background: var(--accent); border-radius: 5px; transition: 0.4s; }
 
-/* HAMBURGER */
-.hamburger{
-    display:none;
-    flex-direction:column;
-    cursor:pointer;
-}
-.hamburger span{
-    width:25px;height:3px;background:#FFD700;margin:4px 0;
-}
+        /* =========================================
+           5. Mobile Sidebar Menu & Overlay
+        ========================================= */
+        @media (max-width: 992px) {
+            .navbar { padding: 0 20px; }
+            .hamburger { display: flex; }
 
-/* MOBILE */
-@media(max-width:992px){
+            .nav-links {
+                position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
+                background: var(--nav-bg); flex-direction: column; align-items: flex-start;
+                padding-top: 80px; transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1); z-index: 1040;
+                box-shadow: -10px 0 30px rgba(0,0,0,0.8); overflow-y: auto; gap: 0;
+            }
+            .nav-links.active { right: 0; }
 
-.hamburger{display:flex}
+            .nav-links a { width: 100%; padding: 15px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); border-radius: 0; }
+            .nav-links a:hover { background: rgba(255,215,0,0.05); padding-left: 35px; }
+            
+            .nav-btn { margin: 20px 30px; width: calc(100% - 60px); justify-content: center; text-align: center; }
 
-.nav-links{
-    position:fixed;
-    top:0;
-    right:-100%;
-    width:260px;
-    height:100vh;
-    background:#0a0b10;
-    flex-direction:column;
-    align-items:flex-start;
-    padding-top:70px;
-    transition:.4s;
-    z-index:1040;
-}
+            /* X (Cross) Animation for Hamburger */
+            .hamburger.toggle-icon span:nth-child(1) { transform: translateY(8.5px) rotate(45deg); background: var(--danger); }
+            .hamburger.toggle-icon span:nth-child(2) { opacity: 0; }
+            .hamburger.toggle-icon span:nth-child(3) { transform: translateY(-8.5px) rotate(-45deg); background: var(--danger); }
+        }
 
-.nav-links.active{right:0}
+        /* Overlay Background (কালো পর্দা) */
+        .overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1030; }
+        .overlay.active { opacity: 1; visibility: visible; }
 
-.nav-links a{
-    width:100%;
-    padding:14px 25px;
-    border-bottom:1px solid rgba(255,255,255,.05)
-}
+        /* =========================================
+           6. Layout & Footer
+        ========================================= */
+        .container { max-width: 1200px; margin: auto; padding: 30px 20px; min-height: 60vh; }
+        
+        .flash-messages p { background: #fff; color: var(--nav-bg); padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--accent); box-shadow: 0 4px 10px rgba(0,0,0,0.05); font-weight: 600; }
+        .flash-messages p.error { border-left-color: var(--danger); }
 
-/* overlay */
-.overlay{
-    position:fixed;
-    top:0;left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,.5);
-    opacity:0;
-    visibility:hidden;
-    transition:.3s;
-}
+        .footer { background: var(--nav-bg); color: #aaa; margin-top: 60px; padding: 30px 20px; text-align: center; border-top: 2px solid var(--accent); font-size: 0.95rem; }
+        .footer span { color: var(--accent); font-weight: bold; }
 
-.overlay.active{
-    opacity:1;
-    visibility:visible;
-}
+        /* =========================================
+           7. Sticky Ad CSS
+        ========================================= */
+        .sticky-ad-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1); z-index: 9999; display: flex; justify-content: center; align-items: center; transition: transform 0.4s ease-in-out; border-top: 1px solid #eee; }
+        .ad-wrapper { width: 100%; max-width: 468px; text-align: center; padding: 5px 0; display: flex; flex-direction: column; align-items: center; position: relative;}
+        .ad-label { font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+        .close-ad-btn { position: absolute; top: -25px; right: 10px; background: #fff; color: #555; border: 1px solid #ddd; border-bottom: none; border-radius: 6px 6px 0 0; font-size: 14px; font-weight: bold; cursor: pointer; padding: 3px 12px; box-shadow: 0 -2px 5px rgba(0,0,0,0.05); transition: 0.3s; }
+        .close-ad-btn:hover { background: #f8f9fa; color: var(--danger); }
+    </style>
 
-}
-
-/* CONTAINER */
-.container{
-    max-width:1200px;
-    margin:auto;
-    padding:20px;
-}
-
-/* FOOTER */
-.footer{
-    background:#0a0b10;
-    color:#aaa;
-    margin-top:60px;
-    padding:40px 20px;
-    text-align:center;
-    border-top:2px solid #FFD700;
-}
-</style>
-
-{% block head %}{% endblock %}
+    {% block head %}{% endblock %}
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-    <div class="logo">
-        <a href="/">📸 পিক<span>ঘর</span></a>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="/"><i class="fa-solid fa-camera-retro"></i>পিক<span>ঘর</span></a>
+        </div>
+
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="nav-links" id="navMenu">
+            <a href="/"><i class="fa-solid fa-house"></i> হোম</a>
+            <a href="/c/image"><i class="fa-solid fa-image"></i> ছবি</a>
+            <a href="/c/story"><i class="fa-solid fa-book-open"></i> গল্প</a>
+            <a href="/c/font"><i class="fa-solid fa-font"></i> ফন্ট</a>
+
+            {% if session.get('user') %}
+                <a href="/upload" class="nav-btn"><i class="fa-solid fa-cloud-arrow-up"></i> আপলোড</a>
+                <a href="/p/{{ session['user']['username'] }}" style="color: var(--accent);"><i class="fa-solid fa-user-circle"></i> প্রোফাইল</a>
+                
+                {% if session['user']['email'] == 'admin@gmail.com' %}
+                    <a href="/admin" style="color: var(--success);"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন</a>
+                {% endif %}
+                
+                <a href="/logout" style="color: var(--danger); border-bottom: none;"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</a>
+            {% else %}
+                <a href="/login"><i class="fa-solid fa-right-to-bracket"></i> লগইন</a>
+                <a href="/signup" class="nav-btn"><i class="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <div class="container">
+        <!-- Flash Messages (অ্যালার্ট) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %} 
+                <p class="{{ category }}">{{ message }}</p> 
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
     </div>
 
-    <div class="hamburger" id="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
+    <!-- FOOTER -->
+    <footer class="footer">
+        &copy; ২০২৬ পিকঘর (PicGhor) — সর্বস্বত্ব সংরক্ষিত। Developed by <span>Ali Hosen</span>
+    </footer>
+
+    <!-- ==========================================
+         Sticky Bottom Ad (Global)
+    =========================================== -->
+    {% if request.path != '/grand-opening' %}
+    <div id="sticky-bottom-ad" class="sticky-ad-container">
+        <div class="ad-wrapper">
+            <!-- Close (X) Button -->
+            <button class="close-ad-btn" onclick="closeStickyAd()" title="Close Ad">✕</button>
+            <span class="ad-label">Advertisement</span>
+            
+            <!-- আপনার দেওয়া Ad Network এর কোড -->
+            <script>
+              atOptions = {
+                'key' : '65ec9f7d8d86083bf154bf98b07df8f1',
+                'format' : 'iframe',
+                'height' : 60,
+                'width' : 468,
+                'params' : {}
+              };
+            </script>
+            <script src="https://www.highperformanceformat.com/65ec9f7d8d86083bf154bf98b07df8f1/invoke.js"></script>
+        </div>
     </div>
+    {% endif %}
+    <!-- ========================================== -->
 
-    <div class="nav-links" id="navMenu">
-        <a href="/"><i class="fa fa-home"></i> হোম</a>
-        <a href="/c/image"><i class="fa fa-image"></i> ছবি</a>
-        <a href="/c/story"><i class="fa fa-book"></i> গল্প</a>
-        <a href="/c/font"><i class="fa fa-font"></i> ফন্ট</a>
+    <!-- JS Scripts -->
+    <script>
+        // 1. Mobile Menu & Overlay Logic
+        const hamburger = document.getElementById("hamburger");
+        const navMenu = document.getElementById("navMenu");
+        const overlay = document.getElementById("overlay");
 
-        {% if session.get('user') %}
-        <a href="/upload" class="nav-btn"><i class="fa fa-upload"></i> আপলোড</a>
-        <a href="/logout"><i class="fa fa-sign-out"></i> লগআউট</a>
-        {% else %}
-        <a href="/login"><i class="fa fa-sign-in"></i> লগইন</a>
-        <a href="/signup" class="nav-btn">রেজিস্ট্রেশন</a>
-        {% endif %}
-    </div>
-</nav>
+        if (hamburger && navMenu && overlay) {
+            hamburger.onclick = () => {
+                navMenu.classList.toggle("active");
+                overlay.classList.toggle("active");
+                hamburger.classList.toggle("toggle-icon"); // X animation
+            }
 
-<!-- OVERLAY -->
-<div class="overlay" id="overlay"></div>
+            overlay.onclick = () => {
+                navMenu.classList.remove("active");
+                overlay.classList.remove("active");
+                hamburger.classList.remove("toggle-icon");
+            }
+        }
 
-<!-- CONTENT -->
-<div class="container">
-    {% block content %}{% endblock %}
-</div>
-
-<!-- FOOTER -->
-<footer class="footer">
-    © ২০২৬ পিকঘর — All rights reserved
-</footer>
-
-<!-- JS -->
-<script>
-const hamburger=document.getElementById("hamburger");
-const navMenu=document.getElementById("navMenu");
-const overlay=document.getElementById("overlay");
-
-hamburger.onclick=()=>{
-    navMenu.classList.toggle("active");
-    overlay.classList.toggle("active");
-}
-
-overlay.onclick=()=>{
-    navMenu.classList.remove("active");
-    overlay.classList.remove("active");
-}
-</script>
-
+        // 2. Sticky Ad Close Logic
+        function closeStickyAd() {
+            var adContainer = document.getElementById('sticky-bottom-ad');
+            if (adContainer) {
+                adContainer.style.transform = 'translateY(100%)';
+                setTimeout(() => { 
+                    adContainer.style.display = 'none'; 
+                    document.body.style.paddingBottom = '0'; // প্যাডিং রিমুভ
+                }, 400); 
+            }
+        }
+    </script>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
