@@ -1,13 +1,14 @@
 /* =========================================
-   PichGhor (পিকঘর) Premium Royal Theme
+   PichGhor (পিকঘর) - Global Styles
 ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
 
 :root {
-    --nav-bg: #0a0b10; /* Deep Midnight Dark */
-    --bg-color: #Faf8f5; /* Cream / Off-White */
-    --surface-color: #ffffff; /* Pure White for Cards */
-    --accent: #FFD700; /* Royal Gold */
+    --nav-bg: #0a0b10;
+    --dark-light: #15171e;
+    --bg-color: #Faf8f5;
+    --surface-color: #ffffff;
+    --accent: #FFD700;
     --text-main: #333333;
     --text-light: #e0e6ed;
     --text-muted: #888888;
@@ -15,97 +16,85 @@
     --success: #4caf50;
 }
 
+/* Reset & Base */
 * { margin: 0; padding: 0; box-sizing: border-box; }
-
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
     font-family: 'Hind Siliguri', sans-serif;
     line-height: 1.6;
     overflow-x: hidden;
-    padding-bottom: 80px; /* For sticky ad */
+    padding-bottom: 80px;
 }
 
-h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.5px; color: var(--nav-bg); }
-.container { max-width: 1200px; margin: 40px auto; padding: 0 20px; min-height: 60vh; }
+h1, h2, h3, h4 { font-weight: 700; color: var(--nav-bg); }
+a { text-decoration: none; transition: 0.3s; }
 
-/* Overlay Background */
-.overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1030; }
+/* =========================================
+   NAVBAR & MENU
+========================================= */
+.navbar {
+    position: sticky; top: 0; z-index: 1100;
+    background: rgba(10, 11, 16, 0.95); backdrop-filter: blur(10px); height: 70px;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 5%; border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.logo a { color: #fff; font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.logo span { color: var(--accent); }
+
+.nav-links { display: flex; gap: 20px; align-items: center; }
+.nav-links a { color: #eee; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+.nav-links a:hover { color: var(--accent); }
+
+.nav-btn { 
+    background: var(--accent); color: #000 !important; 
+    padding: 8px 20px; border-radius: 50px; font-weight: 600; 
+}
+
+/* Mobile Toggle */
+.hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; z-index: 1200; }
+.hamburger span { width: 28px; height: 3px; background: var(--accent); border-radius: 2px; }
+
+/* Overlay */
+.overlay { 
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.7); opacity: 0; visibility: hidden; 
+    transition: 0.3s; z-index: 1050; 
+}
 .overlay.active { opacity: 1; visibility: visible; }
 
-/* =========================================
-   3. GENERAL BUTTONS
-========================================= */
-.btn-primary, .submit-btn, .btn-download-adv {
-    text-decoration: none; color: #000 !important; background: var(--accent);
-    padding: 10px 24px; border-radius: 30px; display: inline-flex; align-items: center; justify-content: center;
-    gap: 8px; font-size: 0.95rem; font-weight: 700; border: 2px solid var(--accent); cursor: pointer; transition: 0.3s ease;
+/* Mobile Menu Logic */
+@media (max-width: 992px) {
+    .hamburger { display: flex; }
+    .nav-links {
+        position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
+        background: var(--dark-light); flex-direction: column; align-items: flex-start;
+        padding: 80px 30px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        z-index: 1060; gap: 15px; box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+    }
+    .nav-links.active { right: 0; }
+    .nav-links a { width: 100%; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 }
-.btn-primary:hover, .submit-btn:hover, .btn-download-adv:hover { background: transparent; color: var(--accent) !important; transform: translateY(-2px); }
 
 /* =========================================
-   4. FORMS & BOXES
-========================================= */
-.form-box, .profile-header, .private-followers-box, .info-section, .comments-section, .related-section, .balance-card, .payout-form, .admin-container, .insight-table-wrapper {
-    background: var(--surface-color); padding: 40px; border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(10, 11, 16, 0.05); border: 1px solid rgba(10, 11, 16, 0.05);
-}
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--nav-bg); }
-.form-group input, .form-group textarea, .form-group select {
-    width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 1rem; background: #fdfdfd; transition: 0.3s;
-}
-.form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--nav-bg); box-shadow: 0 0 0 3px rgba(10, 11, 16, 0.1); background: #fff; }
-
-/* =========================================
-   5. MASONRY GRID & CARDS
+   CARDS & GRID (Masonry)
 ========================================= */
 .grid { column-count: 4; column-gap: 20px; margin-top: 20px; }
-
 .card {
-    position: relative; overflow: hidden; border-radius: 12px; border: none;
-    background: var(--surface-color); box-shadow: 0 5px 15px rgba(10, 11, 16, 0.08);
-    display: inline-block; width: 100%; break-inside: avoid; margin-bottom: 20px;
-    animation: fadeInUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0;
+    position: relative; overflow: hidden; border-radius: 12px;
+    background: var(--surface-color); display: inline-block; width: 100%; 
+    break-inside: avoid; margin-bottom: 20px; transition: 0.3s;
 }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-.card:nth-child(1) { animation-delay: 0.1s; } .card:nth-child(2) { animation-delay: 0.2s; }
+.card img { width: 100%; display: block; transition: 0.6s; }
+.card:hover img { transform: scale(1.05); }
 
-.card img { width: 100%; height: auto; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
-.card:hover img { transform: scale(1.08); }
-
-/* Gradient Overlay */
-.card-overlay {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to top, rgba(10, 11, 16, 0.95) 0%, rgba(10, 11, 16, 0.3) 50%, transparent 100%);
-    opacity: 0; transition: opacity 0.4s ease; display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 20px; color: #fff; z-index: 2;
-}
-.card:hover .card-overlay { opacity: 1; }
-
-.card-overlay h3 { color: #fff; margin: 0 0 8px 0; font-size: 1.25rem; transform: translateY(20px); transition: transform 0.4s ease; }
-.card-overlay p { color: #e0e6ed; font-size: 0.9rem; margin-bottom: 12px; transform: translateY(20px); transition: transform 0.4s ease 0.05s; line-height: 1.4;}
-.card-overlay .author-info { border-top: 1px solid rgba(255, 215, 0, 0.3); padding-top: 10px; margin-top: 0; transform: translateY(20px); transition: transform 0.4s ease 0.1s; display: flex; align-items: center; gap: 8px; }
-.card-overlay .author-info img { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover;}
-.card-overlay .author-info span { color: var(--accent); font-weight: bold; font-size: 0.85rem; }
-.card:hover .card-overlay h3, .card:hover .card-overlay p, .card:hover .card-overlay .author-info { transform: translateY(0); }
-
-/* In-feed Ad Fix */
-.ad-card { background: transparent !important; box-shadow: none !important; border: none !important; padding: 10px 0; text-align: center; display: inline-block; width: 100%; break-inside: avoid; margin-bottom: 20px; }
-
-/* Responsive Grid */
-@media (max-width: 1100px) { .grid { column-count: 3; } }
-@media (max-width: 768px) { .grid { column-count: 2; column-gap: 15px; } .card { margin-bottom: 15px; } }
-@media (max-width: 480px) { .grid { column-count: 2; column-gap: 10px; } .card { margin-bottom: 10px; } .card-overlay { padding: 12px; } .card-overlay h3 { font-size: 0.95rem; margin-bottom: 5px; } .card-overlay p { display: none; } }
+@media (max-width: 768px) { .grid { column-count: 2; } }
 
 /* =========================================
-   6. FOOTER
+   FOOTER & ADS
 ========================================= */
-.footer { background: var(--nav-bg); color: #aaa; margin-top: 60px; border-top: 2px solid var(--accent); font-family: 'Hind Siliguri', sans-serif;}
-.footer-container { max-width: 1200px; margin: 0 auto; padding: 50px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.footer h2, .footer h3 { color: #fff; margin-bottom: 20px; }
-.footer-links a { display: block; margin-bottom: 10px; color: #aaa; text-decoration: none; transition: 0.3s; }
-.footer-links a:hover { color: var(--accent); padding-left: 5px; }
-.social-icons a { display: inline-flex; justify-content: center; align-items: center; width: 35px; height: 35px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--accent); border-radius: 50%; margin-right: 10px; transition: 0.3s; text-decoration: none;}
-.social-icons a:hover { background: var(--accent); color: #000; transform: translateY(-3px); }
-.footer-bottom { text-align: center; padding: 25px 20px; font-size: 0.9rem; }
+.footer { background: var(--nav-bg); color: #fff; padding: 60px 20px 30px; border-top: 4px solid var(--accent); margin-top: 50px; }
+.footer-content { max-width: 1200px; margin: auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+
+.sticky-ad-container { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; z-index: 9999; display: flex; justify-content: center; }
