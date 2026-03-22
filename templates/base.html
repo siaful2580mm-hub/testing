@@ -48,18 +48,53 @@
         .hamburger span { width: 28px; height: 3px; background: var(--primary); border-radius: 2px; transition: 0.3s; }
 
         @media(max-width: 992px) {
-            .hamburger { display: flex; }
-            .nav-links {
-                position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
-                background: var(--dark-light); flex-direction: column; align-items: flex-start;
-                padding: 80px 30px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1040; gap: 10px;
-            }
-            .nav-links.active { right: 0; }
-            .nav-links a { width: 100%; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 1.1rem; }
-            .nav-btn { text-align: center; justify-content: center; width: 100%; margin-top: 15px;}
-            .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); opacity: 0; visibility: hidden; transition: 0.3s; z-index: 1030; }
-            .overlay.active { opacity: 1; visibility: visible; }
-        }
+    .hamburger { display: flex; z-index: 1100; } /* হ্যামবার্গার যেন উপরে থাকে */
+    
+    .nav-links {
+        position: fixed; 
+        top: 0; 
+        right: -100%; 
+        width: 280px; 
+        height: 100vh;
+        background: var(--dark-light); 
+        flex-direction: column; 
+        align-items: flex-start;
+        padding: 80px 30px; 
+        transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        z-index: 1060; /* মেইন নেভিগেশন বার থেকে বেশি */
+        gap: 10px;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        display: flex; /* নিশ্চিত করুন এটা ফ্লেক্স */
+    }
+
+    .nav-links.active { 
+        right: 0; 
+    }
+
+    /* মোবাইল মেনুর ভেতরের লিঙ্কগুলোর স্টাইল */
+    .nav-links a { 
+        width: 100%; 
+        padding: 12px 0; 
+        border-bottom: 1px solid rgba(255,255,255,0.05); 
+        font-size: 1.1rem; 
+        color: #fff !important; /* লেখা সাদা নিশ্চিত করতে */
+    }
+    
+    .overlay { 
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: rgba(0,0,0,0.7); 
+        opacity: 0; 
+        visibility: hidden; 
+        transition: 0.3s; 
+        z-index: 1055; /* মেনুর ঠিক নিচে */
+    }
+    .overlay.active { opacity: 1; visibility: visible; }
+}
+
 
         /* --- CONTAINER (Flash Messages & Content) --- */
         .container { max-width: 1200px; margin: auto; padding: 20px; min-height: 60vh; }
