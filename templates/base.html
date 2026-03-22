@@ -17,7 +17,7 @@
     
     <style>
         /* =========================================
-           1. Global Reset & Navbar Line-Break Fix
+           1. Global Reset & Perfect Navbar Alignment
         ========================================= */
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Hind Siliguri', sans-serif; background-color: #Faf8f5; }
@@ -27,34 +27,26 @@
             background: rgba(10, 11, 16, 0.95); 
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255, 215, 0, 0.2);
-            padding: 15px 5%; /* পারফেক্ট স্পেসিং */
-            
-            /* ম্যাজিক ফিক্স: লোগো ও মেনু সবসময় এক লাইনে থাকবে */
-            display: flex; flex-direction: row; flex-wrap: nowrap; 
-            justify-content: space-between; align-items: center;
-            
+            padding: 0 5%; height: 70px; /* ফিক্সড হাইট দেওয়া হলো যাতে এলাইনমেন্ট না ভাঙে */
+            display: flex; justify-content: space-between; align-items: center;
             width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         
-        .logo a { 
-            display: flex; align-items: center; font-size: 1.8rem; color: #fff; 
-            font-weight: 700; text-decoration: none; letter-spacing: 1px; 
-            white-space: nowrap; /* লোগো ভাঙবে না */
-        }
+        .logo { display: flex; align-items: center; height: 100%; }
+        .logo a { font-size: 1.8rem; color: #fff; font-weight: 700; text-decoration: none; letter-spacing: 1px; display: flex; align-items: center;}
         .logo a i { color: #FFD700; margin-right: 8px; }
         .logo a span { color: #FFD700; }
 
-        .nav-links { display: flex; align-items: center; gap: 20px; }
+        .nav-links { display: flex; align-items: center; gap: 20px; height: 100%; }
         
         .nav-links a {
             color: #e0e6ed; text-decoration: none; font-size: 0.95rem; font-weight: 600;
-            white-space: nowrap; transition: 0.3s; padding: 5px 0;
-            display: flex; align-items: center;
+            transition: 0.3s; display: flex; align-items: center;
         }
-        .nav-links a i { margin-right: 6px; }
+        .nav-links a i { width: 20px; text-align: center; margin-right: 5px; }
         .nav-links a:hover { color: #FFD700; }
         
-        .nav-btn-highlight { background: #FFD700; color: #000 !important; padding: 8px 20px !important; border-radius: 30px; font-weight: 700; border: 1px solid #FFD700; transition: 0.3s;}
+        .nav-btn-highlight { background: #FFD700; color: #000 !important; padding: 8px 18px !important; border-radius: 30px; font-weight: 700; border: 1px solid #FFD700;}
         .nav-btn-highlight:hover { background: transparent; color: #FFD700 !important; }
 
         /* =========================================
@@ -62,15 +54,15 @@
         ========================================= */
         .hamburger { 
             display: none; cursor: pointer; flex-direction: column; 
-            justify-content: space-between; width: 28px; height: 20px; z-index: 1100; flex-shrink: 0;
+            justify-content: space-between; width: 26px; height: 18px; z-index: 1100;
         }
         .hamburger span { width: 100%; height: 3px; background: #FFD700; border-radius: 5px; transition: 0.4s; }
 
         /* =========================================
-           3. Premium Mobile Sidebar Menu
+           3. Premium Mobile Sidebar Menu (Sleek UI)
         ========================================= */
         @media (max-width: 1100px) {
-            .navbar { padding: 15px 20px; }
+            .navbar { padding: 0 20px; }
             .hamburger { display: flex; }
             
             .nav-links {
@@ -82,32 +74,40 @@
             }
             .nav-links.active { right: 0; }
             
-            /* মেনুর ভেতরের লেখার পারফেক্ট অ্যালাইনমেন্ট */
+            /* সাইডবারের সবগুলো লিংক এবং বাটনের ডিজাইন একদম একরকম করা হলো */
             .nav-links a {
-                width: 100%; padding: 15px 30px; font-size: 1.1rem; color: #e0e6ed;
-                border-bottom: 1px solid rgba(255,255,255,0.05); display: flex !important; align-items: center; text-align: left;
+                width: 100%; padding: 16px 30px; font-size: 1.1rem; color: #e0e6ed !important;
+                border-bottom: 1px solid rgba(255,255,255,0.05); display: flex !important; align-items: center;
+                background: transparent !important; /* হলুদ বক্স মুছে ফেলা হলো */
+                border-radius: 0 !important;
             }
             
-            /* আইকনগুলো একদম সমানভাবে সাজানো থাকবে */
-            .nav-links a i {
-                width: 25px; /* ফিক্সড সাইজ */
-                text-align: left; color: #FFD700; margin-right: 12px; font-size: 1.15rem;
-            }
+            .nav-links a i { width: 30px; text-align: left; color: #FFD700; margin-right: 10px; font-size: 1.2rem; }
             
-            .nav-links a:hover { background: rgba(255, 215, 0, 0.05); padding-left: 35px; }
-
-            .nav-btn-highlight { margin: 20px 30px !important; width: calc(100% - 60px) !important; justify-content: center; padding: 12px !important; }
+            /* মোবাইলে স্পেশাল কালার কোডিং */
+            .nav-links a[href="/upload"] { color: #FFD700 !important; font-weight: bold; }
+            .nav-links a[href="/admin"] { color: #4caf50 !important; }
+            .nav-links a[href="/logout"] { color: #ff4d4d !important; border-bottom: none; }
+            .nav-links a[href="/logout"] i { color: #ff4d4d; }
             
             /* X Animation */
-            .hamburger.toggle-icon span:nth-child(1) { transform: translateY(8.5px) rotate(45deg); background: #ff4d4d; }
+            .hamburger.toggle-icon span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); background: #ff4d4d; }
             .hamburger.toggle-icon span:nth-child(2) { opacity: 0; }
-            .hamburger.toggle-icon span:nth-child(3) { transform: translateY(-8.5px) rotate(-45deg); background: #ff4d4d; }
+            .hamburger.toggle-icon span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); background: #ff4d4d; }
         }
 
         /* =========================================
-           4. Footer & Globals
+           4. Footer & In-Feed Ad Fix
         ========================================= */
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* ছবির মাঝখানের অ্যাড যাতে গ্রিড না ভাঙে তার ম্যাজিক কোড */
+        .ad-card {
+            display: inline-block; width: 100%; margin-bottom: 15px;
+            break-inside: avoid; page-break-inside: avoid; -webkit-column-break-inside: avoid;
+            background: transparent; box-shadow: none; border: none; text-align: center;
+        }
+
         .footer { background: #0a0b10; border-top: 2px solid #FFD700; font-family: 'Hind Siliguri', sans-serif; margin-top: 60px;}
         .footer-container { max-width: 1200px; margin: 0 auto; padding: 50px 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .footer h2, .footer h3 { color: #fff; margin-bottom: 20px; }
@@ -145,13 +145,13 @@
             
             {% if session.get('user') %}
                 <a href="/upload" class="nav-btn-highlight"><i class="fa-solid fa-cloud-arrow-up"></i> আপলোড</a>
-                <a href="/p/{{ session['user']['username'] }}"><i class="fa-solid fa-user-circle"></i> {{ session['user']['username'] }}</a>
+                <a href="/p/{{ session['user']['username'] }}"><i class="fa-solid fa-user-circle"></i> প্রোফাইল</a>
                 
                 {% if session['user']['email'] == 'admin@gmail.com' %}
                     <a href="/admin"><i class="fa-solid fa-shield-halved"></i> অ্যাডমিন</a>
                 {% endif %}
                 
-                <a href="/logout" style="color: #ff4d4d;"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</a>
+                <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> লগআউট</a>
             {% else %}
                 <a href="/login"><i class="fa-solid fa-right-to-bracket"></i> লগইন</a>
                 <a href="/signup" class="nav-btn-highlight"><i class="fa-solid fa-user-plus"></i> রেজিস্ট্রেশন</a>
@@ -205,9 +205,7 @@
         </div>
     </footer>
 
-    <!-- ==========================================
-         Sticky Bottom Ad (Grand Opening পেজে দেখাবে না)
-    =========================================== -->
+    <!-- Sticky Bottom Ad -->
     {% if request.path != '/grand-opening' %}
     <div id="sticky-bottom-ad" class="sticky-ad-container">
         <button class="close-ad-btn" onclick="closeStickyAd()" title="Close Ad">✕</button>
@@ -231,17 +229,12 @@
     <script>
         function closeStickyAd() {
             var adContainer = document.getElementById('sticky-bottom-ad');
-            if (adContainer) {
-                adContainer.style.transform = 'translateY(100%)';
-                setTimeout(() => { adContainer.style.display = 'none'; document.body.style.paddingBottom = '0'; }, 400);
-            }
+            if (adContainer) { adContainer.style.transform = 'translateY(100%)'; setTimeout(() => { adContainer.style.display = 'none'; document.body.style.paddingBottom = '0'; }, 400); }
         }
     </script>
     {% endif %}
 
-    <!-- ==========================================
-         Navbar Toggle Script
-    =========================================== -->
+    <!-- Navbar Toggle Script -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const hamburger = document.getElementById('hamburgerBtn');
